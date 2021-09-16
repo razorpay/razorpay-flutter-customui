@@ -31,7 +31,7 @@ flutter:
     platforms:
       android:
         package: com.razorpay.flutter_customui
-        pluginClass: RazorpayFlutterCustomuiPlugin
+        pluginClass: RazorpayPlugin
       ios:
         pluginClass: RazorpayFlutterCustomuiPlugin
       web:
