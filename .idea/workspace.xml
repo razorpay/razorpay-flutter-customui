@@ -1,13 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b2379c99-f91b-41c8-949c-ba3b27e931e8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/android/libs/flutter.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/libs/razorpay-android-3.9.4.aar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/libs/razorpay_flutter.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayDelegate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.packages" beforeDir="false" afterPath="$PROJECT_DIR$/.packages" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayPlugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayPlugin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1xr99TgpJQCpv0nzrtbnFfEGupu" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="ics" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/android/libs" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/example/lib/main.dart" />
       <method v="2" />
     </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b2379c99-f91b-41c8-949c-ba3b27e931e8" name="Default Changelist" comment="" />
+      <created>1631102188733</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1631102188733</updated>
+    </task>
+    <task id="LOCAL-00001" summary="- initial commit">
+      <created>1631102285087</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1631102285087</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="- initial commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="- initial commit" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="100" y="125" width="1240" height="606" key="AVDManager" timestamp="1631777721031">
+      <screen x="0" y="25" width="1440" height="806" />
+    </state>
+    <state x="100" y="125" width="1240" height="606" key="AVDManager/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1631777721031" />
+    <state x="238" y="53" key="CommitChangelistDialog2" timestamp="1631102284709">
+      <screen x="0" y="25" width="1440" height="875" />
+    </state>
+    <state x="238" y="53" key="CommitChangelistDialog2/0.25.1440.875/-265.-1175.1920.1106@0.25.1440.875" timestamp="1631102284709" />
+    <state width="1878" height="205" key="GridCell.Tab.0.bottom" timestamp="1631853623244">
+      <screen x="-265" y="-1175" width="1920" height="1175" />
+    </state>
+    <state width="1878" height="205" key="GridCell.Tab.0.bottom/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659177" />
+    <state width="1398" height="205" key="GridCell.Tab.0.bottom/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1631778030383" />
+    <state width="1878" height="205" key="GridCell.Tab.0.bottom/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623244" />
+    <state width="1878" height="205" key="GridCell.Tab.0.center" timestamp="1631853623242">
+      <screen x="-265" y="-1175" width="1920" height="1175" />
+    </state>
+    <state width="1878" height="205" key="GridCell.Tab.0.center/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659175" />
+    <state width="1398" height="205" key="GridCell.Tab.0.center/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1631778030382" />
+    <state width="1878" height="205" key="GridCell.Tab.0.center/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623242" />
+    <state width="1878" height="205" key="GridCell.Tab.0.left" timestamp="1631853623241">
+      <screen x="-265" y="-1175" width="1920" height="1175" />
+    </state>
+    <state width="1878" height="205" key="GridCell.Tab.0.left/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659175" />
+    <state width="1398" height="205" key="GridCell.Tab.0.left/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1631778030382" />
+    <state width="1878" height="205" key="GridCell.Tab.0.left/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623241" />
+    <state width="1878" height="205" key="GridCell.Tab.0.right" timestamp="1631853623243">
+      <screen x="-265" y="-1175" width="1920" height="1175" />
+    </state>
+    <state width="1878" height="205" key="GridCell.Tab.0.right/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659176" />
+    <state width="1398" height="205" key="GridCell.Tab.0.right/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1631778030383" />
+    <state width="1878" height="205" key="GridCell.Tab.0.right/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623243" />
+    <state x="320" y="186" key="Vcs.Push.Dialog.v2" timestamp="1631102290246">
+      <screen x="0" y="25" width="1440" height="875" />
+    </state>
+    <state x="320" y="186" key="Vcs.Push.Dialog.v2/0.25.1440.875/-265.-1175.1920.1106@0.25.1440.875" timestamp="1631102290246" />
+    <state x="394" y="-833" width="602" height="490" key="find.popup" timestamp="1631858464417">
+      <screen x="-265" y="-1175" width="1920" height="1175" />
+    </state>
+    <state x="394" y="-833" width="602" height="490" key="find.popup/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631858464417" />
+    <state x="385" y="214" width="670" height="676" key="search.everywhere.popup" timestamp="1631102901848">
+      <screen x="0" y="25" width="1440" height="875" />
+    </state>
+    <state x="385" y="214" width="670" height="676" key="search.everywhere.popup/0.25.1440.875/-265.-1175.1920.1106@0.25.1440.875" timestamp="1631102901848" />
   </component>
 </project>
