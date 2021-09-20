@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - razorpay_flutter_customui (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - razorpay_flutter_customui (from `.symlinks/plugins/razorpay_flutter_customui/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  razorpay_flutter_customui:
+    :path: ".symlinks/plugins/razorpay_flutter_customui/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  razorpay_flutter_customui: d3fa1f7d689a98f0c5dae17313822dd762d4bd1c
+
+PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
+
+COCOAPODS: 1.10.1
