@@ -23,7 +23,7 @@ class RazorpayDelegate: NSObject {
                 self.parentVC.view.addSubview(unwrappedWebView)
                 
                 if self.parentVC.navigationController?.navigationBar != nil {
-                    self.navController = rootVC?.navigationController
+                    self.navController = self.parentVC.navigationController
                 } else {
                     self.navController = UINavigationController(rootViewController: self.parentVC)
                 }
@@ -114,21 +114,20 @@ class RazorpayDelegate: NSObject {
     func handleCancelTap(sender: UIBarButtonItem) {
         
         razorpay?.userCancelledPayment()
-        razorpay?.close()
         self.close()
-        navController?.dismiss(animated: true, completion: nil)
     }
     
     private func close() {
+        razorpay?.close()
         if (self.webView != nil) {
             webView?.stopLoading()
         }
         
+        razorpay = nil
+        
         if (self.navController != nil) {
             self.navController?.dismiss(animated: true, completion: nil)
         }
-        
-        razorpay = nil
     }
 }
 
@@ -154,10 +153,12 @@ extension RazorpayDelegate: WKNavigationDelegate {
 extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
     
     func onPaymentSuccess(_ payment_id: String, andData response: [AnyHashable : Any]) {
-        print(payment_id)
+        pendingResult(response as NSDictionary)
+        self.close()
     }
     
     func onPaymentError(_ code: Int32, description str: String, andData response: [AnyHashable : Any]) {
-        print(response)
+        pendingResult(response as NSDictionary)
+        self.close()
     }
 }

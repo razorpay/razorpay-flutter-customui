@@ -1,8 +1,6 @@
-import 'package:flutter/services.dart';
 import 'package:eventify/eventify.dart';
-
+import 'package:flutter/services.dart';
 import 'dart:async';
-import 'dart:convert';
 
 class Razorpay {
   // Response codes from platform
@@ -26,25 +24,22 @@ class Razorpay {
   static const MethodChannel _channel = const MethodChannel('razorpay_flutter');
 
   // EventEmitter instance used for communication
-  var EventEmitter; _eventEmitter;
+  EventEmitter _eventEmitter = EventEmitter();
 
-  Razorpay() {
-    _eventEmitter = new EventEmitter();
-  }
-
-
-  void Future<String> getPaymentMethods() async {
-    final String paymentMethodsObj = await _channel.invokeMethod('getPaymentMethods');
+  Future<String> getPaymentMethods() async {
+    final String paymentMethodsObj =
+        await _channel.invokeMethod('getPaymentMethods');
     return paymentMethodsObj;
   }
 
-  void Future<String> getAppsWhichSupportUpi() async {
-    final String paymentMethodsObj = await _channel.invokeMethod('getAppsWhichSupportUpi');
+  Future<String> getAppsWhichSupportUpi() async {
+    final String paymentMethodsObj =
+        await _channel.invokeMethod('getAppsWhichSupportUpi');
     return paymentMethodsObj;
   }
 
   /// Opens Razorpay checkout
-  void open(Map<String, dynamic> options) async {
+  open(Map<String, dynamic> options) async {
     Map<String, dynamic> validationResult = _validateOptions(options);
 
     if (!validationResult['success']) {
@@ -63,7 +58,7 @@ class Razorpay {
   }
 
   /// Handles checkout response from platform
-  void _handleResult(Map<dynamic, dynamic> response) {
+  _handleResult(Map<dynamic, dynamic> response) {
     String eventName;
     Map<dynamic, dynamic> data = response["data"];
 

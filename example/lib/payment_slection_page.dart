@@ -12,12 +12,22 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
-  RazorpayFlutterCustomui razorpayCustomUI;
+  Razorpay _razorpay;
 
   @override
   void initState() {
-    razorpayCustomUI = RazorpayFlutterCustomui();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     super.initState();
+  }
+
+  void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
+    print(response);
+  }
+
+  void _handlePaymentError(Map<dynamic, dynamic> response) {
+    print(response);
   }
 
   @override
@@ -364,25 +374,26 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                  onPressed: () {
-                    var options = {
-                      'key': 'rzp_live_6KzMg861N1GUS8',
-                      'amount': 100,
-                      "card[cvv]": "123",
-                      "card[expiry_month]": "11",
-                      "card[expiry_year]": "23",
-                      "card[name]": "Test User",
-                      "card[number]": "4111111111111111",
-                      "contact": "123456789",
-                      "currency": "INR",
-                      "display_logo": "0",
-                      'email': 'test@razorpay.com',
-                      'description': 'Fine T-Shirt',
-                      "method": "card"
-                    };
-                    razorpayCustomUI.open(options);
-                  },
-                  child: Text('Submit')),
+                onPressed: () {
+                  var options = {
+                    'key': 'rzp_test_1DP5mmOlF5G5ag',
+                    'amount': 100,
+                    "card[cvv]": "635",
+                    "card[expiry_month]": "09",
+                    "card[expiry_year]": "24",
+                    "card[name]": "Ramprasad A",
+                    "card[number]": "4838342637013349",
+                    "contact": "9663976539",
+                    "currency": "INR",
+                    "display_logo": "0",
+                    'email': 'ramprasad179@gmail.com',
+                    'description': 'Fine T-Shirt',
+                    "method": "card"
+                  };
+                  _razorpay.open(options);
+                },
+                child: Text('Submit'),
+              ),
               ElevatedButton(
                   onPressed: () {}, child: Text('Pay With Cred (Collect FLow)'))
             ],
