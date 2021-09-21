@@ -26,21 +26,85 @@ class Razorpay {
   static const MethodChannel _channel = const MethodChannel('razorpay_flutter');
 
   // EventEmitter instance used for communication
-  var EventEmitter; _eventEmitter;
+  late EventEmitter _eventEmitter;
 
   Razorpay() {
     _eventEmitter = new EventEmitter();
   }
 
 
-  void Future<String> getPaymentMethods() async {
+  void getPaymentMethods() async {
     final String paymentMethodsObj = await _channel.invokeMethod('getPaymentMethods');
-    return paymentMethodsObj;
+    //return paymentMethodsObj;
   }
 
-  void Future<String> getAppsWhichSupportUpi() async {
-    final String paymentMethodsObj = await _channel.invokeMethod('getAppsWhichSupportUpi');
-    return paymentMethodsObj;
+  void getAppsWhichSupportUpi() async {
+    var paymentMethodsObj = await _channel.invokeMethod('getAppsWhichSupportUpi');
+    _handleResult(paymentMethodsObj);
+  }
+
+  void submit(Map<String, dynamic> options) async {
+    Map<String, dynamic> validationResult = _validateOptions(options);
+
+    if (!validationResult['success']) {
+      _handleResult({
+        'type': _CODE_PAYMENT_ERROR,
+        'data': {
+          'code': INVALID_OPTIONS,
+          'message': validationResult['message']
+        }
+      });
+      return;
+    }
+
+    var response = await _channel.invokeMethod('submit', options);
+    _handleResult(response);
+  }
+
+
+  void callNativeIntent(String value) async {
+    var response = await _channel.invokeMethod('callNativeIntent', value);
+    _handleResult(response);
+  }
+
+  void changeApiKey(String value) async {
+    var response = await _channel.invokeMethod('changeApiKey', value);
+    _handleResult(response);
+  }
+
+  void getBankLogoUrl(String value) async {
+    var response = await _channel.invokeMethod('getBankLogoUrl', value);
+    _handleResult(response);
+  }
+
+  void getCardNetwork(String value) async {
+    var response = await _channel.invokeMethod('getCardNetwork', value);
+    _handleResult(response);
+  }
+
+  void getCardNetworkLength(String value) async {
+    var response = await _channel.invokeMethod('getCardNetworkLength', value);
+    _handleResult(response);
+  }
+
+  void getSubscriptionAmount(String value) async {
+    var response = await _channel.invokeMethod('getSubscriptionAmount', value);
+    _handleResult(response);
+  }
+
+  void getWalletLogoUrl(String value) async {
+    var response = await _channel.invokeMethod('getWalletLogoUrl', value);
+    _handleResult(response);
+  }
+
+  void isValidCardNumber(String value) async {
+    var response = await _channel.invokeMethod('isValidCardNumber', value);
+    _handleResult(response);
+  }
+
+  void isValidVpa(String value) async {
+    var response = await _channel.invokeMethod('isValidVpa', value);
+    _handleResult(response);
   }
 
   /// Opens Razorpay checkout
