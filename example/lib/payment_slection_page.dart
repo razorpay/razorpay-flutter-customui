@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 
 enum PaymentMethods { card, upi, nb, wallet, vas }
 
@@ -11,6 +12,13 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
+  RazorpayFlutterCustomui razorpayCustomUI;
+
+  @override
+  void initState() {
+    razorpayCustomUI = RazorpayFlutterCustomui();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -355,7 +363,26 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ElevatedButton(onPressed: () {}, child: Text('Submit')),
+              ElevatedButton(
+                  onPressed: () {
+                    var options = {
+                      'key': 'rzp_live_6KzMg861N1GUS8',
+                      'amount': 100,
+                      "card[cvv]": "123",
+                      "card[expiry_month]": "11",
+                      "card[expiry_year]": "23",
+                      "card[name]": "Test User",
+                      "card[number]": "4111111111111111",
+                      "contact": "123456789",
+                      "currency": "INR",
+                      "display_logo": "0",
+                      'email': 'test@razorpay.com',
+                      'description': 'Fine T-Shirt',
+                      "method": "card"
+                    };
+                    razorpayCustomUI.open(options);
+                  },
+                  child: Text('Submit')),
               ElevatedButton(
                   onPressed: () {}, child: Text('Pay With Cred (Collect FLow)'))
             ],
