@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 import 'package:razorpay_flutter_customui_example/payment_slection_page.dart';
 
 void main() {

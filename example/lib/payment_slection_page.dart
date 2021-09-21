@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:razorpay_flutter_customui/razorpay_flutter.dart';
 
 enum PaymentMethods { card, upi, nb, wallet, vas }
 
@@ -11,6 +13,21 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
+
+  static const platform = const MethodChannel("razorpay_flutter-customui");
+  late Razorpay _razorpay;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -367,10 +384,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 }
 
 class PaymentTypeSelectionButton extends StatelessWidget {
-  final String paymentTitle;
-  final VoidCallback onPaymentTypeTap;
+  late String paymentTitle;
+  late VoidCallback onPaymentTypeTap;
 
-  PaymentTypeSelectionButton({this.paymentTitle, this.onPaymentTypeTap});
+  PaymentTypeSelectionButton({paymentTitle, onPaymentTypeTap});
 
   @override
   Widget build(BuildContext context) {
