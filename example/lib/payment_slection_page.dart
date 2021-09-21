@@ -376,17 +376,17 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
               ElevatedButton(
                 onPressed: () {
                   var options = {
-                    'key': 'rzp_test_1DP5mmOlF5G5ag',
+                    'key': '<your-key>',
                     'amount': 100,
-                    "card[cvv]": "635",
-                    "card[expiry_month]": "09",
-                    "card[expiry_year]": "24",
-                    "card[name]": "Ramprasad A",
-                    "card[number]": "4838342637013349",
-                    "contact": "9663976539",
+                    "card[cvv]": "123",
+                    "card[expiry_month]": "11",
+                    "card[expiry_year]": "23",
+                    "card[name]": "Test User",
+                    "card[number]": "4111111111111111",
+                    "contact": "1234567890",
                     "currency": "INR",
                     "display_logo": "0",
-                    'email': 'ramprasad179@gmail.com',
+                    'email': 'test@gmail.com',
                     'description': 'Fine T-Shirt',
                     "method": "card"
                   };
