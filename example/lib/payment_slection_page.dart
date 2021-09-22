@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 
 enum PaymentMethods { card, upi, nb, wallet, vas }
 
@@ -11,6 +12,23 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
+  Razorpay _razorpay;
+
+  @override
+  void initState() {
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    super.initState();
+  }
+
+  void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
+    print(response);
+  }
+
+  void _handlePaymentError(Map<dynamic, dynamic> response) {
+    print(response);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -355,7 +373,27 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ElevatedButton(onPressed: () {}, child: Text('Submit')),
+              ElevatedButton(
+                onPressed: () {
+                  var options = {
+                    'key': '<your-key>',
+                    'amount': 100,
+                    "card[cvv]": "123",
+                    "card[expiry_month]": "11",
+                    "card[expiry_year]": "23",
+                    "card[name]": "Test User",
+                    "card[number]": "4111111111111111",
+                    "contact": "1234567890",
+                    "currency": "INR",
+                    "display_logo": "0",
+                    'email': 'test@gmail.com',
+                    'description': 'Fine T-Shirt',
+                    "method": "card"
+                  };
+                  _razorpay.open(options);
+                },
+                child: Text('Submit'),
+              ),
               ElevatedButton(
                   onPressed: () {}, child: Text('Pay With Cred (Collect FLow)'))
             ],

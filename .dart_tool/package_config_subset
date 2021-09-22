@@ -22,6 +22,10 @@ collection
 2.12
 file:///Users/ramprasad.a/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.15.0/
 file:///Users/ramprasad.a/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.15.0/lib/
+eventify
+2.12
+file:///Users/ramprasad.a/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/eventify-1.0.0/
+file:///Users/ramprasad.a/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/eventify-1.0.0/lib/
 fake_async
 2.12
 file:///Users/ramprasad.a/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/fake_async-1.2.0/
@@ -91,7 +95,7 @@ flutter_web_plugins
 file:///Users/ramprasad.a/Developer/flutter/packages/flutter_web_plugins/
 file:///Users/ramprasad.a/Developer/flutter/packages/flutter_web_plugins/lib/
 razorpay_flutter_customui
-2.7
+2.12
 file:///Users/ramprasad.a/Documents/RamprasadA/project/razorpay-flutter-customui/
 file:///Users/ramprasad.a/Documents/RamprasadA/project/razorpay-flutter-customui/lib/
 2
