@@ -2,19 +2,30 @@ package com.razorpay.flutter_customui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.RelativeLayout;
 
+
+import androidx.annotation.RequiresApi;
 
 import com.razorpay.ApplicationDetails;
 import com.razorpay.PaymentData;
+//import com.razorpay.PaymentMethodsCallback;
+
 import com.razorpay.PaymentMethodsCallback;
 import com.razorpay.PaymentResultWithDataListener;
 import com.razorpay.Razorpay;
+import com.razorpay.RazorpayWebViewClient;
 import com.razorpay.RzpUpiSupportedAppsCallback;
+
 import com.razorpay.SubscriptionAmountCallback;
 import com.razorpay.ValidateVpaCallback;
 import com.razorpay.ValidationListener;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,12 +57,29 @@ public class RazorpayDelegate implements ActivityResultListener, PaymentResultWi
     private static final int TLS_ERROR = 3;
     private static final int INCOMPATIBLE_PLUGIN = 3;
     private static final int UNKNOWN_ERROR = 100;
+    private WebView webview;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public RazorpayDelegate(Activity activity, String key) {
         this.activity = activity;
         this.key = key;
         razorpay = new Razorpay(activity, key);
+
+        final RelativeLayout layout = new RelativeLayout(activity);
+
+        final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                activity.getWindowManager().getDefaultDisplay().getWidth(),
+                activity.getWindowManager().getDefaultDisplay().getHeight());
+
+        layout.setLayoutParams(params);
+
+        activity.setContentView(layout);
+        webview = new WebView(activity);
+        webview.getSettings().setJavaScriptEnabled(true);
+        RelativeLayout.LayoutParams webViewParams = new RelativeLayout.LayoutParams(
+                new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+        webViewParams.addRule(RelativeLayout.ABOVE);
     }
 
     public RazorpayDelegate(Activity activity) {
@@ -59,7 +87,11 @@ public class RazorpayDelegate implements ActivityResultListener, PaymentResultWi
     }
 
     void submit(JSONObject payload) {
-        razorpay.submit(payload, this);
+        try {
+            razorpay.submit(payload, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     void callNativeIntent(String value) {
@@ -168,6 +200,7 @@ public class RazorpayDelegate implements ActivityResultListener, PaymentResultWi
         razorpay.validateFields(value, new ValidationListener() {
             @Override
             public void onValidationSuccess() {
+                webview.setVisibility(View.VISIBLE);
                 pendingResult.success("success");
             }
 
