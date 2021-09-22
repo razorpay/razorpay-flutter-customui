@@ -33,6 +33,9 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
   private MethodChannel channel;
   private Razorpay razorpay;
 
+  public RazorpayPlugin() {
+  }
+
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "razorpay_flutter_customui");
@@ -43,7 +46,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
     if (call.method.equals("openCheckout")) {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else if (call.method.equals("submit")) {
+    } else if (call.method.equals("open")) {
       ArrayList<JSONObject> arguments = (ArrayList<JSONObject>) call.arguments;
       razorpayDelegate.submit(arguments.get(0));
     } else if (call.method.equals("callNativeIntent")) {
@@ -95,7 +98,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
     channel.setMethodCallHandler(null);
   }
 
-  private RazorpayPlugin(Registrar registrar) {
+  public RazorpayPlugin(Registrar registrar) {
     this.razorpayDelegate = new RazorpayDelegate(registrar.activity());
     registrar.addActivityResultListener(razorpayDelegate);
   }
