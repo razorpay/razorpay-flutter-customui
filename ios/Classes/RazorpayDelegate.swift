@@ -85,6 +85,19 @@ class RazorpayDelegate: NSObject {
             self?.pendingResult(supportedApps)
         })
     }
+    
+    public func isCredAppAvailable() -> Int {
+        let credURIScheme = "credpay://" // This will open CRED URL.
+        if let urlString = credURIScheme.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) {
+            if let credURL = URL(string: urlString) {
+                if UIApplication.shared.canOpenURL(credURL) {
+                    return 1
+                }
+            }
+        }
+        return 0
+    }
+    
     public func getSubscriptionAmount(options: Dictionary<String, Any>) {
         self.razorpay?.getSubscriptionAmount(options: options, withSuccessCallback: { [weak self] successResponse in
             self?.pendingResult(successResponse)
@@ -112,9 +125,15 @@ class RazorpayDelegate: NSObject {
     
     @objc
     func handleCancelTap(sender: UIBarButtonItem) {
-        
-        razorpay?.userCancelledPayment()
-        self.close()
+        let alertController = UIAlertController(title: "Alert!", message: "Are you sure you want to cancel the transaction ?", preferredStyle: .alert)
+        let yesAction = UIAlertAction(title: "Yes, Cancel", style: .destructive) { cancelAction in
+            self.razorpay?.userCancelledPayment()
+            self.close()
+        }
+        let stayOn = UIAlertAction(title: "No", style: .default, handler: nil)
+        alertController.addAction(yesAction)
+        alertController.addAction(stayOn)
+        self.parentVC.present(alertController, animated: true, completion: nil)
     }
     
     private func close() {
@@ -154,11 +173,11 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
     
     func onPaymentSuccess(_ payment_id: String, andData response: [AnyHashable : Any]) {
         pendingResult(response as NSDictionary)
-        self.close()
+//        self.close()
     }
     
     func onPaymentError(_ code: Int32, description str: String, andData response: [AnyHashable : Any]) {
         pendingResult(response as NSDictionary)
-        self.close()
+//        self.close()
     }
 }

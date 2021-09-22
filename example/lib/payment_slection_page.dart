@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
+import 'package:razorpay_flutter_customui_example/models/card_info_model.dart';
 
 enum PaymentMethods { card, upi, nb, wallet, vas }
 
@@ -13,13 +14,31 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
   Razorpay _razorpay;
+  CardInfoModel cardInfoModel;
+  NetBankingModel nbInfo;
+  var netBankingOptions = {
+    'key': 'rzp_live_6KzMg861N1GUS8',
+    'amount': 100,
+    'currency': 'INR',
+    'email': 'ramprasad179@gmail.com',
+    'contact': '9663976539',
+    'method': 'netbanking',
+  };
+  String upiNumber;
 
   @override
   void initState() {
+    cardInfoModel = CardInfoModel();
+    nbInfo = NetBankingModel();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
@@ -28,6 +47,28 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   void _handlePaymentError(Map<dynamic, dynamic> response) {
     print(response);
+  }
+
+  String validateCardFields() {
+    if ((cardInfoModel.cardNumber == '') ||
+        (cardInfoModel.cardNumber == null)) {
+      return 'Card Number Cannot be Empty';
+    }
+    if ((cardInfoModel.expiryMonth == '') ||
+        (cardInfoModel.expiryMonth == null)) {
+      return 'Expiry Month / Year Cannot be Empty';
+    }
+    if ((cardInfoModel.cvv == '') || (cardInfoModel.cvv == null)) {
+      return 'CVV Cannot be Empty';
+    }
+    if ((cardInfoModel.mobileNumber == '') ||
+        (cardInfoModel.mobileNumber == null)) {
+      return 'Mobile number cannot be Empty';
+    }
+    if ((cardInfoModel.email == '') || (cardInfoModel.email == null)) {
+      return 'Email cannot be Empty';
+    }
+    return '';
   }
 
   @override
@@ -103,14 +144,12 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                 Expanded(
                   child: getReleventUI(),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Text(
-                      'Selected Payment Type : ${selectedPaymentType ?? ''}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
+                Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Text(
+                    'Selected Payment Type : ${selectedPaymentType ?? ''}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -193,7 +232,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         ListTile(
           title: Text('ICICI'),
           trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () {},
+          onTap: () {
+            netBankingOptions['bank'] = 'ICIC';
+            _razorpay.open(netBankingOptions);
+          },
         ),
         ListTile(
           title: Text('SBI'),
@@ -206,6 +248,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         ListTile(
           title: Text('HDFC'),
           trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            netBankingOptions['bank'] = 'HDFC';
+            _razorpay.open(netBankingOptions);
+          },
         ),
         ListTile(
           title: Text('Corporation'),
@@ -285,6 +331,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       decoration: InputDecoration(
                         hintText: 'VPA',
                       ),
+                      onChanged: (value) {
+                        upiNumber = value;
+                      },
                     ),
                   ),
                 ],
@@ -296,7 +345,21 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(onPressed: () {}, child: Text('Intent Flow')),
-              ElevatedButton(onPressed: () {}, child: Text('Collect Flow'))
+              ElevatedButton(
+                  onPressed: () {
+                    var options = {
+                      'key': 'rzp_live_6KzMg861N1GUS8',
+                      'amount': 100,
+                      'currency': 'INR',
+                      'email': 'ramprasad179@gmail.com',
+                      'contact': upiNumber,
+                      'method': 'upi',
+                      'vpa': '$upiNumber@upi',
+                      '_[flow]': "collect"
+                    };
+                    _razorpay.open(options);
+                  },
+                  child: Text('Collect Flow'))
             ],
           )
         ],
@@ -307,98 +370,163 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   Widget buildCardDetailsForm() {
     return Container(
       height: 200.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Column(
-            children: [
-              Row(
-                children: [
-                  Text('Card Number :'),
-                  SizedBox(width: 8.0),
-                  Flexible(
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        hintText: 'Card Number',
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Text('Card Number :'),
+                    SizedBox(width: 8.0),
+                    Flexible(
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: 'Card Number',
+                        ),
+                        onChanged: (newValue) =>
+                            cardInfoModel.cardNumber = newValue,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Text('Expiry :'),
-                  SizedBox(width: 8.0),
-                  Flexible(
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        hintText: '12/23',
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Text('Expiry :'),
+                    SizedBox(width: 8.0),
+                    Flexible(
+                      child: TextField(
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            hintText: '12/23',
+                          ),
+                          onChanged: (newValue) {
+                            final month = newValue.split('/').first;
+                            final year = newValue.split('/').last;
+                            cardInfoModel.expiryYear = year;
+                            cardInfoModel.expiryMonth = month;
+                          }),
+                    ),
+                    SizedBox(width: 8.0),
+                    Text('CVV'),
+                    SizedBox(width: 8.0),
+                    Flexible(
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: '***',
+                        ),
+                        onChanged: (newValue) => cardInfoModel.cvv = newValue,
                       ),
                     ),
-                  ),
-                  SizedBox(width: 8.0),
-                  Text('CVV'),
-                  SizedBox(width: 8.0),
-                  Flexible(
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        hintText: '***',
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Text('Name :'),
+                    SizedBox(width: 8.0),
+                    Flexible(
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: 'Card Holder Name',
+                        ),
+                        onChanged: (newValue) =>
+                            cardInfoModel.cardHolderName = newValue,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Text('Name :'),
-                  SizedBox(width: 8.0),
-                  Flexible(
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        hintText: 'Card Holder Name',
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Text('Phone :'),
+                    SizedBox(width: 8.0),
+                    Flexible(
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: 'Mobile Number',
+                        ),
+                        onChanged: (newValue) =>
+                            cardInfoModel.mobileNumber = newValue,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 16.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  var options = {
-                    'key': '<your-key>',
-                    'amount': 100,
-                    "card[cvv]": "123",
-                    "card[expiry_month]": "11",
-                    "card[expiry_year]": "23",
-                    "card[name]": "Test User",
-                    "card[number]": "4111111111111111",
-                    "contact": "1234567890",
-                    "currency": "INR",
-                    "display_logo": "0",
-                    'email': 'test@gmail.com',
-                    'description': 'Fine T-Shirt',
-                    "method": "card"
-                  };
-                  _razorpay.open(options);
-                },
-                child: Text('Submit'),
-              ),
-              ElevatedButton(
-                  onPressed: () {}, child: Text('Pay With Cred (Collect FLow)'))
-            ],
-          )
-        ],
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Text('Email :'),
+                    SizedBox(width: 8.0),
+                    Flexible(
+                      child: TextField(
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: 'Email-ID',
+                        ),
+                        onChanged: (newValue) => cardInfoModel.email = newValue,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    var error = validateCardFields();
+                    if (error != '') {
+                      print(error);
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(error)));
+                      return;
+                    }
+                    var options = {
+                      'key': 'rzp_live_6KzMg861N1GUS8',
+                      'amount': 100,
+                      "card[cvv]": cardInfoModel.cvv,
+                      "card[expiry_month]": cardInfoModel.expiryMonth,
+                      "card[expiry_year]": cardInfoModel.expiryYear,
+                      "card[name]": cardInfoModel.cardHolderName,
+                      "card[number]": cardInfoModel.cardNumber,
+                      "contact": cardInfoModel.mobileNumber,
+                      "currency": "INR",
+                      "display_logo": "0",
+                      'email': cardInfoModel.email,
+                      'description': 'Fine T-Shirt',
+                      "method": "card"
+                    };
+                    _razorpay.open(options);
+                  },
+                  child: Text('Submit'),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      var options = {
+                        'key': 'rzp_live_cepk1crIu9VkJU',
+                        'amount': 100,
+                        'currency': 'INR',
+                        'email': 'ramprasad179@gmail.com',
+                        'app_present': 0,
+                        'contact': '9663976539',
+                        'method': 'app',
+                        'provider': 'cred'
+                      };
+                      _razorpay.open(options);
+                    },
+                    child: Text('Pay With Cred (Collect FLow)'))
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

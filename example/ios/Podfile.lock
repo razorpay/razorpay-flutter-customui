@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - razorpay_flutter_customui (0.0.1):
+  - razorpay_flutter_customui (1.0.0):
     - Flutter
 
 DEPENDENCIES:
@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  razorpay_flutter_customui: d3fa1f7d689a98f0c5dae17313822dd762d4bd1c
+  razorpay_flutter_customui: f3c3be553879f61863e1c41a15c227378345f810
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 

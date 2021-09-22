@@ -45,6 +45,8 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             if let arguments = call.arguments as? String {
                 razorpayDelegate.isValidCardNumber(value: arguments)
             }
+        case "isCredAppAvailable":
+            razorpayDelegate.getAppsWhichSupportUpi()
         default:
             print("no method")
         }
