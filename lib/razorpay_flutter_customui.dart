@@ -55,6 +55,8 @@ class Razorpay {
     _handleResult(response);
   }
 
+  payWithCred() {}
+
   /// Handles checkout response from platform
   _handleResult(Map<dynamic, dynamic> response) {
     String eventName;
