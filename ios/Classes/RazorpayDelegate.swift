@@ -4,21 +4,29 @@ import WebKit
 
 class RazorpayDelegate: NSObject {  
 
-    private var pendingResult: FlutterResult!
+    var pendingResult: FlutterResult!
     private var razorpay: RazorpayCheckout?
     var navController: UINavigationController?
     var webView: WKWebView?
-    let parentVC = UIViewController()
+    var parentVC = UIViewController()
     
-    public func open(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
+    public func initilizeSDK(withKey key: String, result: @escaping FlutterResult) {
         pendingResult = result
-        let key = options["key"] as? String
-        
+        self.configureWebView()
+        if let unwrappedWebView = self.webView {
+            self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
+        }
+    }
+    
+    public func submit(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
+        pendingResult = result
+        let key = options["key"] as? String ?? ""
+        if self.razorpay == nil {
+            self.initilizeSDK(withKey: key, result: result)
+        }
         DispatchQueue.main.async {
             let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))
-            let rootVC = UIApplication.shared.keyWindow?.rootViewController
             
-            self.configureWebView()
             if let unwrappedWebView = self.webView {
                 self.parentVC.view.addSubview(unwrappedWebView)
                 
@@ -32,73 +40,80 @@ class RazorpayDelegate: NSObject {
                 self.parentVC.navigationItem.leftBarButtonItem = cancelButtonItem
                 
                 self.parentVC.view.autoresizingMask = [.flexibleLeftMargin,
-                    .flexibleRightMargin, 
-                    .flexibleBottomMargin, 
-                    .flexibleTopMargin, 
-                    .flexibleHeight, 
+                    .flexibleRightMargin,
+                    .flexibleBottomMargin,
+                    .flexibleTopMargin,
+                    .flexibleHeight,
                     .flexibleWidth
                 ]
                 
-                unwrappedWebView.autoresizingMask = [.flexibleLeftMargin, 
-                    .flexibleRightMargin, 
-                    .flexibleBottomMargin, 
-                    .flexibleTopMargin, 
-                    .flexibleHeight, 
+                unwrappedWebView.autoresizingMask = [.flexibleLeftMargin,
+                    .flexibleRightMargin,
+                    .flexibleBottomMargin,
+                    .flexibleTopMargin,
+                    .flexibleHeight,
                     .flexibleWidth
                 ]
                 
-                self.razorpay = RazorpayCheckout.initWithKey(key ?? "", andDelegate: self, withPaymentWebView: unwrappedWebView)
-                var tempOptions = options
-                tempOptions.removeValue(forKey: "key")
+                let rootVC = UIApplication.shared.keyWindow?.rootViewController
                 if let navCtrl = self.navController {
+                    navCtrl.modalPresentationStyle = .fullScreen
                     rootVC?.present(navCtrl, animated: true, completion: nil)
                 }
+                var tempOptions = options
+                tempOptions.removeValue(forKey: "key")
                 self.razorpay?.authorize(tempOptions)
             }
         }
     }
     
-    public func changeApiKey(key: String) {
+    public func changeApiKey(key: String, result: @escaping FlutterResult) {
         self.razorpay?.changeApiKey(key)
     }
     
-    public func getBankLogoUrl(value: String) {
+    public func getBankLogoUrl(value: String, result: @escaping FlutterResult) {
+        self.pendingResult = result
         let bankLogo = self.razorpay?.getBankLogo(havingBankCode: value)
         self.pendingResult(bankLogo)
     }
     
-    public func getCardNetwork(value: String) {
+    public func getCardNetwork(value: String, result: @escaping FlutterResult) {
+        self.pendingResult = result
         let cardNetwork = self.razorpay?.getCardNetwork(fromCardNumber: value)
         self.pendingResult(cardNetwork)
     }
     
-    public func getPaymentMethods(options: Dictionary<String, Any>) {
-        self.razorpay?.getPaymentMethods(withOptions: options, withSuccessCallback: { [weak self] successResponse in
-            self?.pendingResult(successResponse)
-        }, andFailureCallback: { [weak self] errorResponse in
-            self?.pendingResult(errorResponse)
+    public func getPaymentMethods(result: @escaping FlutterResult) {
+        self.pendingResult = result
+        self.razorpay?.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
+            self.pendingResult(successResponse  as NSDictionary)
+        }, andFailureCallback: { errorResponse in
+            self.pendingResult(errorResponse)
         })
     }
     
-    public func getAppsWhichSupportUpi() {
+    public func getAppsWhichSupportUpi(result: @escaping FlutterResult) {
+        self.pendingResult = result
         RazorpayCheckout.getAppsWhichSupportUpi(handler: { [weak self] supportedApps in
             self?.pendingResult(supportedApps)
         })
     }
     
-    public func isCredAppAvailable() -> Int {
+    public func isCredAppAvailable(result: @escaping FlutterResult) {
+        self.pendingResult = result
         let credURIScheme = "credpay://" // This will open CRED URL.
         if let urlString = credURIScheme.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed) {
             if let credURL = URL(string: urlString) {
                 if UIApplication.shared.canOpenURL(credURL) {
-                    return 1
+                    self.pendingResult(true)
                 }
             }
         }
-        return 0
+        self.pendingResult(false)
     }
     
-    public func getSubscriptionAmount(options: Dictionary<String, Any>) {
+    public func getSubscriptionAmount(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
+        self.pendingResult = result
         self.razorpay?.getSubscriptionAmount(options: options, withSuccessCallback: { [weak self] successResponse in
             self?.pendingResult(successResponse)
         }, andFailureCallback: { [weak self] errorResponse in
@@ -106,12 +121,14 @@ class RazorpayDelegate: NSObject {
         })
     }
     
-    public func getWalletLogoUrl(value: String) {
+    public func getWalletLogoUrl(value: String, result: @escaping FlutterResult) {
+        self.pendingResult = result
         let walletLogoUrl = self.razorpay?.getWalletLogo(havingWalletName: value)
         pendingResult(walletLogoUrl)
     }
     
-    public func isValidCardNumber(value: String) {
+    public func isValidCardNumber(value: String, result: @escaping FlutterResult) {
+        self.pendingResult = result
         pendingResult(self.razorpay?.isCardValid(value))
     }
     

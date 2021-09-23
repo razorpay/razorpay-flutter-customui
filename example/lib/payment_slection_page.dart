@@ -16,14 +16,13 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   Razorpay _razorpay;
   CardInfoModel cardInfoModel;
   NetBankingModel nbInfo;
-  var netBankingOptions = {
-    'key': 'rzp_live_6KzMg861N1GUS8',
-    'amount': 100,
-    'currency': 'INR',
-    'email': 'ramprasad179@gmail.com',
-    'contact': '9663976539',
-    'method': 'netbanking',
-  };
+  String key = "rzp_live_6KzMg861N1GUS8";
+
+  //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
+  //rzp_live_6KzMg861N1GUS8  ---> Live Key
+
+  Map<String, dynamic> netBankingOptions;
+  Map<String, dynamic> walletOptions;
   String upiNumber;
 
   @override
@@ -33,6 +32,25 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.initilizeSDK(key);
+
+    netBankingOptions = {
+      'key': key,
+      'amount': 100,
+      'currency': 'INR',
+      'email': 'ramprasad179@gmail.com',
+      'contact': '9663976539',
+      'method': 'netbanking',
+    };
+
+    walletOptions = {
+      'key': key,
+      'amount': 100,
+      'currency': 'INR',
+      'email': 'ramprasad179@gmail.com',
+      'contact': '9663976539',
+      'method': 'wallet',
+    };
     super.initState();
   }
 
@@ -42,11 +60,11 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
-    print(response);
+    print('Payment Success Response : $response');
   }
 
   void _handlePaymentError(Map<dynamic, dynamic> response) {
-    print(response);
+    print('Payment Error Response : $response');
   }
 
   String validateCardFields() {
@@ -217,6 +235,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         ListTile(
           title: Text('phonepe'),
           trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            walletOptions['wallet'] = 'phonepe';
+            _razorpay.submit(walletOptions);
+          },
         ),
         ListTile(
           title: Text('paypal'),
@@ -234,7 +256,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
             netBankingOptions['bank'] = 'ICIC';
-            _razorpay.open(netBankingOptions);
+            _razorpay.submit(netBankingOptions);
           },
         ),
         ListTile(
@@ -250,7 +272,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
             netBankingOptions['bank'] = 'HDFC';
-            _razorpay.open(netBankingOptions);
+            _razorpay.submit(netBankingOptions);
           },
         ),
         ListTile(
@@ -348,7 +370,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
               ElevatedButton(
                   onPressed: () {
                     var options = {
-                      'key': 'rzp_live_6KzMg861N1GUS8',
+                      'key': key,
                       'amount': 100,
                       'currency': 'INR',
                       'email': 'ramprasad179@gmail.com',
@@ -357,7 +379,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       'vpa': '$upiNumber@upi',
                       '_[flow]': "collect"
                     };
-                    _razorpay.open(options);
+                    _razorpay.submit(options);
                   },
                   child: Text('Collect Flow'))
             ],
@@ -490,7 +512,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       return;
                     }
                     var options = {
-                      'key': 'rzp_live_6KzMg861N1GUS8',
+                      'key': key,
                       'amount': 100,
                       "card[cvv]": cardInfoModel.cvv,
                       "card[expiry_month]": cardInfoModel.expiryMonth,
@@ -504,14 +526,18 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       'description': 'Fine T-Shirt',
                       "method": "card"
                     };
-                    _razorpay.open(options);
+                    _razorpay.submit(options);
                   },
                   child: Text('Submit'),
                 ),
                 ElevatedButton(
-                    onPressed: () {
-                      var options = {
-                        'key': 'rzp_live_cepk1crIu9VkJU',
+                    onPressed: () async {
+                      /* print('Pay With Cred Tapped');
+                      final paymentMethods =
+                          await _razorpay.getPaymentMethods();
+                      print('Payment Methods Retrievend: $paymentMethods'); */
+                      /* var options = {
+                        'key': key,
                         'amount': 100,
                         'currency': 'INR',
                         'email': 'ramprasad179@gmail.com',
@@ -520,7 +546,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         'method': 'app',
                         'provider': 'cred'
                       };
-                      _razorpay.open(options);
+                      _razorpay.submit(options); */
+                      final supportedUpiApps =
+                          _razorpay.getAppsWhichSupportUpi();
+                      print(supportedUpiApps);
                     },
                     child: Text('Pay With Cred (Collect FLow)'))
               ],
