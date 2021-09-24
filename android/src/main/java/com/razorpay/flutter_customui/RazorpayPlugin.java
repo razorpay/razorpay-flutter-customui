@@ -1,13 +1,18 @@
 package com.razorpay.flutter_customui;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
+import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.razorpay.Razorpay;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +36,8 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
   private RazorpayDelegate razorpayDelegate;
   private ActivityPluginBinding pluginBinding;
   private MethodChannel channel;
-  private Razorpay razorpay;
 
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   public RazorpayPlugin() {
   }
 
@@ -44,53 +49,65 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
-    if (call.method.equals("openCheckout")) {
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else if (call.method.equals("open")) {
-      ArrayList<JSONObject> arguments = (ArrayList<JSONObject>) call.arguments;
-      razorpayDelegate.submit(arguments.get(0));
-    } else if (call.method.equals("callNativeIntent")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      razorpayDelegate.callNativeIntent(arguments.get(0));
-    } else if (call.method.equals("changeApiKey")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      razorpayDelegate.changeApiKey(arguments.get(0));
-    } else if (call.method.equals("getBankLogoUrl")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      result.success(razorpayDelegate.getBankLogoUrl(arguments.get(0)));
-    } else if (call.method.equals("getCardNetwork")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      result.success(razorpayDelegate.getCardNetwork(arguments.get(0)));
-    } else if (call.method.equals("getCardNetworkLength")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      result.success(String.valueOf(razorpayDelegate.getCardNetworkLength(arguments.get(0))));
-    } else if (call.method.equals("getPaymentMethods")) {
-      razorpayDelegate.getPaymentMethods();
-    } else if (call.method.equals("getAppsWhichSupportUpi")) {
-      razorpayDelegate.getAppsWhichSupportUpi();
-    } else if (call.method.equals("getSubscriptionAmount")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      razorpayDelegate.getSubscriptionAmount(arguments.get(0));
-    } else if (call.method.equals("getWalletLogoUrl")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      razorpayDelegate.getWalletLogoUrl(arguments.get(0));
-    } else if (call.method.equals("isValidCardNumber")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      razorpayDelegate.isValidCardNumber(arguments.get(0));
-    } else if (call.method.equals("isValidVpa")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      razorpayDelegate.isValidVpa(arguments.get(0));
-    } else if (call.method.equals("setPaymentId")) {
-      ArrayList<String> arguments = (ArrayList<String>) call.arguments;
-      razorpayDelegate.setPaymentID(arguments.get(0));
-    } else if (call.method.equals("setWebView")) {
-      ArrayList<WebView> arguments = (ArrayList<WebView>) call.arguments;
-      razorpayDelegate.setWebView(arguments.get(0));
-    } else if (call.method.equals("validateFields")) {
-      ArrayList<JSONObject> arguments = (ArrayList<JSONObject>) call.arguments;
-      razorpayDelegate.validateFields(arguments.get(0));
-    }
 
+    switch (call.method) {
+      case "init":
+        razorpayDelegate.init();
+        break;
+      case "submit":
+        razorpayDelegate.submit(new JSONObject((Map<String, JSONObject>) call.arguments));
+        break;
+      case "callNativeIntent":
+        razorpayDelegate.callNativeIntent(((ArrayList<String>) call.arguments).get(0));
+        break;
+
+      case "changeApiKey":
+        razorpayDelegate.changeApiKey(((ArrayList<String>) call.arguments).get(0));
+        break;
+
+      case "getBankLogoUrl":
+        result.success(razorpayDelegate.getBankLogoUrl(((ArrayList<String>) call.arguments).get(0)));
+        break;
+
+      case "getCardNetwork":
+        result.success(razorpayDelegate.getCardNetwork(((ArrayList<String>) call.arguments).get(0)));
+        break;
+
+      case "getCardNetworkLength":
+        result.success(String.valueOf(razorpayDelegate.getCardNetworkLength(((ArrayList<String>) call.arguments).get(0))));
+        break;
+
+      case "getPaymentMethods":
+        razorpayDelegate.getPaymentMethods();
+        break;
+
+      case "getAppsWhichSupportUpi":
+        razorpayDelegate.getAppsWhichSupportUpi();
+        break;
+
+      case "getSubscriptionAmount":
+        razorpayDelegate.getSubscriptionAmount(((ArrayList<String>) call.arguments).get(0));
+        break;
+
+      case "getWalletLogoUrl":
+        razorpayDelegate.getWalletLogoUrl(((ArrayList<String>) call.arguments).get(0));
+        break;
+
+      case "isValidCardNumber":
+        razorpayDelegate.isValidCardNumber(((ArrayList<String>) call.arguments).get(0));
+        break;
+
+      case "isValidVpa":
+        razorpayDelegate.isValidVpa(((ArrayList<String>) call.arguments).get(0));
+        break;
+
+      case "setPaymentId":
+        razorpayDelegate.setPaymentID(((ArrayList<String>) call.arguments).get(0));
+        break;
+
+      default:
+        Log.d("RAZORPAY_SDK","no method");
+    }
   }
 
   @Override
@@ -98,11 +115,13 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
     channel.setMethodCallHandler(null);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   public RazorpayPlugin(Registrar registrar) {
     this.razorpayDelegate = new RazorpayDelegate(registrar.activity());
     registrar.addActivityResultListener(razorpayDelegate);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   @Override
   public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
     this.razorpayDelegate = new RazorpayDelegate(activityPluginBinding.getActivity());
@@ -115,6 +134,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
     onDetachedFromActivity();
   }
 
+  @SuppressLint("NewApi")
   @Override
   public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
     onAttachedToActivity(activityPluginBinding);
