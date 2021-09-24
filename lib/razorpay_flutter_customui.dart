@@ -18,6 +18,7 @@ class Razorpay {
   static const TLS_ERROR = 3;
   static const INCOMPATIBLE_PLUGIN = 4;
   static const UNKNOWN_ERROR = 100;
+  static const PlatformVersion = 1;
 
   static const MethodChannel _channel =
       const MethodChannel('razorpay_flutter_customui');
@@ -37,6 +38,11 @@ class Razorpay {
     return paymentMethodsObj;
   }
 
+  init() async {
+    var response = await _channel.invokeMethod('init');
+    _handleResult(response);
+  }
+
   open(Map<String, dynamic> options) async {
     Map<String, dynamic> validationResult = _validateOptions(options);
 
@@ -51,7 +57,7 @@ class Razorpay {
       return;
     }
 
-    var response = await _channel.invokeMethod('open', options);
+    var response = await _channel.invokeMethod('submit', options);
     _handleResult(response);
   }
 
@@ -94,7 +100,7 @@ class Razorpay {
 
   /// Validate payment options
   static Map<String, dynamic> _validateOptions(Map<String, dynamic> options) {
-    var key = options['key'];
+    var key = options['key_id'];
     if (key == null) {
       return {
         'success': false,

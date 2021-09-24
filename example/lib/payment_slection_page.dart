@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 import 'package:flutter/services.dart';
-import 'package:razorpay_flutter_customui/razorpay_flutter.dart';
 
 enum PaymentMethods { card, upi, nb, wallet, vas }
 
@@ -14,11 +13,12 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
-  Razorpay _razorpay;
+  late Razorpay _razorpay;
 
   @override
   void initState() {
     _razorpay = Razorpay();
+    _razorpay.init();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     super.initState();
@@ -201,7 +201,19 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         ListTile(
           title: Text('ICICI'),
           trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () {},
+          onTap: () {
+            var options = {
+              'key_id': 'rzp_live_ILgsfZCZoFIKMb',
+              'amount': 100,
+              "contact": "1234567890",
+              "currency": "INR",
+              'email': 'test@gmail.com',
+              'description': 'Fine T-Shirt',
+              "method": "netbanking",
+              "bank": "ANDB"
+            };
+            _razorpay.open(options);
+          },
         ),
         ListTile(
           title: Text('SBI'),
@@ -384,16 +396,15 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
               ElevatedButton(
                 onPressed: () {
                   var options = {
-                    'key': '<your-key>',
+                    'key_id': 'rzp_live_ILgsfZCZoFIKMb',
                     'amount': 100,
-                    "card[cvv]": "123",
-                    "card[expiry_month]": "11",
+                    "card[cvv]": "686",
+                    "card[expiry_month]": "03",
                     "card[expiry_year]": "23",
                     "card[name]": "Test User",
-                    "card[number]": "4111111111111111",
+                    "card[number]": "36088650384350",
                     "contact": "1234567890",
                     "currency": "INR",
-                    "display_logo": "0",
                     'email': 'test@gmail.com',
                     'description': 'Fine T-Shirt',
                     "method": "card"
@@ -416,7 +427,10 @@ class PaymentTypeSelectionButton extends StatelessWidget {
   late String paymentTitle;
   late VoidCallback onPaymentTypeTap;
 
-  PaymentTypeSelectionButton({paymentTitle, onPaymentTypeTap});
+  PaymentTypeSelectionButton({paymentTitle, onPaymentTypeTap}) {
+    this.paymentTitle = paymentTitle;
+    this.onPaymentTypeTap = onPaymentTypeTap;
+  }
 
   @override
   Widget build(BuildContext context) {
