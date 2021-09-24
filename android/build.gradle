@@ -33,7 +33,7 @@ android {
     dependencies {
         implementation fileTree(include: ['*.jar'], dir: 'libs')
         implementation fileTree(dir: 'libs', include: ['*.aar'])
-        implementation(name:'razorpay-android-3.9.4', ext: 'aar')
+        implementation 'com.razorpay:customui:3.9.5'
         implementation "androidx.core:core:1.0.0"
     }
 }

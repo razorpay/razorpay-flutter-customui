@@ -38,12 +38,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "eventify",
-      "rootUri": "file:///Users/ramprasad.a/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/eventify-1.0.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "fake_async",
       "rootUri": "file:///Users/ramprasad.a/Developer/flutter/.pub-cache/hosted/pub.dartlang.org/fake_async-1.2.0",
       "packageUri": "lib/",
@@ -149,10 +143,10 @@
       "name": "razorpay_flutter_customui",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.7"
     }
   ],
-  "generated": "2021-09-21T05:30:45.436072Z",
+  "generated": "2021-09-16T12:31:47.975371Z",
   "generator": "pub",
   "generatorVersion": "2.13.3"
 }

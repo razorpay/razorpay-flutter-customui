@@ -13,7 +13,6 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
-  Razorpay _razorpay;
   CardInfoModel cardInfoModel;
   NetBankingModel nbInfo;
   String key = "rzp_live_6KzMg861N1GUS8";
@@ -24,6 +23,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   Map<String, dynamic> netBankingOptions;
   Map<String, dynamic> walletOptions;
   String upiNumber;
+  late Razorpay _razorpay;
 
   @override
   void initState() {
@@ -54,11 +54,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
     print('Payment Success Response : $response');
   }
@@ -87,6 +82,12 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       return 'Email cannot be Empty';
     }
     return '';
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
   }
 
   @override
@@ -562,10 +563,13 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 }
 
 class PaymentTypeSelectionButton extends StatelessWidget {
-  final String paymentTitle;
-  final VoidCallback onPaymentTypeTap;
+  late String paymentTitle;
+  late VoidCallback onPaymentTypeTap;
 
-  PaymentTypeSelectionButton({this.paymentTitle, this.onPaymentTypeTap});
+  PaymentTypeSelectionButton({paymentTitle, onPaymentTypeTap}) {
+    this.paymentTitle = paymentTitle;
+    this.onPaymentTypeTap = onPaymentTypeTap;
+  }
 
   @override
   Widget build(BuildContext context) {
