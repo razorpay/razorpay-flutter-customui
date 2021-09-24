@@ -25,19 +25,35 @@ class Razorpay {
   // EventEmitter instance used for communication
   EventEmitter _eventEmitter = EventEmitter();
 
-  Future<String> getPaymentMethods() async {
-    final String paymentMethodsObj =
+  Future<Map<dynamic, dynamic>> getPaymentMethods() async {
+    final Map<dynamic, dynamic> paymentMethodsObj =
         await _channel.invokeMethod('getPaymentMethods');
     return paymentMethodsObj;
   }
 
-  Future<String> getAppsWhichSupportUpi() async {
-    final String paymentMethodsObj =
+  Future<List<String>> getAppsWhichSupportUpi() async {
+    final List<String> paymentMethodsObj =
         await _channel.invokeMethod('getAppsWhichSupportUpi');
     return paymentMethodsObj;
   }
 
-  open(Map<String, dynamic> options) async {
+  Future<String> getCardsNetwork(String cardNumber) async {
+    final String cardNetwork =
+        await _channel.invokeMethod('getCardNetwork', cardNumber);
+    return cardNetwork;
+  }
+
+  Future<bool> isCredAppAvailable() async {
+    final bool isCredAppPresent =
+        await _channel.invokeMethod('isCredAppAvailable');
+    return isCredAppPresent;
+  }
+
+  initilizeSDK(String key) {
+    _channel.invokeMethod('initilizeSDK', key);
+  }
+
+  submit(Map<String, dynamic> options) async {
     Map<String, dynamic> validationResult = _validateOptions(options);
 
     if (!validationResult['success']) {
@@ -51,9 +67,11 @@ class Razorpay {
       return;
     }
 
-    var response = await _channel.invokeMethod('open', options);
+    var response = await _channel.invokeMethod('submit', options);
     _handleResult(response);
   }
+
+  payWithCred() {}
 
   /// Handles checkout response from platform
   _handleResult(Map<dynamic, dynamic> response) {

@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.6,
+              top: MediaQuery.of(context).size.height * 0.8,
               child: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
