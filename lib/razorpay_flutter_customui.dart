@@ -18,7 +18,6 @@ class Razorpay {
   static const TLS_ERROR = 3;
   static const INCOMPATIBLE_PLUGIN = 4;
   static const UNKNOWN_ERROR = 100;
-  static const PlatformVersion = 1;
 
   static const MethodChannel _channel =
       const MethodChannel('razorpay_flutter_customui');
@@ -26,24 +25,35 @@ class Razorpay {
   // EventEmitter instance used for communication
   EventEmitter _eventEmitter = EventEmitter();
 
-  Future<String> getPaymentMethods() async {
-    final String paymentMethodsObj =
+  Future<Map<dynamic, dynamic>> getPaymentMethods() async {
+    final Map<dynamic, dynamic> paymentMethodsObj =
         await _channel.invokeMethod('getPaymentMethods');
     return paymentMethodsObj;
   }
 
-  Future<String> getAppsWhichSupportUpi() async {
-    final String paymentMethodsObj =
+  Future<List<String>> getAppsWhichSupportUpi() async {
+    final List<String> paymentMethodsObj =
         await _channel.invokeMethod('getAppsWhichSupportUpi');
     return paymentMethodsObj;
   }
 
-  init() async {
-    var response = await _channel.invokeMethod('init');
-    _handleResult(response);
+  Future<String> getCardsNetwork(String cardNumber) async {
+    final String cardNetwork =
+        await _channel.invokeMethod('getCardNetwork', cardNumber);
+    return cardNetwork;
   }
 
-  open(Map<String, dynamic> options) async {
+  Future<bool> isCredAppAvailable() async {
+    final bool isCredAppPresent =
+        await _channel.invokeMethod('isCredAppAvailable');
+    return isCredAppPresent;
+  }
+
+  initilizeSDK(String key) {
+    _channel.invokeMethod('initilizeSDK', key);
+  }
+
+  submit(Map<String, dynamic> options) async {
     Map<String, dynamic> validationResult = _validateOptions(options);
 
     if (!validationResult['success']) {
@@ -60,6 +70,8 @@ class Razorpay {
     var response = await _channel.invokeMethod('submit', options);
     _handleResult(response);
   }
+
+  payWithCred() {}
 
   /// Handles checkout response from platform
   _handleResult(Map<dynamic, dynamic> response) {
