@@ -52,6 +52,7 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             }
         case "isCredAppAvailable":
             razorpayDelegate.isCredAppAvailable(result: result)
+            
         default:
             print("no method")
         }

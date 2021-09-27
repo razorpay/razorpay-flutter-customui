@@ -71,7 +71,23 @@ class Razorpay {
     _handleResult(response);
   }
 
-  payWithCred() {}
+  payWithCred(Map<String, dynamic> options) async {
+    Map<String, dynamic> validationResult = _validateOptions(options);
+
+    if (!validationResult['success']) {
+      _handleResult({
+        'type': _CODE_PAYMENT_ERROR,
+        'data': {
+          'code': INVALID_OPTIONS,
+          'message': validationResult['message']
+        }
+      });
+      return;
+    }
+
+    var response = await _channel.invokeMethod('submit', options);
+    _handleResult(response);
+  }
 
   /// Handles checkout response from platform
   _handleResult(Map<dynamic, dynamic> response) {

@@ -9,7 +9,14 @@ class CardInfoModel {
 }
 
 class NetBankingModel {
-  String email;
-  String phoneNumber;
-  String bank;
+  String bankKey;
+  String bankName;
+
+  NetBankingModel({this.bankKey, this.bankName});
+}
+
+class WalletModel {
+  String walletName;
+
+  WalletModel({this.walletName});
 }

@@ -15,7 +15,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   PaymentMethods selectedMethod = PaymentMethods.card;
   Razorpay _razorpay;
   CardInfoModel cardInfoModel;
-  NetBankingModel nbInfo;
   String key = "rzp_live_6KzMg861N1GUS8";
 
   //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
@@ -24,15 +23,18 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   Map<String, dynamic> netBankingOptions;
   Map<String, dynamic> walletOptions;
   String upiNumber;
+  Map<dynamic, dynamic> paymentMethods;
+  List<NetBankingModel> netBankingList;
+  List<WalletModel> walletsList;
 
   @override
   void initState() {
     cardInfoModel = CardInfoModel();
-    nbInfo = NetBankingModel();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.initilizeSDK(key);
+    fetchAllPaymentMethods();
 
     netBankingOptions = {
       'key': key,
@@ -52,6 +54,43 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       'method': 'wallet',
     };
     super.initState();
+  }
+
+  fetchAllPaymentMethods() {
+    _razorpay.getPaymentMethods().then((value) {
+      print(value);
+      paymentMethods = value;
+      configureNetbanking();
+      configurePaymentWallets();
+    }).onError((error, stackTrace) {
+      print('Error Fetching payment methods: $error');
+    });
+  }
+
+  configureNetbanking() {
+    netBankingList = [];
+    final nbDict = paymentMethods['netbanking'];
+    nbDict.entries.forEach(
+      (element) {
+        netBankingList.add(
+          NetBankingModel(bankKey: element.key, bankName: element.value),
+        );
+      },
+    );
+  }
+
+  configurePaymentWallets() {
+    walletsList = [];
+    final walletsDict = paymentMethods['wallet'];
+    walletsDict.entries.forEach(
+      (element) {
+        if (element.value == true) {
+          walletsList.add(
+            WalletModel(walletName: element.key),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -209,129 +248,31 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   Widget buildWalletsList() {
-    return ListView(
-      children: [
-        ListTile(
-          title: Text('mobikwik'),
+    return ListView.builder(
+      itemCount: walletsList.length,
+      itemBuilder: (context, item) {
+        return ListTile(
+          title: Text(walletsList[item].walletName),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {},
-        ),
-        ListTile(
-          title: Text('payzapp'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('olamoney'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('airtelmoney'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('freecharge'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('phonepe'),
-          trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () {
-            walletOptions['wallet'] = 'phonepe';
-            _razorpay.submit(walletOptions);
-          },
-        ),
-        ListTile(
-          title: Text('paypal'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-      ],
+        );
+      },
     );
   }
 
   Widget buildBanksList() {
-    return ListView(
-      children: [
-        ListTile(
-          title: Text('ICICI'),
+    return ListView.builder(
+      itemCount: netBankingList.length,
+      itemBuilder: (context, item) {
+        return ListTile(
+          title: Text(netBankingList[item].bankName),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
-            netBankingOptions['bank'] = 'ICIC';
+            netBankingOptions['bank'] = netBankingList[item].bankKey;
             _razorpay.submit(netBankingOptions);
           },
-        ),
-        ListTile(
-          title: Text('SBI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Axis'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('HDFC'),
-          trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () {
-            netBankingOptions['bank'] = 'HDFC';
-            _razorpay.submit(netBankingOptions);
-          },
-        ),
-        ListTile(
-          title: Text('Corporation'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('CANARA'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('ICICI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('SBI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Axis'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('HDFC'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Corporation'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('CANARA'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('ICICI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('SBI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Axis'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('HDFC'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Corporation'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('CANARA'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -533,23 +474,23 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                 ElevatedButton(
                     onPressed: () async {
                       /* print('Pay With Cred Tapped');
-                      final paymentMethods =
-                          await _razorpay.getPaymentMethods();
+                      final paymentMethods = await _razorpay.getPaymentMethods();
                       print('Payment Methods Retrievend: $paymentMethods'); */
-                      /* var options = {
+                      var options = {
                         'key': key,
                         'amount': 100,
                         'currency': 'INR',
                         'email': 'ramprasad179@gmail.com',
-                        'app_present': 0,
+                        'app_present': 1,
                         'contact': '9663976539',
                         'method': 'app',
                         'provider': 'cred'
                       };
-                      _razorpay.submit(options); */
-                      final supportedUpiApps =
-                          _razorpay.getAppsWhichSupportUpi();
+                      _razorpay.submit(options);
+                      /*final supportedUpiApps = _razorpay.getAppsWhichSupportUpi();
                       print(supportedUpiApps);
+
+                      final cardNetwork = _razorpay.getCardsNetwork("4111111111111111"); */
                     },
                     child: Text('Pay With Cred (Collect FLow)'))
               ],
