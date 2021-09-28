@@ -18,6 +18,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await RazorpayFlutterCustomui.platformVersion, '42');
+    expect(await Razorpay.PlatformVersion, '42');
   });
 }

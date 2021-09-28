@@ -13,19 +13,21 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
-  Razorpay _razorpay;
-  CardInfoModel cardInfoModel;
+  CardInfoModel? cardInfoModel;
   String key = "rzp_live_6KzMg861N1GUS8";
 
   //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
   //rzp_live_6KzMg861N1GUS8  ---> Live Key
 
-  Map<String, dynamic> netBankingOptions;
-  Map<String, dynamic> walletOptions;
-  String upiNumber;
-  Map<dynamic, dynamic> paymentMethods;
-  List<NetBankingModel> netBankingList;
-  List<WalletModel> walletsList;
+  Map<String, dynamic>? netBankingOptions;
+  Map<String, dynamic>? walletOptions;
+  String? upiNumber;
+
+  Map<dynamic, dynamic>? paymentMethods;
+  List<NetBankingModel>? netBankingList;
+  List<WalletModel>? walletsList;
+  late Razorpay _razorpay;
+  Map<String, dynamic>? commonPaymentOptions;
 
   @override
   void initState() {
@@ -53,6 +55,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       'contact': '9663976539',
       'method': 'wallet',
     };
+
+    commonPaymentOptions = {};
+
     super.initState();
   }
 
@@ -69,10 +74,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   configureNetbanking() {
     netBankingList = [];
-    final nbDict = paymentMethods['netbanking'];
+    final nbDict = paymentMethods?['netbanking'];
     nbDict.entries.forEach(
       (element) {
-        netBankingList.add(
+        netBankingList?.add(
           NetBankingModel(bankKey: element.key, bankName: element.value),
         );
       },
@@ -81,21 +86,16 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   configurePaymentWallets() {
     walletsList = [];
-    final walletsDict = paymentMethods['wallet'];
+    final walletsDict = paymentMethods?['wallet'];
     walletsDict.entries.forEach(
       (element) {
         if (element.value == true) {
-          walletsList.add(
+          walletsList?.add(
             WalletModel(walletName: element.key),
           );
         }
       },
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
@@ -107,25 +107,31 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   String validateCardFields() {
-    if ((cardInfoModel.cardNumber == '') ||
-        (cardInfoModel.cardNumber == null)) {
+    if ((cardInfoModel?.cardNumber == '') ||
+        (cardInfoModel?.cardNumber == null)) {
       return 'Card Number Cannot be Empty';
     }
-    if ((cardInfoModel.expiryMonth == '') ||
-        (cardInfoModel.expiryMonth == null)) {
+    if ((cardInfoModel?.expiryMonth == '') ||
+        (cardInfoModel?.expiryMonth == null)) {
       return 'Expiry Month / Year Cannot be Empty';
     }
-    if ((cardInfoModel.cvv == '') || (cardInfoModel.cvv == null)) {
+    if ((cardInfoModel?.cvv == '') || (cardInfoModel?.cvv == null)) {
       return 'CVV Cannot be Empty';
     }
-    if ((cardInfoModel.mobileNumber == '') ||
-        (cardInfoModel.mobileNumber == null)) {
+    if ((cardInfoModel?.mobileNumber == '') ||
+        (cardInfoModel?.mobileNumber == null)) {
       return 'Mobile number cannot be Empty';
     }
-    if ((cardInfoModel.email == '') || (cardInfoModel.email == null)) {
+    if ((cardInfoModel?.email == '') || (cardInfoModel?.email == null)) {
       return 'Email cannot be Empty';
     }
     return '';
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
   }
 
   @override
@@ -204,7 +210,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                 Padding(
                   padding: EdgeInsets.all(12.0),
                   child: Text(
-                    'Selected Payment Type : ${selectedPaymentType ?? ''}',
+                    'Selected Payment Type : $selectedPaymentType',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                     ),
@@ -249,10 +255,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   Widget buildWalletsList() {
     return ListView.builder(
-      itemCount: walletsList.length,
+      itemCount: walletsList?.length,
       itemBuilder: (context, item) {
         return ListTile(
-          title: Text(walletsList[item].walletName),
+          title: Text(walletsList?[item].walletName ?? ''),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {},
         );
@@ -262,14 +268,16 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   Widget buildBanksList() {
     return ListView.builder(
-      itemCount: netBankingList.length,
+      itemCount: netBankingList?.length,
       itemBuilder: (context, item) {
         return ListTile(
-          title: Text(netBankingList[item].bankName),
+          title: Text(netBankingList?[item].bankName ?? ''),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
-            netBankingOptions['bank'] = netBankingList[item].bankKey;
-            _razorpay.submit(netBankingOptions);
+            netBankingOptions?['bank'] = netBankingList?[item].bankKey;
+            if (netBankingOptions != null) {
+              _razorpay.submit(netBankingOptions!);
+            }
           },
         );
       },
@@ -350,7 +358,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           hintText: 'Card Number',
                         ),
                         onChanged: (newValue) =>
-                            cardInfoModel.cardNumber = newValue,
+                            cardInfoModel?.cardNumber = newValue,
                       ),
                     ),
                   ],
@@ -369,8 +377,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           onChanged: (newValue) {
                             final month = newValue.split('/').first;
                             final year = newValue.split('/').last;
-                            cardInfoModel.expiryYear = year;
-                            cardInfoModel.expiryMonth = month;
+                            cardInfoModel?.expiryYear = year;
+                            cardInfoModel?.expiryMonth = month;
                           }),
                     ),
                     SizedBox(width: 8.0),
@@ -382,7 +390,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         decoration: InputDecoration(
                           hintText: '***',
                         ),
-                        onChanged: (newValue) => cardInfoModel.cvv = newValue,
+                        onChanged: (newValue) => cardInfoModel?.cvv = newValue,
                       ),
                     ),
                   ],
@@ -399,7 +407,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           hintText: 'Card Holder Name',
                         ),
                         onChanged: (newValue) =>
-                            cardInfoModel.cardHolderName = newValue,
+                            cardInfoModel?.cardHolderName = newValue,
                       ),
                     ),
                   ],
@@ -416,7 +424,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           hintText: 'Mobile Number',
                         ),
                         onChanged: (newValue) =>
-                            cardInfoModel.mobileNumber = newValue,
+                            cardInfoModel?.mobileNumber = newValue,
                       ),
                     ),
                   ],
@@ -432,7 +440,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         decoration: InputDecoration(
                           hintText: 'Email-ID',
                         ),
-                        onChanged: (newValue) => cardInfoModel.email = newValue,
+                        onChanged: (newValue) =>
+                            cardInfoModel?.email = newValue,
                       ),
                     ),
                   ],
@@ -455,15 +464,15 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                     var options = {
                       'key': key,
                       'amount': 100,
-                      "card[cvv]": cardInfoModel.cvv,
-                      "card[expiry_month]": cardInfoModel.expiryMonth,
-                      "card[expiry_year]": cardInfoModel.expiryYear,
-                      "card[name]": cardInfoModel.cardHolderName,
-                      "card[number]": cardInfoModel.cardNumber,
-                      "contact": cardInfoModel.mobileNumber,
+                      "card[cvv]": cardInfoModel?.cvv,
+                      "card[expiry_month]": cardInfoModel?.expiryMonth,
+                      "card[expiry_year]": cardInfoModel?.expiryYear,
+                      "card[name]": cardInfoModel?.cardHolderName,
+                      "card[number]": cardInfoModel?.cardNumber,
+                      "contact": cardInfoModel?.mobileNumber,
                       "currency": "INR",
                       "display_logo": "0",
-                      'email': cardInfoModel.email,
+                      'email': cardInfoModel?.email,
                       'description': 'Fine T-Shirt',
                       "method": "card"
                     };
@@ -503,10 +512,13 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 }
 
 class PaymentTypeSelectionButton extends StatelessWidget {
-  final String paymentTitle;
-  final VoidCallback onPaymentTypeTap;
+  late String paymentTitle;
+  late VoidCallback onPaymentTypeTap;
 
-  PaymentTypeSelectionButton({this.paymentTitle, this.onPaymentTypeTap});
+  PaymentTypeSelectionButton({paymentTitle, onPaymentTypeTap}) {
+    this.paymentTitle = paymentTitle;
+    this.onPaymentTypeTap = onPaymentTypeTap;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -517,7 +529,7 @@ class PaymentTypeSelectionButton extends StatelessWidget {
             BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
         child: Padding(
           padding: EdgeInsets.all(8.0),
-          child: Text(paymentTitle ?? ''),
+          child: Text(paymentTitle),
         ),
       ),
     );
