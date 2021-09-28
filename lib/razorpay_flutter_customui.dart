@@ -128,7 +128,7 @@ class Razorpay {
 
   /// Validate payment options
   static Map<String, dynamic> _validateOptions(Map<String, dynamic> options) {
-    var key = options['key_id'];
+    var key = options['key'];
     if (key == null) {
       return {
         'success': false,
