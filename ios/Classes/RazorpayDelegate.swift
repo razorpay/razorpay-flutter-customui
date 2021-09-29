@@ -10,61 +10,40 @@ class RazorpayDelegate: NSObject {
     var webView: WKWebView?
     var parentVC = UIViewController()
     
-    public func initilizeSDK(withKey key: String, result: @escaping FlutterResult) {
-        pendingResult = result
-        self.configureWebView()
-        if let unwrappedWebView = self.webView {
-            self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
-        }
-    }
-    
     public func submit(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
         pendingResult = result
         let key = options["key"] as? String ?? ""
-        if self.razorpay == nil {
-            self.initilizeSDK(withKey: key, result: result)
+        
+        self.initilizeSDK(withKey: key, result: result)
+        
+        let rootVC = UIApplication.shared.keyWindow?.rootViewController
+        if let navCtrl = self.navController {
+            navCtrl.modalPresentationStyle = .fullScreen
+            rootVC?.present(navCtrl, animated: true, completion: nil)
         }
-        DispatchQueue.main.async {
-            let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))
-            
-            if let unwrappedWebView = self.webView {
-                self.parentVC.view.addSubview(unwrappedWebView)
-                
-                if self.parentVC.navigationController?.navigationBar != nil {
-                    self.navController = self.parentVC.navigationController
-                } else {
-                    self.navController = UINavigationController(rootViewController: self.parentVC)
-                }
-                
-                self.parentVC.title = "Authorize Payment"
-                self.parentVC.navigationItem.leftBarButtonItem = cancelButtonItem
-                
-                self.parentVC.view.autoresizingMask = [.flexibleLeftMargin,
-                    .flexibleRightMargin,
-                    .flexibleBottomMargin,
-                    .flexibleTopMargin,
-                    .flexibleHeight,
-                    .flexibleWidth
-                ]
-                
-                unwrappedWebView.autoresizingMask = [.flexibleLeftMargin,
-                    .flexibleRightMargin,
-                    .flexibleBottomMargin,
-                    .flexibleTopMargin,
-                    .flexibleHeight,
-                    .flexibleWidth
-                ]
-                
-                let rootVC = UIApplication.shared.keyWindow?.rootViewController
-                if let navCtrl = self.navController {
-                    navCtrl.modalPresentationStyle = .fullScreen
-                    rootVC?.present(navCtrl, animated: true, completion: nil)
-                }
-                var tempOptions = options
-                tempOptions.removeValue(forKey: "key")
-                self.razorpay?.authorize(tempOptions)
-            }
+        var tempOptions = options
+        tempOptions.removeValue(forKey: "key")
+        self.razorpay?.authorize(tempOptions)
+    }
+    
+    public func payWithCred(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
+        self.pendingResult = result
+        let key = options["key"] as? String ?? ""
+        self.initilizeSDK(withKey: key, result: result)
+        
+        let rootVC = UIApplication.shared.keyWindow?.rootViewController
+        if let navCtrl = self.navController {
+            navCtrl.modalPresentationStyle = .fullScreen
+            rootVC?.present(navCtrl, animated: true, completion: nil)
         }
+        var tempOptions = options
+        tempOptions.removeValue(forKey: "key")
+        
+        self.razorpay?.payWithCred(withOptions: tempOptions, withSuccessCallback: { onSuccess in
+            self.pendingResult(onSuccess)
+        }, andFailureCallback: { onFailure in
+            self.pendingResult(onFailure)
+        })
     }
     
     public func changeApiKey(key: String, result: @escaping FlutterResult) {
@@ -132,12 +111,89 @@ class RazorpayDelegate: NSObject {
         pendingResult(self.razorpay?.isCardValid(value))
     }
     
+    private func close() {
+        razorpay?.close()
+        if (self.webView != nil) {
+            webView?.stopLoading()
+        }
+        
+        razorpay = nil
+        
+        if (self.navController != nil) {
+            DispatchQueue.main.async {
+                self.navController?.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+}
+
+//MARK: Initial Setup:
+extension RazorpayDelegate {
+    
     private func configureWebView() {
         let configuration = WKWebViewConfiguration()
         self.webView = WKWebView(frame: parentVC.view.frame, configuration: configuration)
         self.webView?.navigationDelegate = self
         self.webView?.isOpaque = false
-        self.webView?.backgroundColor = UIColor.white   
+        self.webView?.backgroundColor = UIColor.white
+    }
+    
+    public func initilizeSDK(withKey key: String, result: @escaping FlutterResult) {
+            
+        guard self.razorpay == nil else { return }
+        
+        pendingResult = result
+        self.configureWebView()
+        if let unwrappedWebView = self.webView {
+            self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
+            
+            DispatchQueue.main.async {
+                let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))
+                
+                self.parentVC.view.addSubview(unwrappedWebView)
+                
+                if self.parentVC.navigationController?.navigationBar != nil {
+                    self.navController = self.parentVC.navigationController
+                } else {
+                    self.navController = UINavigationController(rootViewController: self.parentVC)
+                }
+                
+                self.parentVC.title = "Authorize Payment"
+                self.parentVC.navigationItem.leftBarButtonItem = cancelButtonItem
+                
+                self.parentVC.view.autoresizingMask = [.flexibleLeftMargin,
+                    .flexibleRightMargin,
+                    .flexibleBottomMargin,
+                    .flexibleTopMargin,
+                    .flexibleHeight,
+                    .flexibleWidth
+                ]
+                
+                unwrappedWebView.autoresizingMask = [.flexibleLeftMargin,
+                    .flexibleRightMargin,
+                    .flexibleBottomMargin,
+                    .flexibleTopMargin,
+                    .flexibleHeight,
+                    .flexibleWidth
+                ]
+            }
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.handleIntentCallback(_:)), name:NSNotification.Name(rawValue: "CRED_CALLBACK_NOTIFICATION"), object: nil)
+    }
+}
+
+//MARK: Helper Methods:
+extension RazorpayDelegate {
+    
+    @objc func handleIntentCallback(_ notification: NSNotification) {
+            if let dict = notification.userInfo {
+                if let uriScheme = dict["response"] as? String {
+                    DispatchQueue.main.async {
+                        self.razorpay?.publishUri(with: uriScheme)
+                }
+            }
+        }
     }
     
     @objc
@@ -151,19 +207,6 @@ class RazorpayDelegate: NSObject {
         alertController.addAction(yesAction)
         alertController.addAction(stayOn)
         self.parentVC.present(alertController, animated: true, completion: nil)
-    }
-    
-    private func close() {
-        razorpay?.close()
-        if (self.webView != nil) {
-            webView?.stopLoading()
-        }
-        
-        razorpay = nil
-        
-        if (self.navController != nil) {
-            self.navController?.dismiss(animated: true, completion: nil)
-        }
     }
 }
 
@@ -190,11 +233,11 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
     
     func onPaymentSuccess(_ payment_id: String, andData response: [AnyHashable : Any]) {
         pendingResult(response as NSDictionary)
-//        self.close()
+        self.close()
     }
     
     func onPaymentError(_ code: Int32, description str: String, andData response: [AnyHashable : Any]) {
         pendingResult(response as NSDictionary)
-//        self.close()
+        self.close()
     }
 }

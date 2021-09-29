@@ -14,10 +14,13 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
   CardInfoModel? cardInfoModel;
-  String key = "rzp_live_6KzMg861N1GUS8";
+  String key = "rzp_live_cepk1crIu9VkJU";
+  String? availableUpiApps;
+  bool showUpiApps = false;
 
   //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
   //rzp_live_6KzMg861N1GUS8  ---> Live Key
+  //rzp_live_cepk1crIu9VkJU  ---> Pay with Cred
 
   Map<String, dynamic>? netBankingOptions;
   Map<String, dynamic>? walletOptions;
@@ -63,7 +66,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   fetchAllPaymentMethods() {
     _razorpay.getPaymentMethods().then((value) {
-      print(value);
       paymentMethods = value;
       configureNetbanking();
       configurePaymentWallets();
@@ -99,10 +101,30 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
+    final snackBar = SnackBar(
+      content: Text(
+        'Payment Success : ${response.toString()}',
+      ),
+      action: SnackBarAction(
+        label: 'Okay',
+        onPressed: () {},
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print('Payment Success Response : $response');
   }
 
   void _handlePaymentError(Map<dynamic, dynamic> response) {
+    final snackBar = SnackBar(
+      content: Text(
+        'Payment Error : ${response.toString()}',
+      ),
+      action: SnackBarAction(
+        label: 'Okay',
+        onPressed: () {},
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print('Payment Error Response : $response');
   }
 
@@ -260,7 +282,12 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         return ListTile(
           title: Text(walletsList?[item].walletName ?? ''),
           trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () {},
+          onTap: () {
+            walletOptions?['wallet'] = walletsList?[item].walletName;
+            if (walletOptions != null) {
+              _razorpay.submit(walletOptions!);
+            }
+          },
         );
       },
     );
@@ -315,23 +342,56 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ElevatedButton(onPressed: () {}, child: Text('Intent Flow')),
               ElevatedButton(
                   onPressed: () {
+                    FocusScope.of(context).unfocus();
                     var options = {
                       'key': key,
                       'amount': 100,
                       'currency': 'INR',
                       'email': 'ramprasad179@gmail.com',
-                      'contact': upiNumber,
+                      'contact': '9663976539',
                       'method': 'upi',
-                      'vpa': '$upiNumber@upi',
-                      '_[flow]': "collect"
+                      '_[flow]': 'intent',
+                      'upi_app_package_name': 'paytm',
+                    };
+                    _razorpay.submit(options);
+                  },
+                  child: Text('Intent Flow')),
+              ElevatedButton(
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    var options = {
+                      'key': key,
+                      'amount': 100,
+                      'currency': 'INR',
+                      'email': 'ramprasad179@gmail.com',
+                      'contact': '9663976539',
+                      'method': 'upi',
+                      'vpa': upiNumber,
+                      '_[flow]': 'collect',
                     };
                     _razorpay.submit(options);
                   },
                   child: Text('Collect Flow'))
             ],
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final upiApps = await _razorpay.getAppsWhichSupportUpi();
+              availableUpiApps = upiApps.toString();
+              setState(() {
+                showUpiApps = true;
+              });
+              print(upiApps);
+            },
+            child: Text('Get All UPI Supported Apps'),
+          ),
+          Visibility(
+            visible: showUpiApps,
+            child: Flexible(
+              child: Text(availableUpiApps ?? ''),
+            ),
           )
         ],
       ),
@@ -493,9 +553,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         'app_present': 1,
                         'contact': '9663976539',
                         'method': 'app',
-                        'provider': 'cred'
+                        'provider': 'cred',
+                        'callback_url': 'flutterCustomUI://'
                       };
-                      _razorpay.submit(options);
+                      _razorpay.payWithCred(options);
                       /*final supportedUpiApps = _razorpay.getAppsWhichSupportUpi();
                       print(supportedUpiApps);
 
@@ -512,13 +573,13 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 }
 
 class PaymentTypeSelectionButton extends StatelessWidget {
-  late String paymentTitle;
-  late VoidCallback onPaymentTypeTap;
+  final String? paymentTitle;
+  final VoidCallback? onPaymentTypeTap;
 
-  PaymentTypeSelectionButton({paymentTitle, onPaymentTypeTap}) {
-    this.paymentTitle = paymentTitle;
-    this.onPaymentTypeTap = onPaymentTypeTap;
-  }
+  PaymentTypeSelectionButton({
+    this.paymentTitle,
+    this.onPaymentTypeTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -529,7 +590,7 @@ class PaymentTypeSelectionButton extends StatelessWidget {
             BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
         child: Padding(
           padding: EdgeInsets.all(8.0),
-          child: Text(paymentTitle),
+          child: Text(paymentTitle ?? ''),
         ),
       ),
     );

@@ -31,8 +31,8 @@ class Razorpay {
     return paymentMethodsObj;
   }
 
-  Future<List<String>> getAppsWhichSupportUpi() async {
-    final List<String> paymentMethodsObj =
+  Future<dynamic> getAppsWhichSupportUpi() async {
+    final paymentMethodsObj =
         await _channel.invokeMethod('getAppsWhichSupportUpi');
     return paymentMethodsObj;
   }
@@ -85,7 +85,7 @@ class Razorpay {
       return;
     }
 
-    var response = await _channel.invokeMethod('submit', options);
+    var response = await _channel.invokeMethod('payWithCred', options);
     _handleResult(response);
   }
 

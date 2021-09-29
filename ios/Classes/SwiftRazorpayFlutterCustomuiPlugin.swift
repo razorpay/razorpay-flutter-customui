@@ -53,6 +53,10 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
         case "isCredAppAvailable":
             razorpayDelegate.isCredAppAvailable(result: result)
             
+        case "payWithCred":
+            if let options = call.arguments as? Dictionary<String, Any> {
+                razorpayDelegate.payWithCred(options: options, result: result)
+            }
         default:
             print("no method")
         }
