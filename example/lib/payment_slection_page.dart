@@ -13,26 +13,33 @@ class PaymentSelectionPage extends StatefulWidget {
 class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
-  CardInfoModel cardInfoModel;
-  NetBankingModel nbInfo;
-  String key = "rzp_live_6KzMg861N1GUS8";
+  CardInfoModel? cardInfoModel;
+  String key = "rzp_live_cepk1crIu9VkJU";
+  String? availableUpiApps;
+  bool showUpiApps = false;
 
   //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
   //rzp_live_6KzMg861N1GUS8  ---> Live Key
+  //rzp_live_cepk1crIu9VkJU  ---> Pay with Cred
 
-  Map<String, dynamic> netBankingOptions;
-  Map<String, dynamic> walletOptions;
-  String upiNumber;
+  Map<String, dynamic>? netBankingOptions;
+  Map<String, dynamic>? walletOptions;
+  String? upiNumber;
+
+  Map<dynamic, dynamic>? paymentMethods;
+  List<NetBankingModel>? netBankingList;
+  List<WalletModel>? walletsList;
   late Razorpay _razorpay;
+  Map<String, dynamic>? commonPaymentOptions;
 
   @override
   void initState() {
     cardInfoModel = CardInfoModel();
-    nbInfo = NetBankingModel();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.initilizeSDK(key);
+    fetchAllPaymentMethods();
 
     netBankingOptions = {
       'key': key,
@@ -51,34 +58,93 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       'contact': '9663976539',
       'method': 'wallet',
     };
+
+    commonPaymentOptions = {};
+
     super.initState();
   }
 
+  fetchAllPaymentMethods() {
+    _razorpay.getPaymentMethods().then((value) {
+      paymentMethods = value;
+      configureNetbanking();
+      configurePaymentWallets();
+    }).onError((error, stackTrace) {
+      print('Error Fetching payment methods: $error');
+    });
+  }
+
+  configureNetbanking() {
+    netBankingList = [];
+    final nbDict = paymentMethods?['netbanking'];
+    nbDict.entries.forEach(
+      (element) {
+        netBankingList?.add(
+          NetBankingModel(bankKey: element.key, bankName: element.value),
+        );
+      },
+    );
+  }
+
+  configurePaymentWallets() {
+    walletsList = [];
+    final walletsDict = paymentMethods?['wallet'];
+    walletsDict.entries.forEach(
+      (element) {
+        if (element.value == true) {
+          walletsList?.add(
+            WalletModel(walletName: element.key),
+          );
+        }
+      },
+    );
+  }
+
   void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
+    final snackBar = SnackBar(
+      content: Text(
+        'Payment Success : ${response.toString()}',
+      ),
+      action: SnackBarAction(
+        label: 'Okay',
+        onPressed: () {},
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print('Payment Success Response : $response');
   }
 
   void _handlePaymentError(Map<dynamic, dynamic> response) {
+    final snackBar = SnackBar(
+      content: Text(
+        'Payment Error : ${response.toString()}',
+      ),
+      action: SnackBarAction(
+        label: 'Okay',
+        onPressed: () {},
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print('Payment Error Response : $response');
   }
 
   String validateCardFields() {
-    if ((cardInfoModel.cardNumber == '') ||
-        (cardInfoModel.cardNumber == null)) {
+    if ((cardInfoModel?.cardNumber == '') ||
+        (cardInfoModel?.cardNumber == null)) {
       return 'Card Number Cannot be Empty';
     }
-    if ((cardInfoModel.expiryMonth == '') ||
-        (cardInfoModel.expiryMonth == null)) {
+    if ((cardInfoModel?.expiryMonth == '') ||
+        (cardInfoModel?.expiryMonth == null)) {
       return 'Expiry Month / Year Cannot be Empty';
     }
-    if ((cardInfoModel.cvv == '') || (cardInfoModel.cvv == null)) {
+    if ((cardInfoModel?.cvv == '') || (cardInfoModel?.cvv == null)) {
       return 'CVV Cannot be Empty';
     }
-    if ((cardInfoModel.mobileNumber == '') ||
-        (cardInfoModel.mobileNumber == null)) {
+    if ((cardInfoModel?.mobileNumber == '') ||
+        (cardInfoModel?.mobileNumber == null)) {
       return 'Mobile number cannot be Empty';
     }
-    if ((cardInfoModel.email == '') || (cardInfoModel.email == null)) {
+    if ((cardInfoModel?.email == '') || (cardInfoModel?.email == null)) {
       return 'Email cannot be Empty';
     }
     return '';
@@ -166,7 +232,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                 Padding(
                   padding: EdgeInsets.all(12.0),
                   child: Text(
-                    'Selected Payment Type : ${selectedPaymentType ?? ''}',
+                    'Selected Payment Type : $selectedPaymentType',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                     ),
@@ -210,129 +276,38 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   Widget buildWalletsList() {
-    return ListView(
-      children: [
-        ListTile(
-          title: Text('mobikwik'),
-          trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () {},
-        ),
-        ListTile(
-          title: Text('payzapp'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('olamoney'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('airtelmoney'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('freecharge'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('phonepe'),
+    return ListView.builder(
+      itemCount: walletsList?.length,
+      itemBuilder: (context, item) {
+        return ListTile(
+          title: Text(walletsList?[item].walletName ?? ''),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
-            walletOptions['wallet'] = 'phonepe';
-            _razorpay.submit(walletOptions);
+            walletOptions?['wallet'] = walletsList?[item].walletName;
+            if (walletOptions != null) {
+              _razorpay.submit(walletOptions!);
+            }
           },
-        ),
-        ListTile(
-          title: Text('paypal'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-      ],
+        );
+      },
     );
   }
 
   Widget buildBanksList() {
-    return ListView(
-      children: [
-        ListTile(
-          title: Text('ICICI'),
+    return ListView.builder(
+      itemCount: netBankingList?.length,
+      itemBuilder: (context, item) {
+        return ListTile(
+          title: Text(netBankingList?[item].bankName ?? ''),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
-            netBankingOptions['bank'] = 'ICIC';
-            _razorpay.submit(netBankingOptions);
+            netBankingOptions?['bank'] = netBankingList?[item].bankKey;
+            if (netBankingOptions != null) {
+              _razorpay.submit(netBankingOptions!);
+            }
           },
-        ),
-        ListTile(
-          title: Text('SBI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Axis'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('HDFC'),
-          trailing: Icon(Icons.arrow_forward_ios),
-          onTap: () {
-            netBankingOptions['bank'] = 'HDFC';
-            _razorpay.submit(netBankingOptions);
-          },
-        ),
-        ListTile(
-          title: Text('Corporation'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('CANARA'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('ICICI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('SBI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Axis'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('HDFC'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Corporation'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('CANARA'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('ICICI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('SBI'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Axis'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('HDFC'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('Corporation'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-        ListTile(
-          title: Text('CANARA'),
-          trailing: Icon(Icons.arrow_forward_ios),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -367,23 +342,56 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ElevatedButton(onPressed: () {}, child: Text('Intent Flow')),
               ElevatedButton(
                   onPressed: () {
+                    FocusScope.of(context).unfocus();
                     var options = {
                       'key': key,
                       'amount': 100,
                       'currency': 'INR',
                       'email': 'ramprasad179@gmail.com',
-                      'contact': upiNumber,
+                      'contact': '9663976539',
                       'method': 'upi',
-                      'vpa': '$upiNumber@upi',
-                      '_[flow]': "collect"
+                      '_[flow]': 'intent',
+                      'upi_app_package_name': 'paytm',
+                    };
+                    _razorpay.submit(options);
+                  },
+                  child: Text('Intent Flow')),
+              ElevatedButton(
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    var options = {
+                      'key': key,
+                      'amount': 100,
+                      'currency': 'INR',
+                      'email': 'ramprasad179@gmail.com',
+                      'contact': '9663976539',
+                      'method': 'upi',
+                      'vpa': upiNumber,
+                      '_[flow]': 'collect',
                     };
                     _razorpay.submit(options);
                   },
                   child: Text('Collect Flow'))
             ],
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final upiApps = await _razorpay.getAppsWhichSupportUpi();
+              availableUpiApps = upiApps.toString();
+              setState(() {
+                showUpiApps = true;
+              });
+              print(upiApps);
+            },
+            child: Text('Get All UPI Supported Apps'),
+          ),
+          Visibility(
+            visible: showUpiApps,
+            child: Flexible(
+              child: Text(availableUpiApps ?? ''),
+            ),
           )
         ],
       ),
@@ -410,7 +418,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           hintText: 'Card Number',
                         ),
                         onChanged: (newValue) =>
-                            cardInfoModel.cardNumber = newValue,
+                            cardInfoModel?.cardNumber = newValue,
                       ),
                     ),
                   ],
@@ -429,8 +437,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           onChanged: (newValue) {
                             final month = newValue.split('/').first;
                             final year = newValue.split('/').last;
-                            cardInfoModel.expiryYear = year;
-                            cardInfoModel.expiryMonth = month;
+                            cardInfoModel?.expiryYear = year;
+                            cardInfoModel?.expiryMonth = month;
                           }),
                     ),
                     SizedBox(width: 8.0),
@@ -442,7 +450,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         decoration: InputDecoration(
                           hintText: '***',
                         ),
-                        onChanged: (newValue) => cardInfoModel.cvv = newValue,
+                        onChanged: (newValue) => cardInfoModel?.cvv = newValue,
                       ),
                     ),
                   ],
@@ -459,7 +467,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           hintText: 'Card Holder Name',
                         ),
                         onChanged: (newValue) =>
-                            cardInfoModel.cardHolderName = newValue,
+                            cardInfoModel?.cardHolderName = newValue,
                       ),
                     ),
                   ],
@@ -476,7 +484,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           hintText: 'Mobile Number',
                         ),
                         onChanged: (newValue) =>
-                            cardInfoModel.mobileNumber = newValue,
+                            cardInfoModel?.mobileNumber = newValue,
                       ),
                     ),
                   ],
@@ -492,7 +500,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         decoration: InputDecoration(
                           hintText: 'Email-ID',
                         ),
-                        onChanged: (newValue) => cardInfoModel.email = newValue,
+                        onChanged: (newValue) =>
+                            cardInfoModel?.email = newValue,
                       ),
                     ),
                   ],
@@ -515,15 +524,15 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                     var options = {
                       'key': key,
                       'amount': 100,
-                      "card[cvv]": cardInfoModel.cvv,
-                      "card[expiry_month]": cardInfoModel.expiryMonth,
-                      "card[expiry_year]": cardInfoModel.expiryYear,
-                      "card[name]": cardInfoModel.cardHolderName,
-                      "card[number]": cardInfoModel.cardNumber,
-                      "contact": cardInfoModel.mobileNumber,
+                      "card[cvv]": cardInfoModel?.cvv,
+                      "card[expiry_month]": cardInfoModel?.expiryMonth,
+                      "card[expiry_year]": cardInfoModel?.expiryYear,
+                      "card[name]": cardInfoModel?.cardHolderName,
+                      "card[number]": cardInfoModel?.cardNumber,
+                      "contact": cardInfoModel?.mobileNumber,
                       "currency": "INR",
                       "display_logo": "0",
-                      'email': cardInfoModel.email,
+                      'email': cardInfoModel?.email,
                       'description': 'Fine T-Shirt',
                       "method": "card"
                     };
@@ -534,23 +543,24 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                 ElevatedButton(
                     onPressed: () async {
                       /* print('Pay With Cred Tapped');
-                      final paymentMethods =
-                          await _razorpay.getPaymentMethods();
+                      final paymentMethods = await _razorpay.getPaymentMethods();
                       print('Payment Methods Retrievend: $paymentMethods'); */
-                      /* var options = {
+                      var options = {
                         'key': key,
                         'amount': 100,
                         'currency': 'INR',
                         'email': 'ramprasad179@gmail.com',
-                        'app_present': 0,
+                        'app_present': 1,
                         'contact': '9663976539',
                         'method': 'app',
-                        'provider': 'cred'
+                        'provider': 'cred',
+                        'callback_url': 'flutterCustomUI://'
                       };
-                      _razorpay.submit(options); */
-                      final supportedUpiApps =
-                          _razorpay.getAppsWhichSupportUpi();
+                      _razorpay.payWithCred(options);
+                      /*final supportedUpiApps = _razorpay.getAppsWhichSupportUpi();
                       print(supportedUpiApps);
+
+                      final cardNetwork = _razorpay.getCardsNetwork("4111111111111111"); */
                     },
                     child: Text('Pay With Cred (Collect FLow)'))
               ],
@@ -563,13 +573,13 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 }
 
 class PaymentTypeSelectionButton extends StatelessWidget {
-  late String paymentTitle;
-  late VoidCallback onPaymentTypeTap;
+  final String? paymentTitle;
+  final VoidCallback? onPaymentTypeTap;
 
-  PaymentTypeSelectionButton({paymentTitle, onPaymentTypeTap}) {
-    this.paymentTitle = paymentTitle;
-    this.onPaymentTypeTap = onPaymentTypeTap;
-  }
+  PaymentTypeSelectionButton({
+    this.paymentTitle,
+    this.onPaymentTypeTap,
+  });
 
   @override
   Widget build(BuildContext context) {

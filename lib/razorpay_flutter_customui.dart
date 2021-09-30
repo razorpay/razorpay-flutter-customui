@@ -31,8 +31,8 @@ class Razorpay {
     return paymentMethodsObj;
   }
 
-  Future<List<String>> getAppsWhichSupportUpi() async {
-    final List<String> paymentMethodsObj =
+  Future<dynamic> getAppsWhichSupportUpi() async {
+    final paymentMethodsObj =
         await _channel.invokeMethod('getAppsWhichSupportUpi');
     return paymentMethodsObj;
   }
@@ -71,7 +71,23 @@ class Razorpay {
     _handleResult(response);
   }
 
-  payWithCred() {}
+  payWithCred(Map<String, dynamic> options) async {
+    Map<String, dynamic> validationResult = _validateOptions(options);
+
+    if (!validationResult['success']) {
+      _handleResult({
+        'type': _CODE_PAYMENT_ERROR,
+        'data': {
+          'code': INVALID_OPTIONS,
+          'message': validationResult['message']
+        }
+      });
+      return;
+    }
+
+    var response = await _channel.invokeMethod('payWithCred', options);
+    _handleResult(response);
+  }
 
   /// Handles checkout response from platform
   _handleResult(Map<dynamic, dynamic> response) {
@@ -112,7 +128,7 @@ class Razorpay {
 
   /// Validate payment options
   static Map<String, dynamic> _validateOptions(Map<String, dynamic> options) {
-    var key = options['key_id'];
+    var key = options['key'];
     if (key == null) {
       return {
         'success': false,
