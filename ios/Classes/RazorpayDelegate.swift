@@ -91,9 +91,9 @@ class RazorpayDelegate: NSObject {
         self.pendingResult(false)
     }
     
-    public func getSubscriptionAmount(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
+    public func getSubscriptionAmount(subscriptionId: String, result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getSubscriptionAmount(options: options, withSuccessCallback: { [weak self] successResponse in
+        self.razorpay?.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
             self?.pendingResult(successResponse)
         }, andFailureCallback: { [weak self] errorResponse in
             self?.pendingResult(errorResponse)
@@ -103,7 +103,13 @@ class RazorpayDelegate: NSObject {
     public func getWalletLogoUrl(value: String, result: @escaping FlutterResult) {
         self.pendingResult = result
         let walletLogoUrl = self.razorpay?.getWalletLogo(havingWalletName: value)
-        pendingResult(walletLogoUrl)
+        pendingResult(walletLogoUrl?.absoluteString)
+    }
+    
+    public func getCardNetworkLenght(network: String, result: @escaping FlutterResult) {
+        self.pendingResult = result
+        let cardNetworkLenght = self.razorpay?.getCardNetworkLength(ofNetwork: network)
+        pendingResult(cardNetworkLenght)
     }
     
     public func isValidCardNumber(value: String, result: @escaping FlutterResult) {

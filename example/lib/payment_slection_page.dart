@@ -312,6 +312,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   Widget buildUPIForm() {
+    upiNumber = '';
     return Container(
       height: 200.0,
       child: Column(
@@ -360,6 +361,15 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                   child: Text('Intent Flow')),
               ElevatedButton(
                   onPressed: () {
+                    if ((upiNumber == null) || (upiNumber == '')) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Plese Enter VPA'),
+                        ),
+                      );
+                      return;
+                    }
+
                     FocusScope.of(context).unfocus();
                     var options = {
                       'key': key,
@@ -545,6 +555,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       /* print('Pay With Cred Tapped');
                       final paymentMethods = await _razorpay.getPaymentMethods();
                       print('Payment Methods Retrievend: $paymentMethods'); */
+
                       var options = {
                         'key': key,
                         'amount': 100,
@@ -554,13 +565,21 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         'contact': '9663976539',
                         'method': 'app',
                         'provider': 'cred',
-                        'callback_url': 'flutterCustomUI://'
+                        // 'callback_url': 'flutterCustomUI://'
                       };
                       _razorpay.payWithCred(options);
+
                       /*final supportedUpiApps = _razorpay.getAppsWhichSupportUpi();
                       print(supportedUpiApps);
 
                       final cardNetwork = _razorpay.getCardsNetwork("4111111111111111"); */
+
+                      /* final walletLogo = await _razorpay.getWalletLogoUrl('paytm');
+                      print('Wallet URL : $walletLogo'); */
+
+                      /* final length =
+                          await _razorpay.getCardNetworkLenght('VISA');
+                      print(length);*/
                     },
                     child: Text('Pay With Cred (Collect FLow)'))
               ],
