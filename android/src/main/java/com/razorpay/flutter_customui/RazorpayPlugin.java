@@ -51,8 +51,8 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
 
     switch (call.method) {
-      case "init":
-        razorpayDelegate.init();
+      case "initilizeSDK":
+        razorpayDelegate.init(result);
         break;
       case "submit":
         razorpayDelegate.submit(new JSONObject((Map<String, JSONObject>) call.arguments));
@@ -78,7 +78,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
         break;
 
       case "getPaymentMethods":
-        razorpayDelegate.getPaymentMethods();
+        razorpayDelegate.getPaymentMethods(result);
         break;
 
       case "getAppsWhichSupportUpi":
