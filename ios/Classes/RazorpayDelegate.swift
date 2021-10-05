@@ -22,6 +22,9 @@ class RazorpayDelegate: NSObject {
             rootVC?.present(navCtrl, animated: true, completion: nil)
         }
         var tempOptions = options
+        if let isCredPayment = tempOptions["provider"] as? String, isCredPayment == "cred" {
+            tempOptions["app_present"] = 0
+        }
         tempOptions.removeValue(forKey: "key")
         self.razorpay?.authorize(tempOptions)
     }
@@ -37,6 +40,7 @@ class RazorpayDelegate: NSObject {
             rootVC?.present(navCtrl, animated: true, completion: nil)
         }
         var tempOptions = options
+        tempOptions["app_present"] = 1
         tempOptions.removeValue(forKey: "key")
         
         self.razorpay?.payWithCred(withOptions: tempOptions, withSuccessCallback: { onSuccess in
