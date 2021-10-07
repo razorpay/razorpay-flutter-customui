@@ -1,4 +1,4 @@
-# Razorpay Flutter
+# Razorpay Flutter Custom-UI
 
 Flutter plugin for Razorpay SDK.
 
@@ -32,7 +32,7 @@ To know more about Razorpay payment flow and steps involved, read up here: [http
 
 ## Installation
 
-This plugin is available on Pub: [https://pub.dev/packages/razorpay_flutter](https://pub.dev/packages/razorpay_flutter)
+This plugin is available on Pub: [https://pub.dev/packages/razorpay_flutter_customui](https://pub.dev/packages/razorpay_flutter)
 
 Add this to `dependencies` in your app's `pubspec.yaml`
 
@@ -67,7 +67,7 @@ Sample code to integrate can be found in [example/lib/main.dart](example/lib/mai
 #### Import package 
 
 ```dart
-import 'package:razorpay_flutter/razorpay_flutter_customui.dart';
+import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 ```
 
 #### Create Razorpay instance
@@ -88,9 +88,7 @@ Use the `on(String event, Function handler)` method on the `Razorpay` instance t
 
 _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
 _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-_razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-```
-
+``
 The handlers would be defined somewhere as
 
 ```dart
@@ -101,10 +99,6 @@ void _handlePaymentSuccess(PaymentSuccessResponse response) {
 
 void _handlePaymentError(PaymentFailureResponse response) {
   // Do something when payment fails
-}
-
-void _handleExternalWallet(ExternalWalletResponse response) {
-  // Do something when an external wallet was selected
 }
 ```
 
