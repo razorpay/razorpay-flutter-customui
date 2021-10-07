@@ -1,6 +1,6 @@
 name: razorpay_flutter_customui
 description: Flutter plugin for Razorpay SDK. To know more about Razorpay, visit http://razorpay.com.
-version: 0.0.1
+version: 1.0.0
 author: Razorpay
 homepage: https://github.com/razorpay/razorpay-flutter-customui
 
