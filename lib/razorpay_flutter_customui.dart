@@ -67,6 +67,12 @@ class Razorpay {
     return subscriptionAmount;
   }
 
+  Future<dynamic> isValidCardNumber(String network) async {
+    final dynamic isValidCard =
+        await _channel.invokeMethod('isValidCardNumber', network);
+    return isValidCard;
+  }
+
   initilizeSDK(String key) {
     _channel.invokeMethod('initilizeSDK', key);
   }
