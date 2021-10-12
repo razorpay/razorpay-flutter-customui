@@ -49,6 +49,30 @@ class Razorpay {
     return isCredAppPresent;
   }
 
+  Future<String> getWalletLogoUrl(String walletName) async {
+    final walletLogoUrl =
+        await _channel.invokeMethod('getWalletLogoUrl', walletName);
+    return walletLogoUrl;
+  }
+
+  Future<dynamic> getSubscriptionAmount(String subscriptionId) async {
+    final dynamic subscriptionAmount =
+        await _channel.invokeMethod('getSubscriptionAmount', subscriptionId);
+    return subscriptionAmount;
+  }
+
+  Future<dynamic> getCardNetworkLenght(String network) async {
+    final dynamic subscriptionAmount =
+        await _channel.invokeMethod('getCardNetworkLenght', network);
+    return subscriptionAmount;
+  }
+
+  Future<dynamic> isValidCardNumber(String network) async {
+    final dynamic isValidCard =
+        await _channel.invokeMethod('isValidCardNumber', network);
+    return isValidCard;
+  }
+
   initilizeSDK(String key) {
     _channel.invokeMethod('initilizeSDK', key);
   }

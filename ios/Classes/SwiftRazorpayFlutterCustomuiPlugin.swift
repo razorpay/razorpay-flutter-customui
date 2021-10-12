@@ -14,7 +14,6 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
-        // result("iOS " + UIDevice.current.systemVersion)
         switch call.method {
         case "initilizeSDK":
             if let key = call.arguments as? String {
@@ -43,8 +42,8 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             razorpayDelegate.getAppsWhichSupportUpi(result: result)
             
         case "getSubscriptionAmount":
-            if let arguments = call.arguments as? String {
-                razorpayDelegate.getWalletLogoUrl(value: arguments, result: result)
+            if let value = call.arguments as? String {
+                razorpayDelegate.getSubscriptionAmount(subscriptionId: value, result: result)
             }
         case "isValidCardNumber":
             if let arguments = call.arguments as? String {
@@ -56,6 +55,14 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
         case "payWithCred":
             if let options = call.arguments as? Dictionary<String, Any> {
                 razorpayDelegate.payWithCred(options: options, result: result)
+            }
+        case "getWalletLogoUrl":
+            if let walletName = call.arguments as? String {
+                razorpayDelegate.getWalletLogoUrl(value: walletName, result: result)
+            }
+        case "getCardNetworkLenght":
+            if let network = call.arguments as? String {
+                razorpayDelegate.getCardNetworkLenght(network: network, result: result)
             }
         default:
             print("no method")
