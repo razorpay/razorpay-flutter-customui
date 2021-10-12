@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.gson.Gson;
 import com.razorpay.ApplicationDetails;
 import com.razorpay.PaymentData;
 //import com.razorpay.PaymentMethodsCallback;
@@ -39,6 +40,8 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
+import static com.razorpay.flutter_customui.Constants.PAYMENT_DATA;
+
 public class RazorpayDelegate implements ActivityResultListener {
 
     private Activity activity;
@@ -52,8 +55,9 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.activity = activity;
     }
 
-    void init() {
-        razorpay = new Razorpay(activity);
+    void init(Result result) {
+        this.pendingResult = result;
+        razorpay = new Razorpay(activity,"rzp_live_6KzMg861N1GUS8");
     }
 
     void submit(final JSONObject payload) {
@@ -83,11 +87,19 @@ public class RazorpayDelegate implements ActivityResultListener {
         return razorpay.getCardNetworkLength(value);
     }
 
-    void getPaymentMethods() {
+    void getPaymentMethods(final Result result) {
+        pendingResult = result;
+        if (razorpay == null) {
+            init(result);
+        }
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
             @Override
             public void onPaymentMethodsReceived(String s) {
-                pendingResult.success(s);
+                HashMap<String, Object> hMapData = new Gson().fromJson(s, HashMap.class);
+
+                System.out.println("String to HashMap: " + hMapData);
+
+                pendingResult.success(hMapData);
             }
 
             @Override
@@ -205,7 +217,7 @@ public class RazorpayDelegate implements ActivityResultListener {
 
 
     public void onPaymentError(int code, String description, JSONObject paymentDataJson) {
-        Log.d("SUCCESS RESPONSE", paymentDataJson.toString());
+        Log.d("ERROR RESPONSE", paymentDataJson.toString());
     }
 
     @Override
@@ -217,7 +229,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     }
 
     void onLocalActivityResult(int requestCode, int resultCode, Intent data){
-        String paymentDataString = data.getStringExtra(Constants.PAYMENT_DATA);
+        String paymentDataString = data.getStringExtra(PAYMENT_DATA);
         JSONObject paymentData = new JSONObject();
         try{
             paymentData = new JSONObject(paymentDataString);
