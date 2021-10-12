@@ -25,6 +25,7 @@ class RazorpayDelegate: NSObject {
         if let isCredPayment = tempOptions["provider"] as? String, isCredPayment == "cred" {
             tempOptions["app_present"] = 0
         }
+        tempOptions["FRAMEWORK"] = "flutter-customui"
         tempOptions.removeValue(forKey: "key")
         self.razorpay?.authorize(tempOptions)
     }
