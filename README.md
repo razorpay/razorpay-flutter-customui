@@ -1,8 +1,8 @@
 # Razorpay Flutter Custom-UI
 
-Flutter plugin for Razorpay SDK.
+Flutter plugin for Razorpay Custom SDK.
 
-[![pub package](https://img.shields.io/pub/v/razorpay_flutter.svg)](https://pub.dartlang.org/packages/razorpay_flutter_customui)
+[![pub package](https://img.shields.io/pub/v/razorpay_flutter_customui.svg)](https://pub.dartlang.org/packages/razorpay_flutter_customui)
 
 * [Getting Started](#getting-started)
 * [Prerequisites](#prerequisites)
@@ -37,7 +37,7 @@ This plugin is available on Pub: [https://pub.dev/packages/razorpay_flutter_cust
 Add this to `dependencies` in your app's `pubspec.yaml`
 
 ```yaml
-razorpay_flutter: ^1.0.0
+razorpay_flutter_customui: ^1.0.0
 ```
 
 **Note for Android**: Make sure that the minimum API level for your app is 19 or higher.

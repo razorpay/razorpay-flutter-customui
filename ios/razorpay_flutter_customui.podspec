@@ -5,13 +5,11 @@
 Pod::Spec.new do |s|
   s.name             = 'razorpay_flutter_customui'
   s.version          = '1.0.0'
-  s.summary          = 'A new flutter plugin project.'
-  s.description      = <<-DESC
-A new flutter plugin project.
-                       DESC
+  s.summary          = 'Flutter plugin for Razorpay Custom SDK.'
+  s.description      =  'Flutter plugin for Razorpay Custom SDK.'
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Razorpay' => 'ramprasad.a@razorpay.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
