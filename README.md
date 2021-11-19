@@ -88,7 +88,7 @@ Use the `on(String event, Function handler)` method on the `Razorpay` instance t
 
 _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
 _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-``
+```
 The handlers would be defined somewhere as
 
 ```dart
