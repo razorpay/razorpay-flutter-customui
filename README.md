@@ -91,11 +91,11 @@ The handlers would be defined somewhere as
 
 ```dart
 
-void _handlePaymentSuccess(PaymentSuccessResponse response) {
+void _handlePaymentSuccess(Map<dynamic, dynamic> response) {
   // Do something when payment succeeds
 }
 
-void _handlePaymentError(PaymentFailureResponse response) {
+void _handlePaymentError(Map<dynamic, dynamic> response) {
   // Do something when payment fails
 }
 ```
