@@ -73,6 +73,11 @@ class Razorpay {
     return isValidCard;
   }
 
+  Future<dynamic> isValidVpa(String vpa) async {
+    final dynamic isValidVpa = await _channel.invokeMethod('isValidVpa', vpa);
+    return isValidVpa;
+  }
+
   initilizeSDK(String key) {
     _channel.invokeMethod('initilizeSDK', key);
   }
