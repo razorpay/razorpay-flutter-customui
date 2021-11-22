@@ -357,7 +357,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       'upi_app_package_name': 'paytm',
                     };
                     _razorpay.submit(options);
-                    /* final result = await _razorpay.isValidVpa('9663976539@upi');
+                    /* final result = await _razorpay.isValidVpa('<VPA>');
                     print(result); */
                   },
                   child: Text('Intent Flow')),
