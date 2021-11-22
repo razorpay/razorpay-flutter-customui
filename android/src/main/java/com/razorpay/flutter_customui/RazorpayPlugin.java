@@ -52,7 +52,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
 
     switch (call.method) {
       case "initilizeSDK":
-        razorpayDelegate.init(result);
+        razorpayDelegate.init(((ArrayList<String>) call.arguments).get(0),result);
         break;
       case "submit":
         razorpayDelegate.submit(new JSONObject((Map<String, JSONObject>) call.arguments));
