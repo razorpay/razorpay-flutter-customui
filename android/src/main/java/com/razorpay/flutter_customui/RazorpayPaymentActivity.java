@@ -39,7 +39,7 @@ public class RazorpayPaymentActivity extends Activity implements PaymentResultWi
             payload = new JSONObject(optionsString);
         } catch(Exception e){}
 
-        initRazorpay();
+        //initRazorpay();
         createWebView();
         sendRequest();
     }

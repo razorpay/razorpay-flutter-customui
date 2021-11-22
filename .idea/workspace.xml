@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2379c99-f91b-41c8-949c-ba3b27e931e8" name="Default Changelist" comment="- Changed key_id to key&#10;- Added GSON integration&#10;- Changed init method&#10;- Added UPI supported apps in Manifest">
+      <change beforePath="$PROJECT_DIR$/.idea/razorpay-flutter-customui.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/razorpay-flutter-customui.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.packages" beforeDir="false" afterPath="$PROJECT_DIR$/.packages" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayDelegate.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayDelegate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayPaymentActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayPaymentActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayPlugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayPlugin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/payment_slection_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/payment_slection_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,39 +114,39 @@
     </state>
     <state x="136" y="92" width="1152" height="644" key="DiffContextDialog/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633419044293" />
     <state x="136" y="92" key="DiffContextDialog/0.25.1440.806@0.25.1440.806" timestamp="1632985019948" />
-    <state width="1398" height="276" key="GridCell.Tab.0.bottom" timestamp="1633280338547">
-      <screen x="0" y="25" width="1440" height="809" />
+    <state width="1398" height="276" key="GridCell.Tab.0.bottom" timestamp="1637579819778">
+      <screen x="0" y="25" width="1440" height="806" />
     </state>
     <state width="1878" height="205" key="GridCell.Tab.0.bottom/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659177" />
     <state width="1398" height="356" key="GridCell.Tab.0.bottom/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796750" />
-    <state width="1398" height="356" key="GridCell.Tab.0.bottom/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
+    <state width="1398" height="276" key="GridCell.Tab.0.bottom/0.25.1440.806@0.25.1440.806" timestamp="1637579819778" />
     <state width="1878" height="205" key="GridCell.Tab.0.bottom/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623244" />
     <state width="1398" height="356" key="GridCell.Tab.0.bottom/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395014" />
     <state width="1398" height="276" key="GridCell.Tab.0.bottom/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338547" />
-    <state width="1398" height="276" key="GridCell.Tab.0.center" timestamp="1633280338546">
-      <screen x="0" y="25" width="1440" height="809" />
+    <state width="1398" height="276" key="GridCell.Tab.0.center" timestamp="1637579819774">
+      <screen x="0" y="25" width="1440" height="806" />
     </state>
     <state width="1878" height="205" key="GridCell.Tab.0.center/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659175" />
     <state width="1398" height="356" key="GridCell.Tab.0.center/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796749" />
-    <state width="1398" height="356" key="GridCell.Tab.0.center/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
+    <state width="1398" height="276" key="GridCell.Tab.0.center/0.25.1440.806@0.25.1440.806" timestamp="1637579819774" />
     <state width="1878" height="205" key="GridCell.Tab.0.center/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623242" />
     <state width="1398" height="356" key="GridCell.Tab.0.center/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395013" />
     <state width="1398" height="276" key="GridCell.Tab.0.center/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338546" />
-    <state width="1398" height="276" key="GridCell.Tab.0.left" timestamp="1633280338545">
-      <screen x="0" y="25" width="1440" height="809" />
+    <state width="1398" height="276" key="GridCell.Tab.0.left" timestamp="1637579819772">
+      <screen x="0" y="25" width="1440" height="806" />
     </state>
     <state width="1878" height="205" key="GridCell.Tab.0.left/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659175" />
     <state width="1398" height="356" key="GridCell.Tab.0.left/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796748" />
-    <state width="1398" height="356" key="GridCell.Tab.0.left/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
+    <state width="1398" height="276" key="GridCell.Tab.0.left/0.25.1440.806@0.25.1440.806" timestamp="1637579819772" />
     <state width="1878" height="205" key="GridCell.Tab.0.left/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623241" />
     <state width="1398" height="356" key="GridCell.Tab.0.left/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395012" />
     <state width="1398" height="276" key="GridCell.Tab.0.left/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338545" />
-    <state width="1398" height="276" key="GridCell.Tab.0.right" timestamp="1633280338547">
-      <screen x="0" y="25" width="1440" height="809" />
+    <state width="1398" height="276" key="GridCell.Tab.0.right" timestamp="1637579819778">
+      <screen x="0" y="25" width="1440" height="806" />
     </state>
     <state width="1878" height="205" key="GridCell.Tab.0.right/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659176" />
     <state width="1398" height="356" key="GridCell.Tab.0.right/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796749" />
-    <state width="1398" height="356" key="GridCell.Tab.0.right/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
+    <state width="1398" height="276" key="GridCell.Tab.0.right/0.25.1440.806@0.25.1440.806" timestamp="1637579819778" />
     <state width="1878" height="205" key="GridCell.Tab.0.right/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623243" />
     <state width="1398" height="356" key="GridCell.Tab.0.right/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395013" />
     <state width="1398" height="276" key="GridCell.Tab.0.right/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338547" />
@@ -230,17 +232,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayDelegate.java</url>
-          <line>106</line>
+          <line>108</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayDelegate.java</url>
-          <line>94</line>
+          <line>96</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayDelegate.java</url>
-          <line>101</line>
+          <line>103</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>

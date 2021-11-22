@@ -48,6 +48,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     private Result pendingResult;
     private Map<String, Object> pendingReply;
     private Razorpay razorpay;
+    private String key;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -55,9 +56,10 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.activity = activity;
     }
 
-    void init(Result result) {
+    void init(String key, Result result) {
         this.pendingResult = result;
-        razorpay = new Razorpay(activity,"rzp_live_6KzMg861N1GUS8");
+        this.key = key;
+        razorpay = new Razorpay(activity,key);
     }
 
     void submit(final JSONObject payload) {
@@ -90,7 +92,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     void getPaymentMethods(final Result result) {
         pendingResult = result;
         if (razorpay == null) {
-            init(result);
+            init(this.key,result);
         }
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
             @Override
