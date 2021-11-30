@@ -65,9 +65,9 @@ class Razorpay {
     return subscriptionAmount;
   }
 
-  Future<dynamic> getCardNetworkLenght(String network) async {
+  Future<dynamic> getCardNetworkLength(String network) async {
     final dynamic subscriptionAmount =
-        await _channel.invokeMethod('getCardNetworkLenght', network);
+        await _channel.invokeMethod('getCardNetworkLength', network);
     return subscriptionAmount;
   }
 
@@ -128,7 +128,8 @@ class Razorpay {
 
     dynamic payload;
 
-    if (response['razorpay_payment_id'] != null || response['type'] == _CODE_PAYMENT_SUCCESS) {
+    if (response['razorpay_payment_id'] != null ||
+        response['type'] == _CODE_PAYMENT_SUCCESS) {
       eventName = EVENT_PAYMENT_SUCCESS;
       payload = response;
     } else {
