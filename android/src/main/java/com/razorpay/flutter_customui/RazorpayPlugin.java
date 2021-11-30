@@ -52,29 +52,29 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
 
     switch (call.method) {
       case "initilizeSDK":
-        razorpayDelegate.init(result);
+        razorpayDelegate.init(call.arguments.toString(),result);
         break;
       case "submit":
-        razorpayDelegate.submit(new JSONObject((Map<String, JSONObject>) call.arguments));
+        razorpayDelegate.submit(new JSONObject((Map<String, JSONObject>) call.arguments), result);
         break;
       case "callNativeIntent":
-        razorpayDelegate.callNativeIntent(((ArrayList<String>) call.arguments).get(0));
+        razorpayDelegate.callNativeIntent(call.arguments.toString(), result);
         break;
 
       case "changeApiKey":
-        razorpayDelegate.changeApiKey(((ArrayList<String>) call.arguments).get(0));
+        razorpayDelegate.changeApiKey(call.arguments.toString(), result);
         break;
 
       case "getBankLogoUrl":
-        result.success(razorpayDelegate.getBankLogoUrl(((ArrayList<String>) call.arguments).get(0)));
+        result.success(razorpayDelegate.getBankLogoUrl(call.arguments.toString()));
         break;
 
       case "getCardNetwork":
-        result.success(razorpayDelegate.getCardNetwork(((ArrayList<String>) call.arguments).get(0)));
+        result.success(razorpayDelegate.getCardNetwork(call.arguments.toString()));
         break;
 
       case "getCardNetworkLength":
-        result.success(String.valueOf(razorpayDelegate.getCardNetworkLength(((ArrayList<String>) call.arguments).get(0))));
+        result.success(String.valueOf(razorpayDelegate.getCardNetworkLength(call.arguments.toString())));
         break;
 
       case "getPaymentMethods":
@@ -82,27 +82,27 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
         break;
 
       case "getAppsWhichSupportUpi":
-        razorpayDelegate.getAppsWhichSupportUpi();
+        razorpayDelegate.getAppsWhichSupportUpi(result);
         break;
 
       case "getSubscriptionAmount":
-        razorpayDelegate.getSubscriptionAmount(((ArrayList<String>) call.arguments).get(0));
+        razorpayDelegate.getSubscriptionAmount(call.arguments.toString(), result);
         break;
 
       case "getWalletLogoUrl":
-        razorpayDelegate.getWalletLogoUrl(((ArrayList<String>) call.arguments).get(0));
+        razorpayDelegate.getWalletLogoUrl(call.arguments.toString(), result);
         break;
 
       case "isValidCardNumber":
-        razorpayDelegate.isValidCardNumber(((ArrayList<String>) call.arguments).get(0));
+        razorpayDelegate.isValidCardNumber(call.arguments.toString(), result);
         break;
 
       case "isValidVpa":
-        razorpayDelegate.isValidVpa(((ArrayList<String>) call.arguments).get(0));
+        razorpayDelegate.isValidVpa(call.arguments.toString(), result);
         break;
 
       case "setPaymentId":
-        razorpayDelegate.setPaymentID(((ArrayList<String>) call.arguments).get(0));
+        razorpayDelegate.setPaymentID(call.arguments.toString(), result);
         break;
 
       default:
