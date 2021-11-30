@@ -46,8 +46,19 @@ public class RazorpayDelegate implements ActivityResultListener {
 
     private Activity activity;
     private Result pendingResult;
-    private Map<String, Object> pendingReply;
+    private Map<Object, Object> pendingReply;
     private Razorpay razorpay;
+    private String key;
+
+    private static final int CODE_PAYMENT_SUCCESS = 0;
+    private static final int CODE_PAYMENT_ERROR = 1;
+
+    // Payment error codes for communicating with plugin
+    private static final int NETWORK_ERROR = 2;
+    private static final int INVALID_OPTIONS = 3;
+    private static final int PAYMENT_CANCELLED = 0;
+    private static final int TLS_ERROR = 6;
+    private static final int UNKNOWN_ERROR = 100;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -55,23 +66,27 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.activity = activity;
     }
 
-    void init(Result result) {
+    void init(String key, Result result) {
+        this.key = key;
         this.pendingResult = result;
-        razorpay = new Razorpay(activity,"rzp_live_6KzMg861N1GUS8");
+        razorpay = new Razorpay(activity,key);
     }
 
-    void submit(final JSONObject payload) {
+    void submit(final JSONObject payload, Result result) {
+        this.pendingResult = result;
         Intent intent = new Intent(activity, RazorpayPaymentActivity.class);
         intent.putExtra(Constants.OPTIONS, payload.toString());
         intent.putExtra("FRAMEWORK", "flutter");
         activity.startActivityForResult(intent, RazorpayPaymentActivity.RZP_REQUEST_CODE);
     }
 
-    void callNativeIntent(String value) {
+    void callNativeIntent(String value, Result result) {
+        this.pendingResult = result;
         razorpay.callNativeIntent(value);
     }
 
-    void changeApiKey(String value) {
+    void changeApiKey(String value, Result result) {
+        this.pendingResult = result;
         razorpay.changeApiKey(value);
     }
 
@@ -90,15 +105,12 @@ public class RazorpayDelegate implements ActivityResultListener {
     void getPaymentMethods(final Result result) {
         pendingResult = result;
         if (razorpay == null) {
-            init(result);
+            init(key, result);
         }
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
             @Override
             public void onPaymentMethodsReceived(String s) {
                 HashMap<String, Object> hMapData = new Gson().fromJson(s, HashMap.class);
-
-                System.out.println("String to HashMap: " + hMapData);
-
                 pendingResult.success(hMapData);
             }
 
@@ -109,7 +121,8 @@ public class RazorpayDelegate implements ActivityResultListener {
         });
     }
 
-    void getAppsWhichSupportUpi() {
+    void getAppsWhichSupportUpi(Result result) {
+        this.pendingResult = result;
         Razorpay.getAppsWhichSupportUpi(activity, new RzpUpiSupportedAppsCallback() {
             @Override
             public void onReceiveUpiSupportedApps(List<ApplicationDetails> list) {
@@ -118,7 +131,8 @@ public class RazorpayDelegate implements ActivityResultListener {
         });
     }
 
-    void getSubscriptionAmount(String value) {
+    void getSubscriptionAmount(String value, Result result) {
+        this.pendingResult = result;
         razorpay.getSubscriptionAmount(value, new SubscriptionAmountCallback() {
             @Override
             public void onSubscriptionAmountReceived(long l) {
@@ -132,15 +146,18 @@ public class RazorpayDelegate implements ActivityResultListener {
         });
     }
 
-    void getWalletLogoUrl(String value) {
+    void getWalletLogoUrl(String value, Result result) {
+        this.pendingResult = result;
         pendingResult.success(razorpay.getWalletLogoUrl(value));
     }
 
-    void isValidCardNumber(String value) {
+    void isValidCardNumber(String value, Result result) {
+        this.pendingResult = result;
         pendingResult.success(razorpay.isValidCardNumber(value));
     }
 
-    void isValidVpa(String value) {
+    void isValidVpa(String value, Result result) {
+        this.pendingResult = result;
         razorpay.isValidVpa(value, new ValidateVpaCallback() {
             @Override
             public void onResponse(boolean b) {
@@ -154,7 +171,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         });
     }
 
-    private void sendReply(Map<String, Object> data) {
+    private void sendReply(HashMap<Object, Object> data) {
         if (pendingResult != null) {
             pendingResult.success(data);
             pendingReply = null;
@@ -168,7 +185,8 @@ public class RazorpayDelegate implements ActivityResultListener {
         pendingReply = null;
     }
 
-    public void setPaymentID(String value) {
+    public void setPaymentID(String value, Result result) {
+        this.pendingResult = result;
         razorpay.setPaymentID(value);
     }
 
@@ -212,12 +230,40 @@ public class RazorpayDelegate implements ActivityResultListener {
     }*/
 
     public void onPaymentSuccess(String razorpayPaymentId, JSONObject paymentData) {
-        Log.d("SUCCESS RESPONSE", paymentData.toString());
+        try {
+            HashMap<Object, Object> reply = new HashMap<>();
+            reply.put("type", CODE_PAYMENT_SUCCESS);
+
+            HashMap<Object, Object> data = new HashMap<>();
+            data.put("razorpay_payment_id", razorpayPaymentId);
+            if (paymentData.has("razorpay_order_id")) {
+                data.put("razorpay_order_id", paymentData.get("razorpay_order_id"));
+            }
+            if (paymentData.has("razorpay_subscription_id")) {
+                data.put("razorpay_signature", paymentData.get("razorpay_subscription_id"));
+            }
+            if (paymentData.has("razorpay_subscription_id")) {
+                data.put("razorpay_subscription_id", paymentData.optString("razorpay_subscription_id"));
+            }
+            reply.put("data",data);
+            sendReply(reply);
+        } catch (JSONException e) {
+
+        }
     }
 
 
     public void onPaymentError(int code, String description, JSONObject paymentDataJson) {
-        Log.d("ERROR RESPONSE", paymentDataJson.toString());
+        HashMap<Object, Object> reply = new HashMap<>();
+        reply.put("type", CODE_PAYMENT_ERROR);
+
+        HashMap<Object, Object> data = new HashMap<>();
+        data.put("code", translateRzpPaymentError(code));
+        data.put("message", description);
+
+        reply.put("data", data);
+
+        sendReply(reply);
     }
 
     @Override
@@ -242,6 +288,21 @@ public class RazorpayDelegate implements ActivityResultListener {
             int errorCode = data.getIntExtra(Constants.ERROR_CODE, 0);
             String errorMessage = data.getStringExtra(Constants.ERROR_MESSAGE);
             onPaymentError(errorCode, errorMessage, paymentData);
+        }
+    }
+
+    private static int translateRzpPaymentError(int errorCode) {
+        switch (errorCode) {
+            case Razorpay.NETWORK_ERROR:
+                return NETWORK_ERROR;
+            case Razorpay.INVALID_OPTIONS:
+                return INVALID_OPTIONS;
+            case Razorpay.PAYMENT_CANCELED:
+                return PAYMENT_CANCELLED;
+            case Razorpay.TLS_ERROR:
+                return TLS_ERROR;
+            default:
+                return UNKNOWN_ERROR;
         }
     }
 
