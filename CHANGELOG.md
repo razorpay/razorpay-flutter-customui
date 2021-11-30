@@ -7,6 +7,6 @@
 * Android Callback issue fixed.
 * Added validate VPA.
 
-## 1.1.0
+## 1.1.1
 
 * Bug fixes
