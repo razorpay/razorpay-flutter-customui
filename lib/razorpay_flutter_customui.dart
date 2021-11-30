@@ -23,7 +23,11 @@ class Razorpay {
       const MethodChannel('razorpay_flutter_customui');
 
   // EventEmitter instance used for communication
-  EventEmitter _eventEmitter = EventEmitter();
+  late EventEmitter _eventEmitter;
+
+  Razorpay() {
+    _eventEmitter = new EventEmitter();
+  }
 
   Future<Map<dynamic, dynamic>> getPaymentMethods() async {
     final Map<dynamic, dynamic> paymentMethodsObj =
@@ -124,7 +128,7 @@ class Razorpay {
 
     dynamic payload;
 
-    if (response['razorpay_payment_id'] != null) {
+    if (response['razorpay_payment_id'] != null || response['type'] == _CODE_PAYMENT_SUCCESS) {
       eventName = EVENT_PAYMENT_SUCCESS;
       payload = response;
     } else {
