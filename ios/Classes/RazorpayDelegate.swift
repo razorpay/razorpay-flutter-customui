@@ -122,6 +122,15 @@ class RazorpayDelegate: NSObject {
         pendingResult(self.razorpay?.isCardValid(value))
     }
     
+    public func isValidVpa(value: String, result: @escaping FlutterResult) {
+        self.pendingResult = result
+        self.razorpay?.isValidVpa(value, withSuccessCallback: { successResponse in
+            self.pendingResult(successResponse  as NSDictionary)
+        }, withFailure: { errorResponse in
+            self.pendingResult(errorResponse)
+        })
+    }
+    
     private func close() {
         razorpay?.close()
         if (self.webView != nil) {

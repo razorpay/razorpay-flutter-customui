@@ -105,7 +105,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     void getPaymentMethods(final Result result) {
         pendingResult = result;
         if (razorpay == null) {
-            init(key, result);
+            init(this.key,result);
         }
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
             @Override
