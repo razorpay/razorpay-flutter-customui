@@ -35,7 +35,7 @@ class Razorpay {
     return paymentMethodsObj;
   }
 
-  Future<dynamic> getAppsWhichSupportUpi() async {
+  Future<Map<dynamic,dynamic>> getAppsWhichSupportUpi() async {
     final paymentMethodsObj =
         await _channel.invokeMethod('getAppsWhichSupportUpi');
     return paymentMethodsObj;
@@ -65,19 +65,19 @@ class Razorpay {
     return subscriptionAmount;
   }
 
-  Future<dynamic> getCardNetworkLenght(String network) async {
-    final dynamic subscriptionAmount =
-        await _channel.invokeMethod('getCardNetworkLenght', network);
-    return subscriptionAmount;
+  Future<dynamic> getCardNetworkLength(String network) async {
+    final dynamic cardNetworkLength =
+        await _channel.invokeMethod('getCardNetworkLength', network);
+    return cardNetworkLength;
   }
 
-  Future<dynamic> isValidCardNumber(String network) async {
+  Future<bool> isValidCardNumber(String network) async {
     final dynamic isValidCard =
         await _channel.invokeMethod('isValidCardNumber', network);
     return isValidCard;
   }
 
-  Future<dynamic> isValidVpa(String vpa) async {
+  Future<bool> isValidVpa(String vpa) async {
     final dynamic isValidVpa = await _channel.invokeMethod('isValidVpa', vpa);
     return isValidVpa;
   }
