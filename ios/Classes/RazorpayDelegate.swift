@@ -111,7 +111,7 @@ class RazorpayDelegate: NSObject {
         pendingResult(walletLogoUrl?.absoluteString)
     }
     
-    public func getCardNetworkLenght(network: String, result: @escaping FlutterResult) {
+    public func getCardNetworkLength(network: String, result: @escaping FlutterResult) {
         self.pendingResult = result
         let cardNetworkLenght = self.razorpay?.getCardNetworkLength(ofNetwork: network)
         pendingResult(cardNetworkLenght)
@@ -125,7 +125,15 @@ class RazorpayDelegate: NSObject {
     public func isValidVpa(value: String, result: @escaping FlutterResult) {
         self.pendingResult = result
         self.razorpay?.isValidVpa(value, withSuccessCallback: { successResponse in
-            self.pendingResult(successResponse  as NSDictionary)
+            if let vpaValidationResult = successResponse as? [String: Any] {
+                if let isValid = vpaValidationResult["success"] as? Bool {
+                    self.pendingResult(isValid)
+                }
+            } else {
+                self.pendingResult(false)
+            }
+            // TODO: Un-Comment the below line when android fixes this.
+//            self.pendingResult(successResponse  as NSDictionary)
         }, withFailure: { errorResponse in
             self.pendingResult(errorResponse)
         })

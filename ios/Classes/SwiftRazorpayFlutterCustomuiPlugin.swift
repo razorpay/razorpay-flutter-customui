@@ -60,9 +60,9 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             if let walletName = call.arguments as? String {
                 razorpayDelegate.getWalletLogoUrl(value: walletName, result: result)
             }
-        case "getCardNetworkLenght":
+        case "getCardNetworkLength":
             if let network = call.arguments as? String {
-                razorpayDelegate.getCardNetworkLenght(network: network, result: result)
+                razorpayDelegate.getCardNetworkLength(network: network, result: result)
             }
         case "isValidVpa":
             if let vpa = call.arguments as? String {
