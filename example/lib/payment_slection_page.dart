@@ -561,25 +561,32 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         'amount': 100,
                         'currency': 'INR',
                         'email': 'ramprasad179@gmail.com',
-                        'app_present': 1,
+                        'app_present': 0,
                         'contact': '9663976539',
                         'method': 'app',
                         'provider': 'cred',
                         // 'callback_url': 'flutterCustomUI://'
                       };
-                      _razorpay.payWithCred(options);
+                      _razorpay.submit(options);
 
-                      /*final supportedUpiApps = _razorpay.getAppsWhichSupportUpi();
-                      print(supportedUpiApps);
+                      /* final isvalidVpa = await _razorpay.isValidVpa('9663976539@upi');
+                      print(isvalidVpa); */
 
-                      final cardNetwork = _razorpay.getCardsNetwork("4111111111111111"); */
+                      /* final supportedUpiApps =
+                          await _razorpay.getAppsWhichSupportUpi();
+                      print(supportedUpiApps); */
 
-                      /* final walletLogo = await _razorpay.getWalletLogoUrl('paytm');
+                      /* final cardNetwork =
+                          await _razorpay.getCardsNetwork("4111111111111111");
+                      print(cardNetwork); */
+
+                      /* final walletLogo 
+                          await _razorpay.getWalletLogoUrl('paytm');
                       print('Wallet URL : $walletLogo'); */
 
                       /* final length =
-                          await _razorpay.getCardNetworkLenght('VISA');
-                      print(length);*/
+                          await _razorpay.getCardNetworkLength('VISA');
+                      print(length); */
                     },
                     child: Text('Pay With Cred (Collect FLow)'))
               ],
