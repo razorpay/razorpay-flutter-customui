@@ -126,7 +126,11 @@ public class RazorpayDelegate implements ActivityResultListener {
         Razorpay.getAppsWhichSupportUpi(activity, new RzpUpiSupportedAppsCallback() {
             @Override
             public void onReceiveUpiSupportedApps(List<ApplicationDetails> list) {
-                pendingResult.success(list);
+                HashMap<Object, Object> hMap = new HashMap<>();
+                for (int i=0;i<list.size();i++) {
+                    hMap.put(list.get(i).getPackageName(),list.get(i).getAppName());
+                }
+                pendingResult.success(hMap);
             }
         });
     }
@@ -161,7 +165,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         razorpay.isValidVpa(value, new ValidateVpaCallback() {
             @Override
             public void onResponse(boolean b) {
-                pendingResult.success(b);
+                pendingResult.success(Boolean.valueOf(b));
             }
 
             @Override
