@@ -128,10 +128,10 @@ class RazorpayDelegate: NSObject {
             if let vpaValidationResult = successResponse as? [String: Any] {
                 if let isValid = vpaValidationResult["success"] as? Bool {
                     self.pendingResult(isValid)
+                    return
                 }
-            } else {
-                self.pendingResult(false)
             }
+            self.pendingResult(false)
             // TODO: Un-Comment the below line when android fixes this.
 //            self.pendingResult(successResponse  as NSDictionary)
         }, withFailure: { errorResponse in
