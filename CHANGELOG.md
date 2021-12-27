@@ -14,3 +14,7 @@
 ## 1.1.2
 
 * Bug fixes on android
+
+## 1.1.3
+
+* Validate VPA fixes
