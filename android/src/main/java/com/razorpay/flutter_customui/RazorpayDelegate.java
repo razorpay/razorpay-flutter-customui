@@ -164,8 +164,9 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.pendingResult = result;
         razorpay.isValidVpa(value, new ValidateVpaCallback() {
             @Override
-            public void onResponse(boolean b) {
-                pendingResult.success(Boolean.valueOf(b));
+            public void onResponse(JSONObject jsonObject) {
+                HashMap<String, Object> hMapData = new Gson().fromJson(jsonObject.toString(), HashMap.class);
+                pendingResult.success(hMapData);
             }
 
             @Override
@@ -246,8 +247,8 @@ public class RazorpayDelegate implements ActivityResultListener {
             if (paymentData.has("razorpay_subscription_id")) {
                 data.put("razorpay_signature", paymentData.get("razorpay_subscription_id"));
             }
-            if (paymentData.has("razorpay_subscription_id")) {
-                data.put("razorpay_subscription_id", paymentData.optString("razorpay_subscription_id"));
+            if (paymentData.has("razorpay_signature")) {
+                data.put("razorpay_signature", paymentData.optString("razorpay_signature"));
             }
             reply.put("data",data);
             sendReply(reply);
