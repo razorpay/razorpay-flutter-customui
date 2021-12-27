@@ -10,3 +10,11 @@
 ## 1.1.1
 
 * Bug fixes
+
+## 1.1.2
+
+* Bug fixes on android
+
+## 1.2.0
+
+* Validate VPA fixes
