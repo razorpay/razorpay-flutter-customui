@@ -125,15 +125,7 @@ class RazorpayDelegate: NSObject {
     public func isValidVpa(value: String, result: @escaping FlutterResult) {
         self.pendingResult = result
         self.razorpay?.isValidVpa(value, withSuccessCallback: { successResponse in
-            if let vpaValidationResult = successResponse as? [String: Any] {
-                if let isValid = vpaValidationResult["success"] as? Bool {
-                    self.pendingResult(isValid)
-                    return
-                }
-            }
-            self.pendingResult(false)
-            // TODO: Un-Comment the below line when android fixes this.
-//            self.pendingResult(successResponse  as NSDictionary)
+           self.pendingResult(successResponse  as NSDictionary)
         }, withFailure: { errorResponse in
             self.pendingResult(errorResponse)
         })
