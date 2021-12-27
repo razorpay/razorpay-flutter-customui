@@ -4,8 +4,46 @@
         <!-- List of apps which you want to support for Intent pay -->
         <package android:name="com.google.android.apps.nbu.paisa.user" />
         <package android:name="com.phonepe.app"/>
-        <package android:name="net.one97.paytm"/>
         <package android:name="in.org.npci.upiapp"/>
+        <package android:name="com.google.android.apps.nbu.paisa.user"/>
+        <package android:name="in.org.npci.upiapp"/>
+        <package android:name="com.phonepe.app"/>
+        <package android:name="com.myairtelapp"/>
+        <package android:name="com.myairtelapp.debug"/>
+        <package android:name="com.csam.icici.bank.imobile"/>
+        <package android:name="net.one97.paytm"/>
+        <package android:name="com.sbi.upi"/>
+        <package android:name="com.upi.axispay"/>
+        <package android:name="com.samsung.android.spaymini"/>
+        <package android:name="com.samsung.android.spay"/>
+        <package android:name="com.snapwork.hdfc"/>
+        <package android:name="com.fss.pnbpsp"/>
+        <package android:name="com.icicibank.pockets"/>
+        <package android:name="com.bankofbaroda.upi"/>
+        <package android:name="com.freecharge.android"/>
+        <package android:name="com.fss.unbipsp"/>
+        <package android:name="com.axis.mobile"/>
+        <package android:name="com.mycompany.kvb"/>
+        <package android:name="com.fss.vijayapsp"/>
+        <package android:name="com.dena.upi.gui"/>
+        <package android:name="com.fss.jnkpsp"/>
+        <package android:name="com.olive.kotak.upi"/>
+        <package android:name="com.enstage.wibmo.hdfc"/>
+        <package android:name="com.bsb.hike"/>
+        <package android:name="com.fss.idfcpsp"/>
+        <package android:name="com.YesBank"/>
+        <package android:name="com.abipbl.upi"/>
+        <package android:name="com.microsoft.mobile.polymer"/>
+        <package android:name="com.finopaytech.bpayfino"/>
+        <package android:name="com.mgs.obcbank"/>
+        <package android:name="com.upi.federalbank.org.lotza"/>
+        <package android:name="com.mgs.induspsp"/>
+        <package android:name="ai.wizely.android"/>
+        <package android:name="com.olive.dcb.upi"/>
+        <package android:name="com.mgs.yesmerchantnative.prod"/>
+        <package android:name="com.example.demo"/>
+        <package android:name="in.amazon.mShop.android.shopping"/>
+
         <!--
              Specific intents you query for,
              eg: for a custom share UI
