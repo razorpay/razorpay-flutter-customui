@@ -35,7 +35,7 @@ This plugin is available on Pub: [https://pub.dev/packages/razorpay_flutter_cust
 Add this to `dependencies` in your app's `pubspec.yaml`
 
 ```yaml
-razorpay_flutter_customui: ^1.1.0
+Frazorpay_flutter_customui: ^1.2.0
 ```
 
 **Note for Android**: Make sure that the minimum API level for your app is 19 or higher.
