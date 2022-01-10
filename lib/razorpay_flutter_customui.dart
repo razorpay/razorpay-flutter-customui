@@ -35,7 +35,7 @@ class Razorpay {
     return paymentMethodsObj;
   }
 
-  Future<Map<dynamic,dynamic>> getAppsWhichSupportUpi() async {
+  Future<dynamic> getAppsWhichSupportUpi() async {
     final paymentMethodsObj =
         await _channel.invokeMethod('getAppsWhichSupportUpi');
     return paymentMethodsObj;
