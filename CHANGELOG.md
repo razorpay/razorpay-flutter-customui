@@ -18,3 +18,7 @@
 ## 1.2.0
 
 * Validate VPA fixes
+
+## 1.2.1
+
+* iOS bug fix for UPI supported Apps response.
