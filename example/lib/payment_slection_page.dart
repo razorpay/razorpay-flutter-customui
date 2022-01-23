@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 import 'package:razorpay_flutter_customui_example/models/card_info_model.dart';
 
@@ -179,6 +180,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                     children: [
                       PaymentTypeSelectionButton(
                         paymentTitle: 'CARD',
+                        isSelected: selectedMethod == PaymentMethods.card,
                         onPaymentTypeTap: () {
                           setState(() {
                             selectedPaymentType = 'CARD';
@@ -188,6 +190,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       ),
                       PaymentTypeSelectionButton(
                         paymentTitle: 'UPI',
+                        isSelected: selectedMethod == PaymentMethods.upi,
                         onPaymentTypeTap: () {
                           setState(() {
                             selectedPaymentType = 'UPI';
@@ -197,6 +200,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       ),
                       PaymentTypeSelectionButton(
                         paymentTitle: 'NET BANKING',
+                        isSelected: selectedMethod == PaymentMethods.nb,
                         onPaymentTypeTap: () {
                           setState(() {
                             selectedPaymentType = 'NET BANKING';
@@ -206,6 +210,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       ),
                       PaymentTypeSelectionButton(
                         paymentTitle: 'WALLET',
+                        isSelected: selectedMethod == PaymentMethods.wallet,
                         onPaymentTypeTap: () {
                           setState(() {
                             selectedPaymentType = 'WALLET';
@@ -215,6 +220,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       ),
                       PaymentTypeSelectionButton(
                         paymentTitle: 'VAS',
+                        isSelected: selectedMethod == PaymentMethods.vas,
                         onPaymentTypeTap: () {
                           setState(() {
                             selectedPaymentType = 'VAS';
@@ -601,23 +607,28 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 class PaymentTypeSelectionButton extends StatelessWidget {
   final String? paymentTitle;
   final VoidCallback? onPaymentTypeTap;
+  final bool isSelected;
 
   PaymentTypeSelectionButton({
+    Key? key,
     this.paymentTitle,
     this.onPaymentTypeTap,
-  });
+    required this.isSelected,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPaymentTypeTap,
-      child: Container(
-        decoration:
-            BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(paymentTitle ?? ''),
-        ),
+    return OutlinedButton(
+      onPressed: onPaymentTypeTap,
+      style: OutlinedButton.styleFrom(
+          side: BorderSide(
+        color: isSelected
+            ? Theme.of(context).primaryColor
+            : Colors.grey[300]!,
+        width: isSelected ? 1.5 : 1.0,
+      )),
+      child: Text(
+        paymentTitle ?? '',
       ),
     );
   }
