@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      =  'Flutter plugin for Razorpay Custom SDK.'
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Razorpay' => 'ramprasad.a@razorpay.com' }
+  s.author           = { 'Razorpay' => 'support@razorpay.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
