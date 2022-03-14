@@ -1,24 +1,29 @@
 ## 1.0.0
 
-* TODO: Describe initial release.
+- TODO: Describe initial release.
 
 ## 1.1.0
 
-* Android Callback issue fixed.
-* Added validate VPA.
+- Android Callback issue fixed.
+- Added validate VPA.
 
 ## 1.1.1
 
-* Bug fixes
+- Bug fixes
 
 ## 1.1.2
 
-* Bug fixes on android
+- Bug fixes on android
 
 ## 1.2.0
 
-* Validate VPA fixes
+- Validate VPA fixes
 
 ## 1.2.1
 
-* iOS bug fix for UPI supported Apps response.
+- iOS bug fix for UPI supported Apps response.
+
+## 1.2.2
+
+- iOS bug fix on Payment cancel callback by the user
+- Build issue fix on flutter run

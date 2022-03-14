@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      =  'Flutter plugin for Razorpay Custom SDK.'
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Razorpay' => 'ramprasad.a@razorpay.com' }
+  s.author           = { 'Razorpay' => 'support@razorpay.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
 
   # Flutter.framework does not contain a i386 slice.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   s.swift_version = '5.0'
 
 
