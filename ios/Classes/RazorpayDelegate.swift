@@ -221,6 +221,7 @@ extension RazorpayDelegate {
         let alertController = UIAlertController(title: "Alert!", message: "Are you sure you want to cancel the transaction ?", preferredStyle: .alert)
         let yesAction = UIAlertAction(title: "Yes, Cancel", style: .destructive) { cancelAction in
             self.razorpay?.userCancelledPayment()
+            self.pendingResult(["error": "Payment cancelled by user"] as NSDictionary)
             self.close()
         }
         let stayOn = UIAlertAction(title: "No", style: .default, handler: nil)
