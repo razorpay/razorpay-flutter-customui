@@ -27,3 +27,8 @@
 
 - iOS bug fix on Payment cancel callback by the user
 - Build issue fix on flutter run
+
+## 1.2.3
+
+- Dashboard Monitoring and Alerting
+- Android bug fixes
