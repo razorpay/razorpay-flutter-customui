@@ -52,4 +52,7 @@
             <action android:name="android.intent.action.SEND" />
         </intent>
     </queries>
+    <application>
+        <activity android:name=".RazorpayPaymentActivity"></activity>
+    </application>
 </manifest>
