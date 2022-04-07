@@ -5,6 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2379c99-f91b-41c8-949c-ba3b27e931e8" name="Default Changelist" comment="- Changed key_id to key&#10;- Added GSON integration&#10;- Changed init method&#10;- Added UPI supported apps in Manifest">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/version" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/version" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/razorpay-flutter-customui.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/razorpay-flutter-customui.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.packages" beforeDir="false" afterPath="$PROJECT_DIR$/.packages" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
@@ -23,18 +38,28 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="1xr99TgpJQCpv0nzrtbnFfEGupu" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="ics" />
+    <property name="settings.editor.selected.configurable" value="dart.settings" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
@@ -82,147 +107,26 @@
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
-    <option name="oldMeFiltersMigrated" value="true" />
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="- initial commit" />
     <MESSAGE value="- Changed key_id to key&#10;- Added GSON integration&#10;- Changed init method&#10;- Added UPI supported apps in Manifest" />
     <MESSAGE value="- Added GSON support lib" />
     <option name="LAST_COMMIT_MESSAGE" value="- Added GSON support lib" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="100" y="125" width="1240" height="606" key="AVDManager" timestamp="1631777721031">
-      <screen x="0" y="25" width="1440" height="806" />
-    </state>
-    <state x="100" y="125" width="1240" height="606" key="AVDManager/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1631777721031" />
-    <state x="516" y="178" key="AndroidProcessChooserDialog" timestamp="1633279468556">
-      <screen x="0" y="25" width="1440" height="807" />
-    </state>
-    <state x="516" y="178" key="AndroidProcessChooserDialog/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115737044" />
-    <state x="516" y="178" key="AndroidProcessChooserDialog/0.25.1440.806@0.25.1440.806" timestamp="1632987552435" />
-    <state x="516" y="178" key="AndroidProcessChooserDialog/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279468556" />
-    <state x="238" y="25" width="954" height="806" key="CommitChangelistDialog2" timestamp="1633419066198">
-      <screen x="0" y="25" width="1440" height="806" />
-    </state>
-    <state x="238" y="25" width="954" height="806" key="CommitChangelistDialog2/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633419066198" />
-    <state x="238" y="25" width="948" height="806" key="CommitChangelistDialog2/0.25.1440.806@0.25.1440.806" timestamp="1632985023366" />
-    <state x="238" y="53" key="CommitChangelistDialog2/0.25.1440.875/-265.-1175.1920.1106@0.25.1440.875" timestamp="1631102284709" />
-    <state x="136" y="92" width="1152" height="644" key="DiffContextDialog" timestamp="1633419044293">
-      <screen x="0" y="25" width="1440" height="806" />
-    </state>
-    <state x="136" y="92" width="1152" height="644" key="DiffContextDialog/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633419044293" />
-    <state x="136" y="92" key="DiffContextDialog/0.25.1440.806@0.25.1440.806" timestamp="1632985019948" />
-    <state width="1398" height="276" key="GridCell.Tab.0.bottom" timestamp="1633280338547">
-      <screen x="0" y="25" width="1440" height="809" />
-    </state>
-    <state width="1878" height="205" key="GridCell.Tab.0.bottom/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659177" />
-    <state width="1398" height="356" key="GridCell.Tab.0.bottom/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796750" />
-    <state width="1398" height="356" key="GridCell.Tab.0.bottom/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
-    <state width="1878" height="205" key="GridCell.Tab.0.bottom/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623244" />
-    <state width="1398" height="356" key="GridCell.Tab.0.bottom/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395014" />
-    <state width="1398" height="276" key="GridCell.Tab.0.bottom/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338547" />
-    <state width="1398" height="276" key="GridCell.Tab.0.center" timestamp="1633280338546">
-      <screen x="0" y="25" width="1440" height="809" />
-    </state>
-    <state width="1878" height="205" key="GridCell.Tab.0.center/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659175" />
-    <state width="1398" height="356" key="GridCell.Tab.0.center/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796749" />
-    <state width="1398" height="356" key="GridCell.Tab.0.center/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
-    <state width="1878" height="205" key="GridCell.Tab.0.center/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623242" />
-    <state width="1398" height="356" key="GridCell.Tab.0.center/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395013" />
-    <state width="1398" height="276" key="GridCell.Tab.0.center/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338546" />
-    <state width="1398" height="276" key="GridCell.Tab.0.left" timestamp="1633280338545">
-      <screen x="0" y="25" width="1440" height="809" />
-    </state>
-    <state width="1878" height="205" key="GridCell.Tab.0.left/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659175" />
-    <state width="1398" height="356" key="GridCell.Tab.0.left/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796748" />
-    <state width="1398" height="356" key="GridCell.Tab.0.left/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
-    <state width="1878" height="205" key="GridCell.Tab.0.left/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623241" />
-    <state width="1398" height="356" key="GridCell.Tab.0.left/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395012" />
-    <state width="1398" height="276" key="GridCell.Tab.0.left/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338545" />
-    <state width="1398" height="276" key="GridCell.Tab.0.right" timestamp="1633280338547">
-      <screen x="0" y="25" width="1440" height="809" />
-    </state>
-    <state width="1878" height="205" key="GridCell.Tab.0.right/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631852659176" />
-    <state width="1398" height="356" key="GridCell.Tab.0.right/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633115796749" />
-    <state width="1398" height="356" key="GridCell.Tab.0.right/0.25.1440.806@0.25.1440.806" timestamp="1633066726755" />
-    <state width="1878" height="205" key="GridCell.Tab.0.right/0.25.1440.807/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631853623243" />
-    <state width="1398" height="356" key="GridCell.Tab.0.right/0.25.1440.807/-265.-1175.1920.1175@0.25.1440.807" timestamp="1633279395013" />
-    <state width="1398" height="276" key="GridCell.Tab.0.right/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280338547" />
-    <state x="-142" y="-1081" width="1413" height="823" key="MergeDialog" timestamp="1632474585208">
-      <screen x="-265" y="-1175" width="1920" height="1106" />
-    </state>
-    <state x="-142" y="-1081" width="1413" height="823" key="MergeDialog/0.25.1440.875/-265.-1175.1920.1106@-265.-1175.1920.1106" timestamp="1632474585208" />
-    <state x="335" y="-857" key="MultipleFileMergeDialog" timestamp="1632474585260">
-      <screen x="-265" y="-1175" width="1920" height="1106" />
-    </state>
-    <state x="335" y="-857" key="MultipleFileMergeDialog/0.25.1440.875/-265.-1175.1920.1106@-265.-1175.1920.1106" timestamp="1632474585260" />
-    <state x="368" y="134" key="RollbackChangesDialog" timestamp="1633418786956">
-      <screen x="0" y="25" width="1440" height="806" />
-    </state>
-    <state x="368" y="134" key="RollbackChangesDialog/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633418786956" />
-    <state x="368" y="134" key="RollbackChangesDialog/0.25.1440.806@0.25.1440.806" timestamp="1632985055330" />
-    <state x="320" y="173" key="Vcs.Push.Dialog.v2" timestamp="1633418666387">
-      <screen x="0" y="25" width="1440" height="806" />
-    </state>
-    <state x="320" y="173" key="Vcs.Push.Dialog.v2/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633418666387" />
-    <state x="320" y="186" key="Vcs.Push.Dialog.v2/0.25.1440.875/-265.-1175.1920.1106@0.25.1440.875" timestamp="1631102290246" />
-    <state x="494" y="260" width="919" height="490" key="find.popup" timestamp="1633417277262">
-      <screen x="0" y="25" width="1440" height="806" />
-    </state>
-    <state x="394" y="-833" width="602" height="490" key="find.popup/0.25.1440.806/-265.-1175.1920.1175@-265.-1175.1920.1175" timestamp="1631858464417" />
-    <state x="494" y="260" width="919" height="490" key="find.popup/0.25.1440.806/-265.-1175.1920.1175@0.25.1440.806" timestamp="1633417277262" />
-    <state x="494" y="260" width="919" height="490" key="find.popup/0.25.1440.806@0.25.1440.806" timestamp="1632986102406" />
-    <state x="494" y="261" width="919" height="492" key="find.popup/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633280007318" />
-    <state x="385" y="200" width="670" height="626" key="search.everywhere.popup" timestamp="1633279999940">
-      <screen x="0" y="25" width="1440" height="809" />
-    </state>
-    <state x="385" y="199" width="670" height="623" key="search.everywhere.popup/0.25.1440.806@0.25.1440.806" timestamp="1632986283581" />
-    <state x="385" y="200" width="670" height="626" key="search.everywhere.popup/0.25.1440.809/-265.-1175.1920.1175@0.25.1440.809" timestamp="1633279999940" />
-    <state x="385" y="214" width="670" height="676" key="search.everywhere.popup/0.25.1440.875/-265.-1175.1920.1106@0.25.1440.875" timestamp="1631102901848" />
-  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/razorpay_flutter_customui.dart</url>
-          <line>30</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/payment_slection_page.dart</url>
-          <line>41</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/payment_slection_page.dart</url>
-          <line>67</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/razorpay_flutter_customui.dart</url>
-          <line>29</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/payment_slection_page.dart</url>
-          <line>69</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/payment_slection_page.dart</url>
-          <line>70</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/payment_slection_page.dart</url>
-          <line>68</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/payment_slection_page.dart</url>
-          <line>72</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
           <url>file://$PROJECT_DIR$/android/src/main/java/com/razorpay/flutter_customui/RazorpayPlugin.java</url>
           <line>80</line>
@@ -245,5 +149,9 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
