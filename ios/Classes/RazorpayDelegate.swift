@@ -15,19 +15,20 @@ class RazorpayDelegate: NSObject {
         let key = options["key"] as? String ?? ""
         
         self.initilizeSDK(withKey: key, result: result)
+
+        var tempOptions = options
+        if let isCredPayment = tempOptions["provider"] as? String, isCredPayment == "cred" {
+            tempOptions["app_present"] = 0
+        }
+        tempOptions["FRAMEWORK"] = "flutter"
+        tempOptions.removeValue(forKey: "key")
+        self.razorpay?.authorize(tempOptions)
         
         let rootVC = UIApplication.shared.keyWindow?.rootViewController
         if let navCtrl = self.navController {
             navCtrl.modalPresentationStyle = .fullScreen
             rootVC?.present(navCtrl, animated: true, completion: nil)
         }
-        var tempOptions = options
-        if let isCredPayment = tempOptions["provider"] as? String, isCredPayment == "cred" {
-            tempOptions["app_present"] = 0
-        }
-        tempOptions["FRAMEWORK"] = "flutter-customui"
-        tempOptions.removeValue(forKey: "key")
-        self.razorpay?.authorize(tempOptions)
     }
     
     public func payWithCred(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
