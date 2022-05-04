@@ -32,3 +32,8 @@
 
 - Dashboard Monitoring and Alerting
 - Android bug fixes
+
+## 1.3.0
+
+- Added native dependency via cocoapods
+- Minor bug fixes
