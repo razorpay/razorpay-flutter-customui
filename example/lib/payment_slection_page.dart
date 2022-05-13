@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 import 'package:razorpay_flutter_customui_example/models/card_info_model.dart';
 
@@ -171,61 +171,64 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: [
-                      PaymentTypeSelectionButton(
-                        paymentTitle: 'CARD',
-                        onPaymentTypeTap: () {
-                          setState(() {
-                            selectedPaymentType = 'CARD';
-                            selectedMethod = PaymentMethods.card;
-                          });
-                        },
-                      ),
-                      PaymentTypeSelectionButton(
-                        paymentTitle: 'UPI',
-                        onPaymentTypeTap: () {
-                          setState(() {
-                            selectedPaymentType = 'UPI';
-                            selectedMethod = PaymentMethods.upi;
-                          });
-                        },
-                      ),
-                      PaymentTypeSelectionButton(
-                        paymentTitle: 'NET BANKING',
-                        onPaymentTypeTap: () {
-                          setState(() {
-                            selectedPaymentType = 'NET BANKING';
-                            selectedMethod = PaymentMethods.nb;
-                          });
-                        },
-                      ),
-                      PaymentTypeSelectionButton(
-                        paymentTitle: 'WALLET',
-                        onPaymentTypeTap: () {
-                          setState(() {
-                            selectedPaymentType = 'WALLET';
-                            selectedMethod = PaymentMethods.wallet;
-                          });
-                        },
-                      ),
-                      PaymentTypeSelectionButton(
-                        paymentTitle: 'VAS',
-                        onPaymentTypeTap: () {
-                          setState(() {
-                            selectedPaymentType = 'VAS';
-                            selectedMethod = PaymentMethods.vas;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: [
+                    PaymentTypeSelectionButton(
+                      paymentTitle: 'CARD',
+                      isSelected: selectedMethod == PaymentMethods.card,
+                      onPaymentTypeTap: () {
+                        setState(() {
+                          selectedPaymentType = 'CARD';
+                          selectedMethod = PaymentMethods.card;
+                        });
+                      },
+                    ),
+                    PaymentTypeSelectionButton(
+                      paymentTitle: 'UPI',
+                      isSelected: selectedMethod == PaymentMethods.upi,
+                      onPaymentTypeTap: () {
+                        setState(() {
+                          selectedPaymentType = 'UPI';
+                          selectedMethod = PaymentMethods.upi;
+                        });
+                      },
+                    ),
+                    PaymentTypeSelectionButton(
+                      paymentTitle: 'NET BANKING',
+                      isSelected: selectedMethod == PaymentMethods.nb,
+                      onPaymentTypeTap: () {
+                        setState(() {
+                          selectedPaymentType = 'NET BANKING';
+                          selectedMethod = PaymentMethods.nb;
+                        });
+                      },
+                    ),
+                    PaymentTypeSelectionButton(
+                      paymentTitle: 'WALLET',
+                      isSelected: selectedMethod == PaymentMethods.wallet,
+                      onPaymentTypeTap: () {
+                        setState(() {
+                          selectedPaymentType = 'WALLET';
+                          selectedMethod = PaymentMethods.wallet;
+                        });
+                      },
+                    ),
+                    PaymentTypeSelectionButton(
+                      paymentTitle: 'VAS',
+                      isSelected: selectedMethod == PaymentMethods.vas,
+                      onPaymentTypeTap: () {
+                        setState(() {
+                          selectedPaymentType = 'VAS';
+                          selectedMethod = PaymentMethods.vas;
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                SizedBox(height: 32.0),
+                Divider(),
+                SizedBox(height: 20),
                 Expanded(
                   child: getReleventUI(),
                 ),
@@ -264,7 +267,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   Widget buildForVas() {
-    return Container(
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(15),
       child: Column(
         children: [
           ElevatedButton(onPressed: () {}, child: Text('Make Payment')),
@@ -313,8 +317,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   Widget buildUPIForm() {
     upiNumber = '';
-    return Container(
-      height: 200.0,
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -409,190 +413,187 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   Widget buildCardDetailsForm() {
-    return Container(
-      height: 200.0,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Text('Card Number :'),
-                    SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextField(
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Column(
+            children: [
+              Row(
+                children: [
+                  Text('Card Number :'),
+                  SizedBox(width: 8.0),
+                  Flexible(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        hintText: 'Card Number',
+                      ),
+                      onChanged: (newValue) =>
+                          cardInfoModel?.cardNumber = newValue,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text('Expiry :'),
+                  SizedBox(width: 8.0),
+                  Flexible(
+                    child: TextField(
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                          hintText: 'Card Number',
+                          hintText: '12/23',
                         ),
-                        onChanged: (newValue) =>
-                            cardInfoModel?.cardNumber = newValue,
+                        onChanged: (newValue) {
+                          final month = newValue.split('/').first;
+                          final year = newValue.split('/').last;
+                          cardInfoModel?.expiryYear = year;
+                          cardInfoModel?.expiryMonth = month;
+                        }),
+                  ),
+                  SizedBox(width: 8.0),
+                  Text('CVV'),
+                  SizedBox(width: 8.0),
+                  Flexible(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        hintText: '***',
                       ),
+                      onChanged: (newValue) => cardInfoModel?.cvv = newValue,
                     ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Text('Expiry :'),
-                    SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextField(
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            hintText: '12/23',
-                          ),
-                          onChanged: (newValue) {
-                            final month = newValue.split('/').first;
-                            final year = newValue.split('/').last;
-                            cardInfoModel?.expiryYear = year;
-                            cardInfoModel?.expiryMonth = month;
-                          }),
-                    ),
-                    SizedBox(width: 8.0),
-                    Text('CVV'),
-                    SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: '***',
-                        ),
-                        onChanged: (newValue) => cardInfoModel?.cvv = newValue,
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text('Name :'),
+                  SizedBox(width: 8.0),
+                  Flexible(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        hintText: 'Card Holder Name',
                       ),
+                      onChanged: (newValue) =>
+                          cardInfoModel?.cardHolderName = newValue,
                     ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Text('Name :'),
-                    SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: 'Card Holder Name',
-                        ),
-                        onChanged: (newValue) =>
-                            cardInfoModel?.cardHolderName = newValue,
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text('Phone :'),
+                  SizedBox(width: 8.0),
+                  Flexible(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        hintText: 'Mobile Number',
                       ),
+                      onChanged: (newValue) =>
+                          cardInfoModel?.mobileNumber = newValue,
                     ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Text('Phone :'),
-                    SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: 'Mobile Number',
-                        ),
-                        onChanged: (newValue) =>
-                            cardInfoModel?.mobileNumber = newValue,
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text('Email :'),
+                  SizedBox(width: 8.0),
+                  Flexible(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        hintText: 'Email-ID',
                       ),
+                      onChanged: (newValue) => cardInfoModel?.email = newValue,
                     ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Text('Email :'),
-                    SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: 'Email-ID',
-                        ),
-                        onChanged: (newValue) =>
-                            cardInfoModel?.email = newValue,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    var error = validateCardFields();
-                    if (error != '') {
-                      print(error);
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text(error)));
-                      return;
-                    }
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 16.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  var error = validateCardFields();
+                  if (error != '') {
+                    print(error);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(error)));
+                    return;
+                  }
+                  var options = {
+                    'key': key,
+                    'amount': 100,
+                    "card[cvv]": cardInfoModel?.cvv,
+                    "card[expiry_month]": cardInfoModel?.expiryMonth,
+                    "card[expiry_year]": cardInfoModel?.expiryYear,
+                    "card[name]": cardInfoModel?.cardHolderName,
+                    "card[number]": cardInfoModel?.cardNumber,
+                    "contact": cardInfoModel?.mobileNumber,
+                    "currency": "INR",
+                    "display_logo": "0",
+                    'email': cardInfoModel?.email,
+                    'description': 'Fine T-Shirt',
+                    "method": "card"
+                  };
+                  _razorpay.submit(options);
+                },
+                child: Text('Submit'),
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    /* print('Pay With Cred Tapped');
+                    final paymentMethods = await _razorpay.getPaymentMethods();
+                    print('Payment Methods Retrievend: $paymentMethods'); */
+
                     var options = {
                       'key': key,
                       'amount': 100,
-                      "card[cvv]": cardInfoModel?.cvv,
-                      "card[expiry_month]": cardInfoModel?.expiryMonth,
-                      "card[expiry_year]": cardInfoModel?.expiryYear,
-                      "card[name]": cardInfoModel?.cardHolderName,
-                      "card[number]": cardInfoModel?.cardNumber,
-                      "contact": cardInfoModel?.mobileNumber,
-                      "currency": "INR",
-                      "display_logo": "0",
-                      'email': cardInfoModel?.email,
-                      'description': 'Fine T-Shirt',
-                      "method": "card"
+                      'currency': 'INR',
+                      'email': 'ramprasad179@gmail.com',
+                      'app_present': 0,
+                      'contact': '9663976539',
+                      'method': 'app',
+                      'provider': 'cred',
+                      // 'callback_url': 'flutterCustomUI://'
                     };
                     _razorpay.submit(options);
+
+                    /* final isvalidVpa = await _razorpay.isValidVpa('9663976539@upi');
+                    print(isvalidVpa); */
+
+                    /* final supportedUpiApps =
+                        await _razorpay.getAppsWhichSupportUpi();
+                    print(supportedUpiApps); */
+
+                    /* final cardNetwork =
+                        await _razorpay.getCardsNetwork("4111111111111111");
+                    print(cardNetwork); */
+
+                    /* final walletLogo 
+                        await _razorpay.getWalletLogoUrl('paytm');
+                    print('Wallet URL : $walletLogo'); */
+
+                    /* final length =
+                        await _razorpay.getCardNetworkLength('VISA');
+                    print(length); */
                   },
-                  child: Text('Submit'),
-                ),
-                ElevatedButton(
-                    onPressed: () async {
-                      /* print('Pay With Cred Tapped');
-                      final paymentMethods = await _razorpay.getPaymentMethods();
-                      print('Payment Methods Retrievend: $paymentMethods'); */
-
-                      var options = {
-                        'key': key,
-                        'amount': 100,
-                        'currency': 'INR',
-                        'email': 'ramprasad179@gmail.com',
-                        'app_present': 0,
-                        'contact': '9663976539',
-                        'method': 'app',
-                        'provider': 'cred',
-                        // 'callback_url': 'flutterCustomUI://'
-                      };
-                      _razorpay.submit(options);
-
-                      /* final isvalidVpa = await _razorpay.isValidVpa('9663976539@upi');
-                      print(isvalidVpa); */
-
-                      /* final supportedUpiApps =
-                          await _razorpay.getAppsWhichSupportUpi();
-                      print(supportedUpiApps); */
-
-                      /* final cardNetwork =
-                          await _razorpay.getCardsNetwork("4111111111111111");
-                      print(cardNetwork); */
-
-                      /* final walletLogo 
-                          await _razorpay.getWalletLogoUrl('paytm');
-                      print('Wallet URL : $walletLogo'); */
-
-                      /* final length =
-                          await _razorpay.getCardNetworkLength('VISA');
-                      print(length); */
-                    },
-                    child: Text('Pay With Cred (Collect FLow)'))
-              ],
-            )
-          ],
-        ),
+                  child: Text('Pay With Cred (Collect FLow)'))
+            ],
+          )
+        ],
       ),
     );
   }
@@ -601,23 +602,26 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 class PaymentTypeSelectionButton extends StatelessWidget {
   final String? paymentTitle;
   final VoidCallback? onPaymentTypeTap;
+  final bool isSelected;
 
   PaymentTypeSelectionButton({
+    Key? key,
     this.paymentTitle,
     this.onPaymentTypeTap,
-  });
+    required this.isSelected,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPaymentTypeTap,
-      child: Container(
-        decoration:
-            BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(paymentTitle ?? ''),
-        ),
+    return OutlinedButton(
+      onPressed: onPaymentTypeTap,
+      style: OutlinedButton.styleFrom(
+          side: BorderSide(
+        color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
+        width: isSelected ? 1.5 : 1.0,
+      )),
+      child: Text(
+        paymentTitle ?? '',
       ),
     );
   }
