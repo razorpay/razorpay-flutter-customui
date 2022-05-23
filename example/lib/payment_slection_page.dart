@@ -14,7 +14,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
   CardInfoModel? cardInfoModel;
-  String key = "rzp_live_cepk1crIu9VkJU";
+  String key = "rzp_test_1DP5mmOlF5G5ag";
   String? availableUpiApps;
   bool showUpiApps = false;
 
@@ -541,7 +541,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       "card[number]": cardInfoModel?.cardNumber,
                       "contact": cardInfoModel?.mobileNumber,
                       "currency": "INR",
-                      "display_logo": "0",
                       'email': cardInfoModel?.email,
                       'description': 'Fine T-Shirt',
                       "method": "card"
