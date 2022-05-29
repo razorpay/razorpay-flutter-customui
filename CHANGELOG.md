@@ -37,3 +37,7 @@
 
 - Added native dependency via cocoapods
 - Minor bug fixes
+
+## 1.3.1
+
+- Exposed method to get bank logo url for netbanking
