@@ -11,8 +11,9 @@ class CardInfoModel {
 class NetBankingModel {
   String? bankKey;
   String? bankName;
+  String? logoUrl;
 
-  NetBankingModel({this.bankKey, this.bankName});
+  NetBankingModel({this.bankKey, this.bankName, this.logoUrl});
 }
 
 class WalletModel {
