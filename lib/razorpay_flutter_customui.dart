@@ -59,6 +59,12 @@ class Razorpay {
     return walletLogoUrl;
   }
 
+  Future<String> getBankLogoUrl(String bankName) async {
+    final bankLogoUrl =
+        await _channel.invokeMethod('getBankLogoUrl', bankName);
+    return bankLogoUrl;
+  }
+
   Future<dynamic> getSubscriptionAmount(String subscriptionId) async {
     final dynamic subscriptionAmount =
         await _channel.invokeMethod('getSubscriptionAmount', subscriptionId);
@@ -81,6 +87,7 @@ class Razorpay {
     final dynamic isValidVpa = await _channel.invokeMethod('isValidVpa', vpa);
     return isValidVpa;
   }
+
 
   initilizeSDK(String key) {
     _channel.invokeMethod('initilizeSDK', key);
