@@ -541,7 +541,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       "card[number]": cardInfoModel?.cardNumber,
                       "contact": cardInfoModel?.mobileNumber,
                       "currency": "INR",
-                      "display_logo": "0",
                       'email': cardInfoModel?.email,
                       'description': 'Fine T-Shirt',
                       "method": "card"
@@ -567,8 +566,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         'provider': 'cred',
                         // 'callback_url': 'flutterCustomUI://'
                       };
-                      _razorpay.submit(options);
-
+                      // _razorpay.submit(options);
+                      // String logo = await _razorpay.getBankLogoUrl("UTIB");
+                      // print(logo);
                       /* final isvalidVpa = await _razorpay.isValidVpa('9663976539@upi');
                       print(isvalidVpa); */
 
