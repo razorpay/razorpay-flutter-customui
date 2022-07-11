@@ -59,7 +59,7 @@ class RazorpayDelegate: NSObject {
     public func getBankLogoUrl(value: String, result: @escaping FlutterResult) {
         self.pendingResult = result
         let bankLogo = self.razorpay?.getBankLogo(havingBankCode: value)
-        self.pendingResult(bankLogo)
+        self.pendingResult(bankLogo?.absoluteString)
     }
     
     public func getCardNetwork(value: String, result: @escaping FlutterResult) {
