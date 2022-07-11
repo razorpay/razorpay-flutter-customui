@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'razorpay_flutter_customui'
-  s.version          = '1.3.0'
+  s.version          = '1.3.1'
   s.summary          = 'Flutter plugin for Razorpay Custom SDK.'
   s.description      =  'Flutter plugin for Razorpay Custom SDK.'
   s.homepage         = 'http://example.com'
