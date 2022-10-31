@@ -46,3 +46,7 @@
 
 - getBankLogoUrl Bug Fix
 
+## 1.3.3
+
+- Removed JCenter from build.gradle for android due to Deprecation
+
