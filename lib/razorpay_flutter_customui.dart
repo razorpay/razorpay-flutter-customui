@@ -53,6 +53,12 @@ class Razorpay {
     return isCredAppPresent;
   }
 
+  Future<String> getBankLogoUrl(String bankCode) async {
+    final bankLogoUrl =
+    await _channel.invokeMethod('getBankLogoUrl', bankCode);
+    return bankLogoUrl;
+  }
+
   Future<String> getWalletLogoUrl(String walletName) async {
     final walletLogoUrl =
         await _channel.invokeMethod('getWalletLogoUrl', walletName);
