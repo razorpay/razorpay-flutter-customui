@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
@@ -15,7 +17,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   PaymentMethods selectedMethod = PaymentMethods.card;
   CardInfoModel? cardInfoModel;
   String key = "rzp_test_1DP5mmOlF5G5ag";
-  String? availableUpiApps;
+  String availableUpiApps ="";
   bool showUpiApps = false;
 
   //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
@@ -388,12 +390,19 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final upiApps = await _razorpay.getAppsWhichSupportUpi();
-              availableUpiApps = upiApps.toString();
+              final upiApps = await _razorpay.getAppsWhichSupportUpi() as List<dynamic>;
+              // availableUpiApps = upiApps.toString();
+              availableUpiApps = "";
               setState(() {
                 showUpiApps = true;
               });
-              print(upiApps);
+              var correctedList = <dynamic>[];
+              for (var i=0; i<upiApps.length; i++){
+                var map = upiApps[i] as Map<dynamic, dynamic>;
+                map.remove("appIconBase64");
+                correctedList.add(map);
+              }
+              availableUpiApps = correctedList.toString();
             },
             child: Text('Get All UPI Supported Apps'),
           ),
