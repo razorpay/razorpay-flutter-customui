@@ -33,6 +33,7 @@ import com.razorpay.ValidationListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,11 +127,16 @@ public class RazorpayDelegate implements ActivityResultListener {
         Razorpay.getAppsWhichSupportUpi(activity, new RzpUpiSupportedAppsCallback() {
             @Override
             public void onReceiveUpiSupportedApps(List<ApplicationDetails> list) {
-                HashMap<Object, Object> hMap = new HashMap<>();
+                List< HashMap<String, String>> itemList = new ArrayList<>();
+
                 for (int i=0;i<list.size();i++) {
-                    hMap.put(list.get(i).getPackageName(),list.get(i).getAppName());
+                    HashMap<String, String> appInfo = new HashMap<>();
+                    appInfo.put("appName", list.get(i).getAppName());
+                    appInfo.put("appPackageName", list.get(i).getPackageName());
+                    appInfo.put("appLogo", list.get(i).getAppLogoUrl());
+                    itemList.add(appInfo);
                 }
-                pendingResult.success(hMap);
+                pendingResult.success(itemList);
             }
         });
     }
