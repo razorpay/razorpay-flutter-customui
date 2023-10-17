@@ -2,19 +2,21 @@ package com.razorpay.flutter_customui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
 import com.razorpay.PaymentResultWithDataListener;
 import com.razorpay.Razorpay;
 import com.razorpay.PaymentData;
+import com.razorpay.upi.UpiAccount;
+
 import org.json.JSONObject;
 import android.content.Intent;
-import java.util.Map;
+
+import java.util.HashMap;
+
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.util.Log;
 
@@ -81,6 +83,20 @@ public class RazorpayPaymentActivity extends Activity implements PaymentResultWi
 
     private void sendRequest() {
         try {
+            if(payload.has(Constants.UPI_ACCOUNT)){
+                Log.d("RazorpayPaymentActivity", "payload "+payload);
+                String key  =  getAndRemoveKeyFromOptions(payload.getJSONObject("payload"));
+                razorpay.changeApiKey(key);
+                JSONObject newPayLoad =  payload.getJSONObject("payload");
+                newPayLoad.remove(Constants.KEY_ID);
+                UpiAccount upiAccount = RazorpayDelegate.getUpiAccount(payload.getString("upiAccount")) ;
+                HashMap<String, Object> payloadMap = new HashMap<>();
+                payloadMap.put("upiAccount", upiAccount);
+                payloadMap.put("payload", newPayLoad);
+                Log.d("RazorpayPaymentActivity", " payloadMap : "+ payloadMap +" "+ upiAccount.getAccountNumber());
+                razorpay.submit(payloadMap, RazorpayPaymentActivity.this);
+                return;
+            }
             razorpay.submit(payload, RazorpayPaymentActivity.this);
         } catch(Exception e) {
             Log.e(TAG, "Failed to submit.", e);
