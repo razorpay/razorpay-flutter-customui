@@ -11,10 +11,12 @@ import 'package:razorpay_flutter_customui/model/Error.dart';
 class GetLinkedUPIAccountPage extends StatelessWidget {
   final List<UpiAccount> upiAccounts;
   final Razorpay razorpay;
+  final String  keyValue;
 
   const GetLinkedUPIAccountPage({
     required this.upiAccounts,
     required this.razorpay,
+    required this.keyValue,
   });
 
   @override
@@ -49,7 +51,7 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                           onPressed: () {
 
                             Map<String, dynamic> payload = {
-                              "key":"rzp_test_0wFRWIZnH65uny",
+                              "key":keyValue,
                               "currency": "INR",
                               "amount": 100,
                               "contact": "8145628647",

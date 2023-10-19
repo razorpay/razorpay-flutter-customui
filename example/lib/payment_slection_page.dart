@@ -887,7 +887,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             MaterialPageRoute(
               builder: (builder) {
                 return GetLinkedUPIAccountPage(
-                    razorpay: _razorpay, upiAccounts: upiAccounts);
+                    razorpay: _razorpay, upiAccounts: upiAccounts ,
+                    keyValue : key);
               },
             ),
           );
