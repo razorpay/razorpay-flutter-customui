@@ -16,7 +16,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   CardInfoModel? cardInfoModel;
   String key = "rzp_test_1DP5mmOlF5G5ag";
   String? availableUpiApps;
+  String? availableUpiRecurringApps;
   bool showUpiApps = false;
+  bool showUpiRecurringApps = false;
 
   //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
   //rzp_live_6KzMg861N1GUS8  ---> Live Key
@@ -64,14 +66,16 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     super.initState();
   }
 
-  fetchAllPaymentMethods() {
-    _razorpay.getPaymentMethods().then((value) {
-      paymentMethods = value;
-      configureNetbanking();
-      configurePaymentWallets();
-    }).onError((error, stackTrace) {
-      print('Error Fetching payment methods: $error');
-    });
+  fetchAllPaymentMethods() async {
+    Map<dynamic, dynamic> paymentMethods = await _razorpay.getPaymentMethods();
+
+    // _razorpay.getPaymentMethods().then((value) {
+    //   paymentMethods = value;
+    //   configureNetbanking();
+    //   configurePaymentWallets();
+    // }).onError((error, stackTrace) {
+    //   print('Error Fetching payment methods: $error');
+    // });
   }
 
   configureNetbanking() {
@@ -401,6 +405,24 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             visible: showUpiApps,
             child: Flexible(
               child: Text(availableUpiApps ?? ''),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final upiApps =
+                  await _razorpay.getAppsWhichSupportAutoPayIntent();
+              availableUpiRecurringApps = upiApps.toString();
+              setState(() {
+                showUpiRecurringApps = true;
+              });
+              print(upiApps);
+            },
+            child: Text('Get All UPI Recurring Supported Apps'),
+          ),
+          Visibility(
+            visible: showUpiRecurringApps,
+            child: Flexible(
+              child: Text(availableUpiRecurringApps ?? ''),
             ),
           )
         ],

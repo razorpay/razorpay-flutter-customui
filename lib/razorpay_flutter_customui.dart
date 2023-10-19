@@ -41,6 +41,12 @@ class Razorpay {
     return paymentMethodsObj;
   }
 
+  Future<dynamic> getAppsWhichSupportAutoPayIntent() async {
+    final response =
+        await _channel.invokeMethod('getAppsWhichSupportAutoPayIntent');
+    return response;
+  }
+
   Future<String> getCardsNetwork(String cardNumber) async {
     final String cardNetwork =
         await _channel.invokeMethod('getCardNetwork', cardNumber);
@@ -60,8 +66,7 @@ class Razorpay {
   }
 
   Future<String> getBankLogoUrl(String bankName) async {
-    final bankLogoUrl =
-        await _channel.invokeMethod('getBankLogoUrl', bankName);
+    final bankLogoUrl = await _channel.invokeMethod('getBankLogoUrl', bankName);
     return bankLogoUrl;
   }
 
@@ -87,7 +92,6 @@ class Razorpay {
     final dynamic isValidVpa = await _channel.invokeMethod('isValidVpa', vpa);
     return isValidVpa;
   }
-
 
   initilizeSDK(String key) {
     _channel.invokeMethod('initilizeSDK', key);

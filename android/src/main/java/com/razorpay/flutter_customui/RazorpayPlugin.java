@@ -87,6 +87,10 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
         razorpayDelegate.getAppsWhichSupportUpi(result);
         break;
 
+      case "getAppsWhichSupportAutoPayIntent":
+        razorpayDelegate.getAppsWhichSupportAutoPayIntent(result);
+        break;  
+
       case "getSubscriptionAmount":
         razorpayDelegate.getSubscriptionAmount(call.arguments.toString(), result);
         break;

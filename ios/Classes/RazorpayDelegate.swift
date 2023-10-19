@@ -83,6 +83,11 @@ class RazorpayDelegate: NSObject {
             self?.pendingResult(supportedApps)
         })
     }
+
+    public func getAppsWhichSupportUpiRecurring(result: @escaping FlutterResult){
+        self.pendingResult = result
+        RazorpayCheckout.getAppsWhichSupportUpiRecurring(handler: { [weak self] supportedApps in self?.pendingResult(supportedApps)})
+    }
     
     public func isCredAppAvailable(result: @escaping FlutterResult) {
         self.pendingResult = result
