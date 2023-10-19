@@ -1,7 +1,7 @@
 PODS:
   - Flutter (1.0.0)
-  - razorpay-customui-pod (2.0.0)
-  - razorpay_flutter_customui (1.3.0):
+  - razorpay-customui-pod (2.0.6)
+  - razorpay_flutter_customui (1.3.2):
     - Flutter
     - razorpay-customui-pod
 
@@ -20,10 +20,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/razorpay_flutter_customui/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  razorpay-customui-pod: 9efe71a2db94a89cfc340081195da2ca4b12adf2
-  razorpay_flutter_customui: 0d9f7c78bea3ed3050aa0ccea09bde0f7a193e11
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  razorpay-customui-pod: 3a660addfac3b2c015a72de4c8c8c3bc2c16f851
+  razorpay_flutter_customui: d234a058e50df9e65680de75121caf11676d8a88
 
-PODFILE CHECKSUM: 19289cbe2df8fae542329939000c2ed5ab8628ad
+PODFILE CHECKSUM: 642e1262a59f7238a9b65ccfac5b00f35ff92053
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

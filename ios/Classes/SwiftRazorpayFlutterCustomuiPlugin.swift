@@ -40,7 +40,10 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             
         case "getAppsWhichSupportUpi":
             razorpayDelegate.getAppsWhichSupportUpi(result: result)
-            
+        
+        case "getAppsWhichSupportAutoPayIntent":
+            razorpayDelegate.getAppsWhichSupportUpiRecurring(result: result)
+
         case "getSubscriptionAmount":
             if let value = call.arguments as? String {
                 razorpayDelegate.getSubscriptionAmount(subscriptionId: value, result: result)

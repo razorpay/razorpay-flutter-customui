@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.platform = :ios, '10.0'
+  s.platform = :ios, '11.0'
 
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
   s.dependency 'razorpay-customui-pod'

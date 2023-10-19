@@ -135,6 +135,20 @@ public class RazorpayDelegate implements ActivityResultListener {
         });
     }
 
+    void getAppsWhichSupportAutoPayIntent(Result result){
+        this.pendingResult = result;
+        Razorpay.getAppsWhichSupportAutoPayIntent(activity, new RzpUpiSupportedAppsCallback() {
+            @Override
+            public void onReceiveUpiSupportedApps(List<ApplicationDetails> list) {
+                HashMap<Object, Object> hMap = new HashMap<>();
+                for (int i=0;i<list.size();i++) {
+                    hMap.put(list.get(i).getPackageName(),list.get(i).getAppName());
+                }
+                pendingResult.success(hMap);
+            }
+        });
+    }
+
     void getSubscriptionAmount(String value, Result result) {
         this.pendingResult = result;
         razorpay.getSubscriptionAmount(value, new SubscriptionAmountCallback() {
