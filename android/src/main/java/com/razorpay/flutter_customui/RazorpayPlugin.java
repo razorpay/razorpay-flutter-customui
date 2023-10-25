@@ -3,18 +3,12 @@ package com.razorpay.flutter_customui;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Map;
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -28,7 +22,7 @@ import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** RazorpayFlutterCustomuiPlugin */
-@SuppressLint("LongLogTag")
+
 public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, ActivityAware , EventChannel.StreamHandler  {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
@@ -146,35 +140,29 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
         break;
       case "getBalance":
         upiAccountStr = call.arguments.toString();
-        Log.d(TAG, "getBalance - upiAccountStr :"+ upiAccountStr);
         razorpayDelegate.getBalance( razorpayDelegate.getUpiAccount(upiAccountStr), result , this.eventSink);
         break;
       case "changeUpiPin":
         upiAccountStr = call.arguments.toString();
-        Log.d(TAG, "changeUpiPin - upiAccountStr :"+ upiAccountStr);
         razorpayDelegate.changeUpiPin( razorpayDelegate.getUpiAccount(upiAccountStr), result , this.eventSink);
         break;
       case "resetUpiPin":
         _arguments = call.arguments();
         upiAccountStr = (String) _arguments.get("upiAccount");
         cardStr =  (String) _arguments.get("card");
-        Log.d(TAG, "resetUpiPin - upiAccountStr :"+ upiAccountStr + " cardStr "+ cardStr);
         razorpayDelegate.resetUpiPin( razorpayDelegate.getUpiAccount(upiAccountStr) , razorpayDelegate.getCard(cardStr) ,
                 result , this.eventSink);
         break;
       case "delink":
         upiAccountStr = call.arguments.toString();
-        Log.d(TAG, "delink - upiAccountStr :"+ upiAccountStr);
         razorpayDelegate.delink( razorpayDelegate.getUpiAccount(upiAccountStr), result , this.eventSink);
         break;
       case "selectedBankAccount":
         String bankAccountStr = call.arguments.toString();
-        Log.d(TAG, "bankAccountStr :"+ bankAccountStr );
         razorpayDelegate.selectedBankAccount(razorpayDelegate.getBankAccount(bankAccountStr) ,result , this.eventSink);
         break;
       case "setUpUPIPin":
          cardStr = call.arguments.toString();
-         Log.d(TAG, "cardStr :"+ cardStr);
          razorpayDelegate.setupUpiPin(razorpayDelegate.getCard(cardStr) ,result , this.eventSink);
          break;
       case "isTurboPluginAvailable":
@@ -221,7 +209,6 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
     permissionResultListener = new PluginRegistry.RequestPermissionsResultListener() {
       @Override
       public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.d(TAG , "onRequestPermissionsResult() requestCode "+ requestCode);
         razorpayDelegate.handlePermissionResult(requestCode, permissions, grantResults);
         return false;
       }
@@ -251,13 +238,11 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
 
   @Override
   public void onListen(Object arguments, EventChannel.EventSink events) {
-    Log.d(TAG, "onListen()");
     this.eventSink = events;
   }
 
   @Override
   public void onCancel(Object arguments) {
-    Log.d(TAG, "onCancel()]");
     this.eventSink = null;
   }
 

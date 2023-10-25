@@ -25,7 +25,6 @@ class Tpv {
 
   void _checkTurboPluginAvailable() async {
     final Map<dynamic, dynamic> turboPluginAvailableResponse = await _channel?.invokeMethod('isTurboPluginAvailable');
-    print("turboPluginAvailableResponse :  ${turboPluginAvailableResponse}");
     _isTurboPluginAvailable = turboPluginAvailableResponse["isTurboPluginAvailable"];
   }
 
@@ -63,7 +62,6 @@ class Tpv {
         "tpvBankAccount": _getTpvBankAccountStr(this.tpvBankAccount)
       };
 
-      print("linkNewUpiAccount() linkNewUpiAccountTPVInput : $linkNewUpiAccountTPVInput ");
       await this._channel?.invokeMethod('linkNewUpiAccountTPV' , linkNewUpiAccountTPVInput);
   }
 

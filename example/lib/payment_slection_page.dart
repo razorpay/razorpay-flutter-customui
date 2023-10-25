@@ -28,7 +28,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
   CardInfoModel? cardInfoModel;
-  String key = "rzp_test_5sHeuuremkiApj";
+  String key = "rzp_test_5sHeuuremkiApj"; //    //rzp_test_0wFRWIZnH65uny
 
   String? availableUpiApps;
   bool showUpiApps = false;
@@ -49,6 +49,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   Map<String, dynamic>? commonPaymentOptions;
   TextEditingController _controllerMerchantKey = new TextEditingController();
   TextEditingController _controllerHandle = new TextEditingController();
+  TextEditingController _controllerMobile = new TextEditingController();
 
   final int _CODE_EVENT_SUCCESS = 200;
   final int _CODE_EVENT_ERROR = 201;
@@ -56,6 +57,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   // For Turbo UPI
   String turboUpiHandle = 'axisbank';
+  String mobileNo = "";
 
   @override
   void initState() {
@@ -101,6 +103,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     _controllerHandle.text = turboUpiHandle;
     turboUPIModel?.merchantKey = key;
     turboUPIModel?.handle = turboUpiHandle ;
+    _controllerMobile.text = mobileNo;
+    turboUPIModel?.mobileNumber = mobileNo;
+
   }
 
   fetchAllPaymentMethods() {
@@ -481,6 +486,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           SizedBox(height: 16.0),
           Flexible(
             child: TextField(
+              controller: _controllerMobile ,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.start,
               decoration: InputDecoration(
@@ -879,9 +885,11 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
 
   void getLinkedUpiAccounts() {
+    print("getLinkedUpiAccounts()");
     _razorpay.upiTurbo.getLinkedUpiAccounts(
         customerMobile: turboUPIModel?.mobileNumber,
         onSuccess: (List<UpiAccount> upiAccounts){
+          print("onSuccess() upiAccounts");
           Navigator.push(
             context,
             MaterialPageRoute(

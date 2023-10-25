@@ -174,7 +174,6 @@ class Razorpay  {
     _eventEmitter.emit(eventName, null, payload);
   }
 
-
   /// Registers event listeners for payment events
   void on(String event, Function handler) {
     EventCallback cb = (event, cont) {
@@ -215,8 +214,6 @@ class Razorpay  {
     }
     return {'success': true};
   }
-
-
 }
 
 class PaymentSuccessResponse {

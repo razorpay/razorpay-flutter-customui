@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter_customui/model/account_balance.dart';
 import 'package:razorpay_flutter_customui/model/empty.dart';

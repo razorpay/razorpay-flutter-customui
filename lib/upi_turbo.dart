@@ -39,7 +39,6 @@ class UpiTurbo {
 
   void _checkTurboPluginAvailable() async {
     final Map<dynamic, dynamic> turboPluginAvailableResponse = await _channel.invokeMethod('isTurboPluginAvailable');
-    print("turboPluginAvailableResponse :  ${turboPluginAvailableResponse}");
     _isTurboPluginAvailable = turboPluginAvailableResponse["isTurboPluginAvailable"];
   }
 
@@ -52,8 +51,6 @@ class UpiTurbo {
   }
 
   void _onEvent(dynamic event) {
-    print("_onEvent ${event} ");
-
     if (event["type"] == _CODE_EVENT_ERROR) {
        event["error"] = _getError(errorResponse: event["error"]);
        _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
@@ -79,7 +76,6 @@ class UpiTurbo {
   }
 
   void _onError(dynamic event) {
-    print("_onError ${event.toString()}");
   }
 
   /*
@@ -91,7 +87,6 @@ class UpiTurbo {
       _emitError();
       return;
     }
-
     await _channel.invokeMethod('linkNewUpiAccount' , customerMobile);
   }
 
@@ -135,46 +130,39 @@ class UpiTurbo {
     await _channel.invokeMethod('askForPermission');
   }
 
-
-
   /*
       Non-transactional Flow Turbo UPI
    */
   void getLinkedUpiAccounts({required String? customerMobile, required OnSuccess<List<UpiAccount>> onSuccess,
     required OnFailure<Error> onFailure} ) async {
       try {
-
         if(!_isTurboPluginAvailable){
           _emitFailure(onFailure);
           return;
         }
-
         final Map<dynamic, dynamic> getLinkedUpiAccountsResponse = await _channel.invokeMethod('getLinkedUpiAccounts', customerMobile);
-        print("getLinkedUpiAccounts response : ${getLinkedUpiAccountsResponse} ");
         if(getLinkedUpiAccountsResponse["data"]!=""){
           onSuccess(_getUpiAccounts(getLinkedUpiAccountsResponse["data"]));
+        }else {
+          onFailure(Error(errorCode:"" , errorDescription: "No Account Found"));
         }
-
       } on PlatformException catch (error) {
-        print("PlatformException :  ${error}");
         onFailure(Error(errorCode:error.code , errorDescription: error.message!));
       }
   }
 
   void getBalance({required UpiAccount upiAccount , required OnSuccess<AccountBalance> onSuccess,
       required OnFailure<Error> onFailure}) async {
-    try {
+      try {
          if(!_isTurboPluginAvailable){
           _emitFailure(onFailure);
           return;
          }
          final Map<dynamic, dynamic> getBalanceResponse = await _channel.invokeMethod('getBalance' , _getUpiAccountStr(upiAccount));
-         print("getBalanceResponse ${getBalanceResponse}");
          onSuccess(AccountBalance.fromJson(jsonDecode(getBalanceResponse["data"])));
-    } on PlatformException catch (error) {
-      print("PlatformException :  ${error}");
-      onFailure(Error(errorCode:error.code , errorDescription: error.message!));
-    }
+      } on PlatformException catch (error) {
+        onFailure(Error(errorCode:error.code , errorDescription: error.message!));
+      }
   }
 
   void changeUpiPin({ required UpiAccount upiAccount, required OnSuccess<UpiAccount> onSuccess,
@@ -185,12 +173,10 @@ class UpiTurbo {
         return;
       }
       final Map<dynamic, dynamic> changeUpiPinResponse = await _channel.invokeMethod('changeUpiPin' , _getUpiAccountStr(upiAccount));
-      print("changeUpiPinResponse response : ${changeUpiPinResponse} ");
       if(changeUpiPinResponse["data"]!=""){
         onSuccess(_getUpiAccount(changeUpiPinResponse["data"]));
       }
     } on PlatformException catch (error) {
-        print("PlatformException :  ${error}");
         onFailure(Error(errorCode:error.code , errorDescription: error.message!));
     }
   }
@@ -208,12 +194,10 @@ class UpiTurbo {
         };
 
         final Map<dynamic, dynamic> resetUpiPinResponse = await _channel.invokeMethod('resetUpiPin' , resetUpiPinInput);
-        print("resetUpiPinResponse response : ${resetUpiPinResponse} ");
         if(resetUpiPinResponse["data"]!=""){
           onSuccess(_getUpiAccount(resetUpiPinResponse["data"]));
         }
     } on PlatformException catch (error) {
-      print("PlatformException :  ${error}");
       onFailure(Error(errorCode:error.code , errorDescription: error.message!));
     }
   }
@@ -226,26 +210,21 @@ class UpiTurbo {
            return;
          }
         final Map<dynamic, dynamic> delinkResponse =  await _channel.invokeMethod('delink' , _getUpiAccountStr(upiAccount));
-        print("delinkResponse response : ${delinkResponse} ");
         var empty = Empty();
         onSuccess(empty);
      } on PlatformException catch (error) {
-       print("PlatformException :  ${error}");
        onFailure(Error(errorCode:error.code , errorDescription: error.message!));
      }
   }
 
 
   UpiAccount _getUpiAccount(jsonString) {
-    print("getUpiAccount() jsonString : ${jsonString}");
     var upiAccountMap =  json.decode(jsonString);
-    print("getUpiAccount() upiAccountMap : ${upiAccountMap}");
     UpiAccount upiAccount = UpiAccount.fromJson(upiAccountMap);
     return upiAccount;
   }
 
   List<UpiAccount> _getUpiAccounts(jsonString) {
-    print("getUpiAccounts() jsonString : ${jsonString}");
     if (jsonString.toString().isEmpty){
       return <UpiAccount>[];
     }

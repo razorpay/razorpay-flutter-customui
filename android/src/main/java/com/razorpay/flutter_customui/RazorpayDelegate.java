@@ -2,13 +2,11 @@ package com.razorpay.flutter_customui;
 
 
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.google.gson.Gson;
@@ -18,12 +16,9 @@ import com.razorpay.PaymentMethodsCallback;
 import com.razorpay.Razorpay;
 import com.razorpay.RzpUpiSupportedAppsCallback;
 import com.razorpay.SubscriptionAmountCallback;
-import com.razorpay.UpiTurbo;
 import com.razorpay.UpiTurboLinkAccountListener;
 import com.razorpay.UpiTurboLinkAction;
 import com.razorpay.UpiTurboResultListener;
-import com.razorpay.UpiTurboTpvLinkAccountListener;
-import com.razorpay.UpiTurboTpvLinkAction;
 import com.razorpay.ValidateVpaCallback;
 import com.razorpay.upi.AccountBalance;
 import com.razorpay.upi.Bank;
@@ -44,7 +39,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 import static com.razorpay.flutter_customui.Constants.PAYMENT_DATA;
 
-@SuppressLint("LongLogTag")
 public class RazorpayDelegate implements ActivityResultListener  {
     private Activity activity;
     private Result pendingResult;
@@ -211,45 +205,6 @@ public class RazorpayDelegate implements ActivityResultListener  {
         razorpay.setPaymentID(value);
     }
 
-
-
-    /*@Override
-    public void onPaymentError(int code, String message, PaymentData paymentData) {
-        Map<String, Object> reply = new HashMap<>();
-        reply.put("type", CODE_PAYMENT_ERROR);
-
-        Map<String, Object> data = new HashMap<>();
-        //data.put("code", translateRzpPaymentError(code));
-        data.put("message", message);
-
-        reply.put("data", data);
-
-        sendReply(reply);
-    }
-
-    @Override
-    public void onPaymentSuccess(String paymentId, PaymentData paymentData) {
-        Map<String, Object> reply = new HashMap<>();
-        reply.put("type", CODE_PAYMENT_SUCCESS);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("razorpay_payment_id", paymentData.getPaymentId());
-        data.put("razorpay_order_id", paymentData.getOrderId());
-        data.put("razorpay_signature", paymentData.getSignature());
-
-        if (paymentData.getData().has("razorpay_subscription_id")) {
-            try {
-                data.put("razorpay_subscription_id", paymentData.getData().optString("razorpay_subscription_id"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        reply.put("data", data);
-        sendReply(reply);
-    }*/
-
     public void onPaymentSuccess(String razorpayPaymentId, JSONObject paymentData) {
         try {
             HashMap<Object, Object> reply = new HashMap<>();
@@ -352,7 +307,6 @@ public class RazorpayDelegate implements ActivityResultListener  {
     }
 
     private void requestPermissionsManually(String[] permissionArray) {
-        Log.d(TAG,"requestPermissionsManually()");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             activity.requestPermissions(permissionArray, 4001);
         }
@@ -406,14 +360,11 @@ public class RazorpayDelegate implements ActivityResultListener  {
         return this.gson.fromJson(bankAccountStr, listType);
     }
 
-
-
     /*
        Non-transactional Flow Turbo UPI
      */
 
     void getLinkedUpiAccounts(String mobileNumber, Result result, EventChannel.EventSink eventSink){
-        Log.d(TAG, "getLinkedUpiAccounts()");
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object> reply = new HashMap<>();
@@ -436,36 +387,30 @@ public class RazorpayDelegate implements ActivityResultListener  {
     }
 
     public void getBalance(UpiAccount upiAccount , Result result, EventChannel.EventSink eventSink){
-        Log.d(TAG, "getBalance() "+ upiAccount.getAccountNumber());
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object>  reply = getNonTransactionalReply();
         razorpay.upiTurbo.getBalance(upiAccount, new com.razorpay.upi.Callback<AccountBalance>() {
             @Override
             public void onSuccess(AccountBalance accountBalance) {
-                Log.d(TAG, "getBalance() "+ accountBalance.getBalance());
                 reply.put("data", toJsonString(accountBalance));
                 sendReply(reply);
-                //onEventSuccess(reply);
             }
 
             @Override
             public void onFailure(@NonNull Error error) {
                 pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
-                // onEventError(reply, error.getErrorDescription());
             }
         });
     }
 
     public void changeUpiPin(UpiAccount upiAccount, Result result, EventChannel.EventSink eventSink){
-        Log.d(TAG, "changeUpiPin() "+ upiAccount.getAccountNumber());
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object>  reply = getNonTransactionalReply();
         razorpay.upiTurbo.changeUpiPin(upiAccount, new com.razorpay.upi.Callback<UpiAccount>() {
             @Override
             public void onSuccess(UpiAccount upiAccount) {
-                Log.d(TAG, "changeUpiPin() "+ upiAccount.getAccountNumber());
                 reply.put("data", toJsonString(upiAccount));
                 sendReply(reply);
             }
@@ -478,14 +423,12 @@ public class RazorpayDelegate implements ActivityResultListener  {
     }
 
     public void resetUpiPin(UpiAccount upiAccount, Card card , Result result, EventChannel.EventSink eventSink){
-        Log.d(TAG, "resetUpiPin() "+ upiAccount.getAccountNumber());
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object>  reply = getNonTransactionalReply();
         razorpay.upiTurbo.resetUpiPin(card, upiAccount, new com.razorpay.upi.Callback<UpiAccount>() {
             @Override
             public void onSuccess(UpiAccount upiAccount) {
-                Log.d(TAG, "resetUpiPin() "+ upiAccount.getAccountNumber());
                 reply.put("data", toJsonString(upiAccount));
                 sendReply(reply);
             }
@@ -498,7 +441,6 @@ public class RazorpayDelegate implements ActivityResultListener  {
     }
 
     public void delink(UpiAccount upiAccount , Result result, EventChannel.EventSink eventSink){
-        Log.d(TAG, "delink() "+ upiAccount.getAccountNumber());
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object>  reply = getNonTransactionalReply();
@@ -531,104 +473,47 @@ public class RazorpayDelegate implements ActivityResultListener  {
         return reply;
     }
 
-
-
     public void onUpiTurboResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
         HashMap<Object, Object> reply = new HashMap<>();
         this.linkAction = upiTurboLinkAction;
         reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_EVENT);
         reply.put("action", upiTurboLinkAction.name());
+        if (upiTurboLinkAction.getError() != null) {
+            onEventError(reply, this.gson.toJson(upiTurboLinkAction.getError()));
+            return;
+        }
         switch (upiTurboLinkAction) {
             case ASK_FOR_PERMISSION:
-                Log.d(TAG, "onResponse() ASK_FOR_PERMISSION" );
-                if (upiTurboLinkAction.getError() != null) {
-                    Log.d(TAG, "ASK_FOR_PERMISSION Error :  "+ upiTurboLinkAction.getError().getErrorDescription() );
-                    onEventError(reply, this.gson.toJson(upiTurboLinkAction.getError()));
-                    return;
-                }
                 /*
                    Callback is not coming from upiTurboLinkAction.requestPermission(); .
                    Created manual function for ask permission adn handle it by PluginRegistry.RequestPermissionsResultListener()
                 */
-
-               /* Object data = upiTurboLinkAction.getData();
-                if (data instanceof String[]) {
-                    String[] permissionArray = (String[]) data;
-                    requestPermissionsManually(permissionArray);
-                }*/
                 reply.put("data", "");
                 onEventSuccess(reply);
                 break;
             case SHOW_PERMISSION_ERROR:
-                Log.d(TAG, "onResponse() SHOW_PERMISSION_ERROR" );
-                if (upiTurboLinkAction.getError() != null) {
-                    Log.d(TAG, "SHOW_PERMISSION_ERROR Error :  "+ upiTurboLinkAction.getError().getErrorDescription() );
-                    onEventError(reply, this.gson.toJson(upiTurboLinkAction.getError()));
-                    return;
-                }
                 break;
             case SELECT_SIM:
-                Log.d(TAG, "onResponse() SELECT_SIM" );
-                if (upiTurboLinkAction.getError() != null) {
-                    Log.d(TAG, "SELECT_SIM Error :  "+ upiTurboLinkAction.getError().getErrorDescription() );
-                    String errorStr =  this.gson.toJson(upiTurboLinkAction.getError());
-                    Log.d(TAG," ERROR SELECT_BANK_ACCOUNT errorStr : "+errorStr);
-                    onEventError(reply , this.gson.toJson(upiTurboLinkAction.getError()));
-                    return;
-                }
-
-                String simStr = toJsonString(upiTurboLinkAction.getData());
-                reply.put("data", simStr);
-                Log.d(TAG, "Sending response back to SELECT_SIM data :  "+ simStr );
+                reply.put("data", toJsonString(upiTurboLinkAction.getData()));
                 onEventSuccess(reply);
                 break;
             case SELECT_BANK:
-                if (upiTurboLinkAction.getError() != null) {
-                    Log.d(TAG, "SELECT_BANK Error :  "+ upiTurboLinkAction.getError().getErrorDescription() );
-                    onEventError(reply, this.gson.toJson(upiTurboLinkAction.getError()));
-                    return;
-                }
-
-                String bankStr = toJsonString(upiTurboLinkAction.getData());
-                reply.put("data", bankStr);
-                Log.d(TAG, "Sending response back to SELECT_BANK data :  "+ bankStr );
+                reply.put("data", toJsonString(upiTurboLinkAction.getData()));
                 onEventSuccess(reply);
                 break;
             case SELECT_BANK_ACCOUNT:
-                if (upiTurboLinkAction.getError() != null) {
-                    Log.d(TAG, "SELECT_BANK_ACCOUNT Error :  "+ upiTurboLinkAction.getError().getErrorDescription() );
-                    onEventError(reply, this.gson.toJson(upiTurboLinkAction.getError()));
-                    return;
-                }
-
-                String bankAccountStr = toJsonString(upiTurboLinkAction.getData());
-                reply.put("data", bankAccountStr);
-                Log.d(TAG, "Sending response back to SELECT_BANK_ACCOUNT data :  "+ bankAccountStr );
+                reply.put("data", toJsonString(upiTurboLinkAction.getData()));
                 onEventSuccess(reply);
                 break;
             case SETUP_UPI_PIN:
-                Log.d(TAG, "onResponse() SETUP_UPI_PIN" );
-                if (upiTurboLinkAction.getError() != null) {
-                    Log.d(TAG, "SETUP_UPI_PIN Error :  "+ upiTurboLinkAction.getError().getErrorDescription() );
-                    onEventError(reply, this.gson.toJson(upiTurboLinkAction.getError()));
-                    return;
-                }
                 reply.put("data", "SETUP_UPI_PIN");
                 onEventSuccess(reply);
                 break;
             case STATUS:
-                Log.d(TAG, "onResponse() STATUS ");
-                if (upiTurboLinkAction.getError() != null) {
-                    Log.d(TAG, "STATUS Error :  "+ upiTurboLinkAction.getError().getErrorDescription() );
-                    onEventError(reply , this.gson.toJson(upiTurboLinkAction.getError()));
-                    return;
-                }
-                Log.d(TAG, "onResponse() STATUS Data : "+upiTurboLinkAction.getData() );
                 reply.put("data",  toJsonString(upiTurboLinkAction.getData()));
                 onEventSuccess(reply);
                 break;
             case LOADER_DATA:
-                Log.d(TAG, "onResponse() LOADER_DATA" );
                 reply.put("data", "");
                 onEventSuccess(reply);
                 break;
@@ -642,7 +527,6 @@ public class RazorpayDelegate implements ActivityResultListener  {
                 RazorpayDelegate.this.eventSink.success(reply);
             }
         });
-
     }
 
     public void onEventSuccess(HashMap<Object, Object> reply) {
@@ -664,13 +548,11 @@ public class RazorpayDelegate implements ActivityResultListener  {
         razorpay.upiTurbo.onPermissionsRequestResult();
     }
 
-
     public  boolean isTurboPluginAvailable(Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object> reply = new HashMap<>();
         try {
-
             Class.forName("com.razorpay.RzpTurboExternalPlugin");
             Class.forName("com.razorpay.UpiTurboLinkAccountListener");
             reply.put("isTurboPluginAvailable", true);
@@ -690,11 +572,8 @@ public class RazorpayDelegate implements ActivityResultListener  {
 
     public void linkNewUpiAccount(String customerMobile, String customerId, String  orderId , String tpvBankAccountStr , Result result,
                                      EventChannel.EventSink eventSink){
-        Log.d(TAG,"TPV linkNewUpiAccount() customerId : "+customerId +" orderId : "+orderId
-                +" tpvBankAccountStr : "+ tpvBankAccountStr);
         this.pendingResult = result;
         this.eventSink = eventSink;
-
         razorpay.upiTurbo.getTPV()
                 .setOrderId(orderId)
                 .setCustomerMobile(customerMobile)
@@ -706,8 +585,6 @@ public class RazorpayDelegate implements ActivityResultListener  {
                         onUpiTurboResponse(upiTurboLinkAction);
                     }
                 });
-
-
     }
 
     public TPVBankAccount getTPVBankAccount(String tPVBankAccountStr){
@@ -717,5 +594,4 @@ public class RazorpayDelegate implements ActivityResultListener  {
         Type listType = new TypeToken<TPVBankAccount>() {}.getType();
         return new Gson().fromJson(tPVBankAccountStr, listType);
     }
-
 }

@@ -84,7 +84,6 @@ public class RazorpayPaymentActivity extends Activity implements PaymentResultWi
     private void sendRequest() {
         try {
             if(payload.has(Constants.UPI_ACCOUNT)){
-                Log.d("RazorpayPaymentActivity", "payload "+payload);
                 String key  =  getAndRemoveKeyFromOptions(payload.getJSONObject("payload"));
                 razorpay.changeApiKey(key);
                 JSONObject newPayLoad =  payload.getJSONObject("payload");
@@ -93,7 +92,6 @@ public class RazorpayPaymentActivity extends Activity implements PaymentResultWi
                 HashMap<String, Object> payloadMap = new HashMap<>();
                 payloadMap.put("upiAccount", upiAccount);
                 payloadMap.put("payload", newPayLoad);
-                Log.d("RazorpayPaymentActivity", " payloadMap : "+ payloadMap +" "+ upiAccount.getAccountNumber());
                 razorpay.submit(payloadMap, RazorpayPaymentActivity.this);
                 return;
             }

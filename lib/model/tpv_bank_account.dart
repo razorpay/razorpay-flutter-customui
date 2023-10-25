@@ -1,25 +1,25 @@
 class TPVBankAccount {
 
-  String? accountNumber;
+  String? account_number;
   String? ifsc;
-  String? bankName;
+  String? bank_name;
 
   TPVBankAccount({
-    this.accountNumber,
+    this.account_number,
     this.ifsc,
-    this.bankName,
+    this.bank_name,
 
   });
 
   factory TPVBankAccount.fromJson(Map<String, dynamic> json) => TPVBankAccount(
-    accountNumber: json['accountNumber'],
+    account_number: json['account_number'],
     ifsc: json['ifsc'],
-    bankName: json['bankName'],
+    bank_name: json['bank_name'],
   );
 
   Map<String, dynamic> toJson() => {
-    'accountNumber': accountNumber,
+    'account_number': account_number,
     'ifsc': ifsc,
-    'bankName': bankName,
+    'bank_name': bank_name,
   };
 }

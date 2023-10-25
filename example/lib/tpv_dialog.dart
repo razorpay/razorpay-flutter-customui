@@ -14,16 +14,32 @@ class TpvDialog extends StatefulWidget {
 
 class _TpvDialogState extends State<TpvDialog> {
   String? orderId;
-
   String? accountNumber="";
-
   String? ifsc="";
-
   String? bankName="";
-
-  String? customerId;
+  String? customerId="";
 
   bool isLoading = false;
+
+  TextEditingController _controllerOrderId = new TextEditingController();
+  TextEditingController _controllerCustomerId = new TextEditingController();
+  TextEditingController _controllerAccountNumber = new TextEditingController();
+  TextEditingController _controllerIFSC = new TextEditingController();
+  TextEditingController _controllerBankName = new TextEditingController();
+
+  @override
+  void initState() {
+    initValueForTurboUPI();
+    super.initState();
+  }
+
+  void initValueForTurboUPI(){
+    _controllerOrderId.text = "";
+    _controllerCustomerId.text = customerId!;
+    _controllerAccountNumber.text = accountNumber!;
+    _controllerIFSC.text = ifsc!;
+    _controllerBankName.text = bankName!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +58,7 @@ class _TpvDialogState extends State<TpvDialog> {
             SizedBox(height: 20,),
             Flexible(
               child: TextField(
+                controller: _controllerCustomerId,
                 keyboardType: TextInputType.text,
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
@@ -53,6 +70,7 @@ class _TpvDialogState extends State<TpvDialog> {
             ),
             Flexible(
               child: TextField(
+                controller: _controllerOrderId,
                 keyboardType: TextInputType.text,
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
@@ -65,6 +83,7 @@ class _TpvDialogState extends State<TpvDialog> {
             SizedBox(height: 20,),
             Flexible(
               child: TextField(
+                controller: _controllerAccountNumber,
                 keyboardType: TextInputType.text,
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
@@ -77,6 +96,7 @@ class _TpvDialogState extends State<TpvDialog> {
             SizedBox(height: 20,),
             Flexible(
               child: TextField(
+                controller: _controllerIFSC,
                 keyboardType: TextInputType.text,
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
@@ -89,6 +109,7 @@ class _TpvDialogState extends State<TpvDialog> {
             SizedBox(height: 20,),
             Flexible(
               child: TextField(
+                controller: _controllerBankName,
                 keyboardType: TextInputType.text,
                 textAlign: TextAlign.start,
                 decoration: InputDecoration(
@@ -109,7 +130,7 @@ class _TpvDialogState extends State<TpvDialog> {
             ElevatedButton(onPressed: () {
               var tpvBankAccount = null;
               if(accountNumber!.isNotEmpty && bankName!.isNotEmpty && ifsc!.isNotEmpty){
-                tpvBankAccount = TPVBankAccount(accountNumber: accountNumber, bankName:bankName , ifsc: ifsc );
+                tpvBankAccount = TPVBankAccount(account_number: accountNumber, bank_name:bankName , ifsc: ifsc );
               }
               widget.razorpay.tpv
                     .setOrderId(orderId)
