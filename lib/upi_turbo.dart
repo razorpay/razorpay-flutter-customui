@@ -217,6 +217,48 @@ class UpiTurbo {
      }
   }
 
+    /*
+     UPI Turbo with custom UI
+   */
+
+  void linkNewUpiAccountWithUI({required String? customerMobile, required String? color , required OnSuccess<List<UpiAccount>> onSuccess,
+    required OnFailure<Error> onFailure} ) async {
+    try {
+
+      if(!_isTurboPluginAvailable){
+        _emitFailure(onFailure);
+        return;
+      }
+
+      var requestLinkNewUpiAccountWithUI =  <String, dynamic>{
+        "customerMobile": customerMobile,
+        "color": color
+      };
+
+      final Map<dynamic, dynamic> getLinkedUpiAccountsResponse = await _channel.invokeMethod('linkNewUpiAccountWithUI', requestLinkNewUpiAccountWithUI);
+      if(getLinkedUpiAccountsResponse["data"]!=""){
+        onSuccess(_getUpiAccounts(getLinkedUpiAccountsResponse["data"]));
+      }else {
+        onFailure(Error(errorCode:"" , errorDescription: "No Account Found"));
+      }
+
+    } on PlatformException catch (error) {
+      onFailure(Error(errorCode:error.code , errorDescription: error.message!));
+    }
+  }
+
+  void manageUpiAccounts({required String? customerMobile, required OnFailure<Error> onFailure} ) async {
+    try {
+      if(!_isTurboPluginAvailable){
+        _emitFailure(onFailure);
+        return;
+      }
+      await _channel.invokeMethod('manageUpiAccounts', customerMobile);
+    } on PlatformException catch (error) {
+      onFailure(Error(errorCode:error.code , errorDescription: error.message!));
+    }
+  }
+
 
   UpiAccount _getUpiAccount(jsonString) {
     var upiAccountMap =  json.decode(jsonString);

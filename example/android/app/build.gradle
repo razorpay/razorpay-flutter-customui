@@ -43,11 +43,17 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    buildFeatures {
+        buildConfig = false
+        dataBinding true
+        viewBinding true
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/TPV/TurboLib/')
-    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/TPV/CustomUILib/')
+    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/TurboLib/')
+    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/CustomUILib/')
     //implementation 'com.razorpay:customui:3.9.+'
 }
 

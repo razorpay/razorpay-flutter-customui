@@ -180,6 +180,18 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
         razorpayDelegate.linkNewUpiAccount(customerMobile, customerId, orderId , tpvBankAccount , result , this.eventSink);
         break;
 
+      case "linkNewUpiAccountWithUI":
+        _arguments = call.arguments();
+        customerMobile = (String) _arguments.get("customerMobile");
+        String color = (String) _arguments.get("color");
+        razorpayDelegate.linkNewUpiAccountWithUI(customerMobile, color , result , this.eventSink);
+        break;
+
+      case "manageUpiAccounts":
+        customerMobile = call.arguments.toString();
+        razorpayDelegate.manageUpiAccounts(customerMobile, result , this.eventSink);
+        break;
+
       default:
         Log.d(TAG,"no method");
     }
