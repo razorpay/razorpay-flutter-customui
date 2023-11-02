@@ -386,18 +386,12 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       'key': key,
                       'amount': '20000',
                       'currency': 'INR',
-                      'email': 'epay.bypass@motilaloswal.com',
+                      'email': 'test@gmail.com',
                       'contact': '9999999999',
                       'method': 'upi',
                       '_[flow]': 'collect',
-                      'vpa': '9663976539@ybl',
-                      'order_id': 'order_LZHrpAwS837e3g',
-                      'notes': {
-                        'client_code': 'T0102815',
-                        'PayRefNo': 'ft_1f3ff8a3c72750',
-                        'ClientName': 'XYX',
-                        'Segment': 'Cash'
-                      }
+                      'vpa': '9999999999@ybl',
+                      'order_id': 'order_LZHrpAwSwewasda',
                     };
                     _razorpay.submit(options);
                   },

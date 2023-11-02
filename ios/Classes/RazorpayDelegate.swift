@@ -68,12 +68,16 @@ class RazorpayDelegate: NSObject {
         self.pendingResult(cardNetwork)
     }
     
-    public func getPaymentMethods(withOptions options: [AnyHashable: Any], result: @escaping FlutterResult) {
+    public func getPaymentMethods(withOptions options: Dictionary<String, Any>, result: @escaping FlutterResult) {
         self.pendingResult = result
         self.razorpay?.getPaymentMethods(withOptions: options, withSuccessCallback: { successResponse in
             self.pendingResult(successResponse  as NSDictionary)
         }, andFailureCallback: { errorResponse in
-            self.pendingResult(errorResponse)
+            let errorObject = ["error": [
+                "description": errorResponse
+                ]
+            ]
+            self.pendingResult(errorObject)
         })
     }
     
