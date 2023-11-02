@@ -36,7 +36,9 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
                 razorpayDelegate.getCardNetwork(value: argument, result: result)
             }
         case "getPaymentMethods":
-            razorpayDelegate.getPaymentMethods(result: result)
+            if let argument = call.arguments as? Dictionary<String, Any> {
+                razorpayDelegate.getPaymentMethods(withOptions: argument, result: result)
+            }
             
         case "getAppsWhichSupportUpi":
             razorpayDelegate.getAppsWhichSupportUpi(result: result)
