@@ -68,7 +68,13 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   fetchAllPaymentMethods() {
-    _razorpay.getPaymentMethods({}).then((value) {
+    /* _razorpay.getPaymentMethods({}).then((value) => {
+
+    }).onError((error, stackTrace) => {
+
+    }); */
+
+    _razorpay.getPaymentMethods().then((value) {
       paymentMethods = value;
       print(paymentMethods);
       configureNetbanking();

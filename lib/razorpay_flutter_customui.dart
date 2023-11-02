@@ -30,9 +30,10 @@ class Razorpay {
   }
 
   Future<Map<dynamic, dynamic>> getPaymentMethods(
-      Map<String, dynamic> options) async {
+      [Map<String, dynamic>? options]) async {
+    var payload = (options == null) ? {} : options;
     final Map<dynamic, dynamic> paymentMethodsObj =
-        await _channel.invokeMethod('getPaymentMethods', options);
+        await _channel.invokeMethod('getPaymentMethods', payload);
     return paymentMethodsObj;
   }
 
