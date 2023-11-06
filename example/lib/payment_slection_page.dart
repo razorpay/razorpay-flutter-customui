@@ -41,7 +41,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.initilizeSDK('rzp_test_EkQGlL3pHAfibf');
+    _razorpay.initilizeSDK(key);
     fetchAllPaymentMethods();
 
     netBankingOptions = {
