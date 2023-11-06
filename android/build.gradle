@@ -3,6 +3,7 @@ version '1.0'
 
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
         google()
     }
@@ -14,6 +15,7 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         google()
     }
@@ -33,7 +35,7 @@ android {
     dependencies {
         implementation fileTree(include: ['*.jar'], dir: 'libs')
         implementation fileTree(dir: 'libs', include: ['*.aar'])
-        implementation 'com.razorpay:customui:3.9.+'
+        implementation 'com.razorpay:customui:3.9.13'
         implementation 'com.google.code.gson:gson:2.8.7'
         implementation "androidx.core:core:1.0.0"
     }

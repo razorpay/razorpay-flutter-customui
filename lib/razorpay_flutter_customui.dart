@@ -29,9 +29,11 @@ class Razorpay {
     _eventEmitter = new EventEmitter();
   }
 
-  Future<Map<dynamic, dynamic>> getPaymentMethods() async {
+  Future<Map<dynamic, dynamic>> getPaymentMethods(
+      [Map<String, dynamic>? options]) async {
+    var payload = (options == null) ? {} : options;
     final Map<dynamic, dynamic> paymentMethodsObj =
-        await _channel.invokeMethod('getPaymentMethods');
+        await _channel.invokeMethod('getPaymentMethods', payload);
     return paymentMethodsObj;
   }
 
@@ -60,8 +62,7 @@ class Razorpay {
   }
 
   Future<String> getBankLogoUrl(String bankName) async {
-    final bankLogoUrl =
-        await _channel.invokeMethod('getBankLogoUrl', bankName);
+    final bankLogoUrl = await _channel.invokeMethod('getBankLogoUrl', bankName);
     return bankLogoUrl;
   }
 
@@ -87,7 +88,6 @@ class Razorpay {
     final dynamic isValidVpa = await _channel.invokeMethod('isValidVpa', vpa);
     return isValidVpa;
   }
-
 
   initilizeSDK(String key) {
     _channel.invokeMethod('initilizeSDK', key);

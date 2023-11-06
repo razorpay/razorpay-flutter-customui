@@ -102,12 +102,30 @@ public class RazorpayDelegate implements ActivityResultListener {
         return razorpay.getCardNetworkLength(value);
     }
 
-    void getPaymentMethods(final Result result) {
+    void getPaymentMethods(final Result result){
         pendingResult = result;
         if (razorpay == null) {
             init(this.key,result);
         }
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
+            @Override
+            public void onPaymentMethodsReceived(String s) {
+                HashMap<String, Object> hMapData = new Gson().fromJson(s, HashMap.class);
+                pendingResult.success(hMapData);
+            }
+
+            @Override
+            public void onError(String s) {
+                pendingResult.error(s, "", null);
+            }
+        });
+    }
+    void getPaymentMethods(final JSONObject payload, final Result result) {
+        pendingResult = result;
+        if (razorpay == null) {
+            init(this.key,result);
+        }
+        razorpay.getPaymentMethods(payload, new PaymentMethodsCallback() {
             @Override
             public void onPaymentMethodsReceived(String s) {
                 HashMap<String, Object> hMapData = new Gson().fromJson(s, HashMap.class);

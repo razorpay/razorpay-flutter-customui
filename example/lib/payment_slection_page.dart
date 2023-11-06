@@ -14,13 +14,16 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
   CardInfoModel? cardInfoModel;
-  String key = "rzp_test_1DP5mmOlF5G5ag";
+  // String key = "rzp_test_1DP5mmOlF5G5ag";
+  String key = "rzp_test_EkQGlL3pHAfibf";
   String? availableUpiApps;
   bool showUpiApps = false;
 
   //rzp_test_1DP5mmOlF5G5ag  ---> Debug Key
   //rzp_live_6KzMg861N1GUS8  ---> Live Key
   //rzp_live_cepk1crIu9VkJU  ---> Pay with Cred
+  //rzp_test_1DP5mmOlF5G5ag  ---> Replace
+  //rzp_live_cepk1crIu9VkJU  ---> Live Key
 
   Map<String, dynamic>? netBankingOptions;
   Map<String, dynamic>? walletOptions;
@@ -65,8 +68,15 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   fetchAllPaymentMethods() {
+    /* _razorpay.getPaymentMethods({}).then((value) => {
+
+    }).onError((error, stackTrace) => {
+
+    }); */
+
     _razorpay.getPaymentMethods().then((value) {
       paymentMethods = value;
+      print(paymentMethods);
       configureNetbanking();
       configurePaymentWallets();
     }).onError((error, stackTrace) {
@@ -347,14 +357,21 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                   onPressed: () {
                     FocusScope.of(context).unfocus();
                     var options = {
-                      'key': key,
-                      'amount': 100,
-                      'currency': 'INR',
-                      'email': 'ramprasad179@gmail.com',
-                      'contact': '9663976539',
-                      'method': 'upi',
-                      '_[flow]': 'intent',
-                      'upi_app_package_name': 'paytm',
+                      "key": key,
+                      "amount": "10000",
+                      "currency": "INR",
+                      "email": "epay.bypass@motilaloswal.com",
+                      "contact": "9999999999",
+                      "method": "upi",
+                      "_[flow]": "collect",
+                      "vpa": "9922243638@ybl",
+                      "order_id": "order_MZpdBVam3a0Jso",
+                      "notes": {
+                        "client_code": "Y05120",
+                        "PayRefNo": "uft_226dee7fc756a5",
+                        "ClientName": "",
+                        "Segment": "Cash"
+                      }
                     };
                     _razorpay.submit(options);
                   },
@@ -373,13 +390,14 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                     FocusScope.of(context).unfocus();
                     var options = {
                       'key': key,
-                      'amount': 100,
+                      'amount': '20000',
                       'currency': 'INR',
-                      'email': 'ramprasad179@gmail.com',
-                      'contact': '9663976539',
+                      'email': 'test@gmail.com',
+                      'contact': '9999999999',
                       'method': 'upi',
-                      'vpa': upiNumber,
                       '_[flow]': 'collect',
+                      'vpa': '9999999999@ybl',
+                      'order_id': 'order_LZHrpAwSwewasda',
                     };
                     _razorpay.submit(options);
                   },
@@ -394,6 +412,17 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                 showUpiApps = true;
               });
               print(upiApps);
+
+              final snackBar = SnackBar(
+                content: Text(
+                  'Payment Success : ${availableUpiApps}',
+                ),
+                action: SnackBarAction(
+                  label: 'Okay',
+                  onPressed: () {},
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             },
             child: Text('Get All UPI Supported Apps'),
           ),
