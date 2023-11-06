@@ -74,6 +74,7 @@ class RazorpayDelegate: NSObject {
             self.pendingResult(successResponse  as NSDictionary)
         }, andFailureCallback: { errorResponse in
             let errorObject = ["error": [
+                "code":"BAD_REQUEST_ERROR",
                 "description": errorResponse
                 ]
             ]
