@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter_customui_example/payment_slection_page.dart';
+import 'package:razorpay_flutter_customui_example/sdk_initilize_dialog.dart';
 
 void main() {
   runApp(MyApp());
@@ -93,13 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       SizedBox(height: 16.0),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (builder) {
-                                return PaymentSelectionPage();
-                              },
-                            ),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SDKInitilizeDialog();
+                            },
                           );
                         },
                         child: Text('Purchase'),

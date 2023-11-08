@@ -19,6 +19,13 @@ import 'package:razorpay_flutter_customui/model/Error.dart';
 enum PaymentMethods { card, upi, nb, wallet, vas, turboUPI }
 
 class PaymentSelectionPage extends StatefulWidget {
+
+  
+  late String sdkKey;
+  PaymentSelectionPage( String sdkKey){
+    this.sdkKey = sdkKey;
+  }
+
   @override
   _PaymentSelectionPageState createState() => _PaymentSelectionPageState();
 }
@@ -28,7 +35,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
   CardInfoModel? cardInfoModel;
-  String key = "rzp_test_5sHeuuremkiApj"; //    //rzp_test_0wFRWIZnH65uny
+  String key ="" ; //
 
   String? availableUpiApps;
   bool showUpiApps = false;
@@ -45,7 +52,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   Map<dynamic, dynamic>? paymentMethods;
   List<NetBankingModel>? netBankingList;
   List<WalletModel>? walletsList;
-  late Razorpay _razorpay;
+ 
   Map<String, dynamic>? commonPaymentOptions;
   TextEditingController _controllerMerchantKey = new TextEditingController();
   TextEditingController _controllerHandle = new TextEditingController();
@@ -58,17 +65,21 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   // For Turbo UPI
   String turboUpiHandle = 'axisbank';
   String mobileNo = "";
+  late Razorpay _razorpay;
 
   @override
   void initState() {
     cardInfoModel = CardInfoModel();
     turboUPIModel = TurboUPIModel();
     initValueForTurboUPI();
-    _razorpay = Razorpay(key);
+    print("=====> sdk ${widget.sdkKey} ");
+     key = widget.sdkKey;
+     _razorpay = Razorpay(widget.sdkKey);
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, _handleNewUpiAccountResponse);
     fetchAllPaymentMethods();
+    print("=====> key ${key} ");
     netBankingOptions = {
       'key': key,
       'amount': 100,
@@ -101,7 +112,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   void initValueForTurboUPI(){
     _controllerMerchantKey.text = key;
     _controllerHandle.text = turboUpiHandle;
-    turboUPIModel?.merchantKey = key;
     turboUPIModel?.handle = turboUpiHandle ;
     _controllerMobile.text = mobileNo;
     turboUPIModel?.mobileNumber = mobileNo;
@@ -301,10 +311,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   String validateTurboUpiFields() {
-    if ((turboUPIModel?.merchantKey == '') ||
-        (turboUPIModel?.merchantKey == null)) {
-      return 'Merchant Key Cannot be Empty';
-    }
+
     if ((turboUPIModel?.handle == '') || (turboUPIModel?.handle == null)) {
       return 'Handle Cannot be Empty';
     }
@@ -345,7 +352,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                     spacing: 8.0,
                     runSpacing: 8.0,
                     children: [
-                      PaymentTypeSelectionButton(
+               PaymentTypeSelectionButton(
                         paymentTitle: 'CARD',
                         onPaymentTypeTap: () {
                           setState(() {
@@ -462,16 +469,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       margin: EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Flexible(
-            child: TextField(
-              controller: _controllerMerchantKey,
-              textAlign: TextAlign.start,
-              decoration: InputDecoration(
-                hintText: 'MerchantKey',
-              ),
-              onChanged: (newValue) => turboUPIModel?.merchantKey = newValue,
-            ),
-          ),
+
           SizedBox(height: 16.0),
           Flexible(
             child: TextField(
