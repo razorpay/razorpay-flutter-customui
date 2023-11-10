@@ -4,6 +4,7 @@ import 'package:razorpay_flutter_customui/model/account_balance.dart';
 import 'package:razorpay_flutter_customui/model/empty.dart';
 import 'package:razorpay_flutter_customui/model/upi_account.dart';
 import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
+import 'package:razorpay_flutter_customui_example/turbo_upi_txn_dialog.dart';
 import 'card_dialog.dart';
 import 'package:razorpay_flutter_customui/model/Error.dart';
 
@@ -11,11 +12,13 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
   final List<UpiAccount> upiAccounts;
   final Razorpay razorpay;
   final String  keyValue;
+  final String customerMobile;
 
   const GetLinkedUPIAccountPage({
     required this.upiAccounts,
     required this.razorpay,
     required this.keyValue,
+    required this.customerMobile
   });
 
   @override
@@ -48,28 +51,17 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                       ),
                       ElevatedButton(
                           onPressed: () {
-
-                            Map<String, dynamic> payload = {
-                              "key":keyValue,
-                              "currency": "INR",
-                              "amount": 100,
-                              "contact": "8145628647",
-                              "method": "upi",
-                              "email": "vivekshindhe@gmail.com",
-                              "upi": {
-                                "mode": "in_app",
-                                "flow": "in_app"
-                              }
-                            };
-
-                            Map<String, dynamic> turboPayload = {
-                              "upiAccount": getUpiAccountStr(upiAccounts[index]),
-                              "payload": payload,
-                            };
-
-
-                            razorpay.submit(turboPayload);
-
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return TurboUPITxnDialog(
+                                  razorpay: razorpay,
+                                  upiAccount : getUpiAccountStr(upiAccounts[index]),
+                                  mobileNumber: customerMobile,
+                                  sdkKey: keyValue,
+                                );
+                              },
+                            );
                           },
                           child: Text('Pay Rs 1.00')),
                       SizedBox(

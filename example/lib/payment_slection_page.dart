@@ -72,9 +72,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     cardInfoModel = CardInfoModel();
     turboUPIModel = TurboUPIModel();
     initValueForTurboUPI();
-    print("=====> sdk ${widget.sdkKey} ");
-     key = widget.sdkKey;
-     _razorpay = Razorpay(widget.sdkKey);
+    key = widget.sdkKey;
+    _razorpay = Razorpay(widget.sdkKey);
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, _handleNewUpiAccountResponse);
@@ -893,8 +892,11 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             MaterialPageRoute(
               builder: (builder) {
                 return GetLinkedUPIAccountPage(
-                    razorpay: _razorpay, upiAccounts: upiAccounts ,
-                    keyValue : key);
+                    razorpay: _razorpay,
+                    upiAccounts: upiAccounts ,
+                    keyValue : key,
+                    customerMobile : turboUPIModel!.mobileNumber.toString()
+                );
               },
             ),
           );
