@@ -46,8 +46,6 @@ android {
 }
 
 dependencies {
-//    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/TPV/TurboLib/')
-//    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/TPV/CustomUILib/')
     implementation fileTree(include: ['*.aar'], dir: 'libs')
     //implementation 'com.razorpay:customui:3.9.+'
 }
