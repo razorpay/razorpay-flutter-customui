@@ -46,7 +46,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.aar'], dir: 'libs')
+    //implementation fileTree(include: ['*.aar'], dir: 'libs')
+    implementation fileTree(include: ['*.aar'], dir: '/Users/shibu.prasad/Desktop/FlutterCustomHeadlessTPV/')
     //implementation 'com.razorpay:customui:3.9.+'
 }
 

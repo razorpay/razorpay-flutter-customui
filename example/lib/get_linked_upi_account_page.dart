@@ -44,6 +44,8 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      Text("Bank Name : ${upiAccounts[index].bankName}", style: TextStyle(fontSize: 18, color: Colors.white)),
+                      Text("Account Number : ${upiAccounts[index].accountNumber}", style: TextStyle(fontSize: 18, color: Colors.white)),
                       Text("VPA : ${upiAccounts[index].vpa?.address}",
                           style: TextStyle(fontSize: 18, color: Colors.white)),
                       SizedBox(
