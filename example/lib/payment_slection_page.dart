@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
 import 'package:razorpay_flutter_customui_example/models/card_info_model.dart';
 
-enum PaymentMethods { card, upi, nb, wallet, vas }
+enum PaymentMethods { card, upi, nb, wallet, vas, freeform }
 
 class PaymentSelectionPage extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
   Map<String, dynamic>? netBankingOptions;
   Map<String, dynamic>? walletOptions;
+  Map<String, dynamic>? freeformOptions;
   String? upiNumber;
 
   Map<dynamic, dynamic>? paymentMethods;
@@ -222,6 +224,15 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           });
                         },
                       ),
+                      PaymentTypeSelectionButton(
+                        paymentTitle: 'Free Form',
+                        onPaymentTypeTap: (){
+                          setState(() {
+                            selectedPaymentType = 'free-form';
+                            selectedMethod = PaymentMethods.freeform;
+                          });
+                        },
+                      )
                     ],
                   ),
                 ),
@@ -258,9 +269,40 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         return buildWalletsList();
       case PaymentMethods.vas:
         return buildForVas();
+      case PaymentMethods.freeform:
+        return buildForFreeForm();
       default:
         return buildUPIForm();
     }
+  }
+
+  Widget buildForFreeForm(){
+    return Container(
+      child: Column(
+        children: [
+          TextField(
+            minLines: 10,
+            maxLines: 20,
+            decoration: InputDecoration(
+              hintText: 'Entire Payload',
+            ),
+            onEditingComplete: (){},
+            onChanged: (value) {
+              freeformOptions = jsonDecode(value);
+            },
+            onSubmitted: (value){
+              freeformOptions = jsonDecode(value);
+            },
+          ),
+          ElevatedButton(onPressed: () {
+            print(freeformOptions);
+            _razorpay.submit(freeformOptions!);
+          }, child: Text('Make Payment')),
+
+        ],
+      )
+
+    );
   }
 
   Widget buildForVas() {
