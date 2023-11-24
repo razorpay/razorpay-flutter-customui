@@ -1,49 +1,45 @@
 package com.razorpay.flutter_customui;
 
+
+
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Build;
-import android.util.Log;
-import android.view.View;
-import android.webkit.WebView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-
+import android.os.Handler;
+import android.os.Looper;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.razorpay.ApplicationDetails;
-import com.razorpay.PaymentData;
-//import com.razorpay.PaymentMethodsCallback;
-
 import com.razorpay.PaymentMethodsCallback;
-import com.razorpay.PaymentResultWithDataListener;
 import com.razorpay.Razorpay;
-import com.razorpay.RazorpayWebViewClient;
 import com.razorpay.RzpUpiSupportedAppsCallback;
-
 import com.razorpay.SubscriptionAmountCallback;
+import com.razorpay.UpiTurboLinkAccountListener;
+import com.razorpay.UpiTurboLinkAction;
+import com.razorpay.UpiTurboResultListener;
 import com.razorpay.ValidateVpaCallback;
-import com.razorpay.ValidationListener;
-
-
+import com.razorpay.upi.AccountBalance;
+import com.razorpay.upi.Bank;
+import com.razorpay.upi.Card;
+import com.razorpay.upi.Empty;
+import com.razorpay.upi.Error;
+import com.razorpay.upi.Sim;
+import com.razorpay.upi.TPVBankAccount;
+import com.razorpay.upi.UpiAccount;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
-
 import static com.razorpay.flutter_customui.Constants.PAYMENT_DATA;
 
-public class RazorpayDelegate implements ActivityResultListener {
-
+public class RazorpayDelegate implements ActivityResultListener  {
     private Activity activity;
     private Result pendingResult;
     private Map<Object, Object> pendingReply;
@@ -60,19 +56,33 @@ public class RazorpayDelegate implements ActivityResultListener {
     private static final int TLS_ERROR = 6;
     private static final int UNKNOWN_ERROR = 100;
 
+    final String TAG = "com.razorpay.flutter_customui.RazorpayDelegate";
+
+    // Turbo UPI
+
+    private UpiTurboLinkAction linkAction;
+    private EventChannel.EventSink eventSink;
+
+    private static final int CODE_EVENT_SUCCESS = 200;
+    private static final int CODE_EVENT_ERROR = 201;
+
+    private static final String LINK_NEW_UPI_ACCOUNT_EVENT = "linkNewUpiAccountEvent";
+    Gson gson ;
+    private Handler uiThreadHandler = new Handler(Looper.getMainLooper());
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public RazorpayDelegate(Activity activity) {
         this.activity = activity;
+        this.gson = new Gson();
     }
 
     void init(String key, Result result) {
         this.key = key;
         this.pendingResult = result;
-        razorpay = new Razorpay(activity,key);
+        razorpay = new Razorpay(activity, key);
     }
 
-    void submit(final JSONObject payload, Result result) {
+    void submit(final JSONObject payload, Result result ) {
         this.pendingResult = result;
         Intent intent = new Intent(activity, RazorpayPaymentActivity.class);
         intent.putExtra(Constants.OPTIONS, payload.toString());
@@ -91,7 +101,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     }
 
     String getBankLogoUrl(String value) {
-       return razorpay.getBankLogoUrl(value);
+        return razorpay.getBankLogoUrl(value);
     }
 
     String getCardNetwork(String value) {
@@ -105,7 +115,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     void getPaymentMethods(final Result result) {
         pendingResult = result;
         if (razorpay == null) {
-            init(this.key,result);
+            init(this.key, result);
         }
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
             @Override
@@ -127,8 +137,8 @@ public class RazorpayDelegate implements ActivityResultListener {
             @Override
             public void onReceiveUpiSupportedApps(List<ApplicationDetails> list) {
                 HashMap<Object, Object> hMap = new HashMap<>();
-                for (int i=0;i<list.size();i++) {
-                    hMap.put(list.get(i).getPackageName(),list.get(i).getAppName());
+                for (int i = 0; i < list.size(); i++) {
+                    hMap.put(list.get(i).getPackageName(), list.get(i).getAppName());
                 }
                 pendingResult.success(hMap);
             }
@@ -195,45 +205,6 @@ public class RazorpayDelegate implements ActivityResultListener {
         razorpay.setPaymentID(value);
     }
 
-
-
-    /*@Override
-    public void onPaymentError(int code, String message, PaymentData paymentData) {
-        Map<String, Object> reply = new HashMap<>();
-        reply.put("type", CODE_PAYMENT_ERROR);
-
-        Map<String, Object> data = new HashMap<>();
-        //data.put("code", translateRzpPaymentError(code));
-        data.put("message", message);
-
-        reply.put("data", data);
-
-        sendReply(reply);
-    }
-
-    @Override
-    public void onPaymentSuccess(String paymentId, PaymentData paymentData) {
-        Map<String, Object> reply = new HashMap<>();
-        reply.put("type", CODE_PAYMENT_SUCCESS);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("razorpay_payment_id", paymentData.getPaymentId());
-        data.put("razorpay_order_id", paymentData.getOrderId());
-        data.put("razorpay_signature", paymentData.getSignature());
-
-        if (paymentData.getData().has("razorpay_subscription_id")) {
-            try {
-                data.put("razorpay_subscription_id", paymentData.getData().optString("razorpay_subscription_id"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        reply.put("data", data);
-        sendReply(reply);
-    }*/
-
     public void onPaymentSuccess(String razorpayPaymentId, JSONObject paymentData) {
         try {
             HashMap<Object, Object> reply = new HashMap<>();
@@ -250,7 +221,7 @@ public class RazorpayDelegate implements ActivityResultListener {
             if (paymentData.has("razorpay_signature")) {
                 data.put("razorpay_signature", paymentData.optString("razorpay_signature"));
             }
-            reply.put("data",data);
+            reply.put("data", data);
             sendReply(reply);
         } catch (JSONException e) {
 
@@ -273,20 +244,20 @@ public class RazorpayDelegate implements ActivityResultListener {
 
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == RazorpayPaymentActivity.RZP_REQUEST_CODE && resultCode == RazorpayPaymentActivity.RZP_RESULT_CODE){
+        if (requestCode == RazorpayPaymentActivity.RZP_REQUEST_CODE && resultCode == RazorpayPaymentActivity.RZP_RESULT_CODE) {
             onLocalActivityResult(requestCode, resultCode, data);
         }
         return true;
     }
 
-    void onLocalActivityResult(int requestCode, int resultCode, Intent data){
+    void onLocalActivityResult(int requestCode, int resultCode, Intent data) {
         String paymentDataString = data.getStringExtra(PAYMENT_DATA);
         JSONObject paymentData = new JSONObject();
-        try{
+        try {
             paymentData = new JSONObject(paymentDataString);
-        } catch(Exception e){
+        } catch (Exception e) {
         }
-        if(data.getBooleanExtra(Constants.IS_SUCCESS, false)){
+        if (data.getBooleanExtra(Constants.IS_SUCCESS, false)) {
             String payment_id = data.getStringExtra(Constants.PAYMENT_ID);
             onPaymentSuccess(payment_id, paymentData);
         } else {
@@ -311,6 +282,316 @@ public class RazorpayDelegate implements ActivityResultListener {
         }
     }
 
-    public void onNewIntent(Intent intent) {}
 
+    // Turbo Custom Flutter Wrapper Integrations
+    /*
+         OnBoarding Flow Turbo UPI
+     */
+    void linkNewUpiAccount(String mobileNumber, Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        razorpay.upiTurbo.linkNewUpiAccount(mobileNumber, new UpiTurboLinkAccountListener() {
+            @Override
+            public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
+                onUpiTurboResponse(upiTurboLinkAction);
+            }
+        });
+    }
+
+    void askForPermission(Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        if (linkAction !=null){
+            linkAction.requestPermission();
+        }
+    }
+
+    private void requestPermissionsManually(String[] permissionArray) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity.requestPermissions(permissionArray, 4001);
+        }
+    }
+
+    void register(String simStr, Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        if (this.linkAction !=null){
+            this.linkAction.selectedSim(getSim(simStr));
+        }
+    }
+
+    public void getBankAccounts(String bankStr, Result result, EventChannel.EventSink eventSink) {
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        if (linkAction !=null){
+            linkAction.selectedBank(getBank(bankStr));
+        }
+    }
+
+    public void selectedBankAccount(com.razorpay.upi.BankAccount bankAccount , Result result,
+                                    EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        if (this.linkAction !=null){
+            this.linkAction.selectedBankAccount(bankAccount);
+        }
+    }
+
+    public void setupUpiPin(Card card,Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        if (this.linkAction !=null){
+            this.linkAction.setupUpiPin(card);
+        }
+    }
+
+    private Bank getBank(String bankStr) {
+        Type listType = new TypeToken<Bank>() {}.getType();
+        return this.gson.fromJson(bankStr, listType);
+    }
+
+    public Sim getSim(String simStr){
+        Type listType = new TypeToken<Sim>() {}.getType();
+        return this.gson.fromJson(simStr, listType);
+    }
+
+    public  com.razorpay.upi.BankAccount getBankAccount(String bankAccountStr){
+        Type listType = new TypeToken<com.razorpay.upi.BankAccount>() {}.getType();
+        return this.gson.fromJson(bankAccountStr, listType);
+    }
+
+    /*
+       Non-transactional Flow Turbo UPI
+     */
+
+    void getLinkedUpiAccounts(String mobileNumber, Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        HashMap<Object, Object> reply = new HashMap<>();
+        razorpay.upiTurbo.getLinkedUpiAccounts(mobileNumber, new UpiTurboResultListener() {
+            @Override
+            public void onSuccess(@NonNull List<UpiAccount> upiAccounts) {
+                if(upiAccounts.isEmpty()){
+                    reply.put("data", "");
+                }else {
+                    reply.put("data", toJsonString(upiAccounts));
+                }
+                sendReply(reply);
+            }
+
+            @Override
+            public void onError(@NonNull Error error) {
+                pendingResult.error(error.getErrorCode(), error.getErrorDescription() , toJsonString(error));
+            }
+        });
+    }
+
+    public void getBalance(UpiAccount upiAccount , Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        HashMap<Object, Object>  reply = getNonTransactionalReply();
+        razorpay.upiTurbo.getBalance(upiAccount, new com.razorpay.upi.Callback<AccountBalance>() {
+            @Override
+            public void onSuccess(AccountBalance accountBalance) {
+                reply.put("data", toJsonString(accountBalance));
+                sendReply(reply);
+            }
+
+            @Override
+            public void onFailure(@NonNull Error error) {
+                pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
+            }
+        });
+    }
+
+    public void changeUpiPin(UpiAccount upiAccount, Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        HashMap<Object, Object>  reply = getNonTransactionalReply();
+        razorpay.upiTurbo.changeUpiPin(upiAccount, new com.razorpay.upi.Callback<UpiAccount>() {
+            @Override
+            public void onSuccess(UpiAccount upiAccount) {
+                reply.put("data", toJsonString(upiAccount));
+                sendReply(reply);
+            }
+
+            @Override
+            public void onFailure(@NonNull Error error) {
+                pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
+            }
+        });
+    }
+
+    public void resetUpiPin(UpiAccount upiAccount, Card card , Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        HashMap<Object, Object>  reply = getNonTransactionalReply();
+        razorpay.upiTurbo.resetUpiPin(card, upiAccount, new com.razorpay.upi.Callback<UpiAccount>() {
+            @Override
+            public void onSuccess(UpiAccount upiAccount) {
+                reply.put("data", toJsonString(upiAccount));
+                sendReply(reply);
+            }
+
+            @Override
+            public void onFailure(@NonNull Error error) {
+                pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
+            }
+        });
+    }
+
+    public void delink(UpiAccount upiAccount , Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        HashMap<Object, Object>  reply = getNonTransactionalReply();
+        razorpay.upiTurbo.delink(upiAccount, new com.razorpay.upi.Callback<Empty>() {
+            @Override
+            public void onSuccess(Empty empty) {
+                reply.put("data", "Successfully delink your account");
+                sendReply(reply);
+            }
+
+            @Override
+            public void onFailure(@NonNull Error error) {
+                pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
+            }
+        });
+    }
+
+    public static UpiAccount getUpiAccount(String upiAccountStr){
+        Type listType = new TypeToken<UpiAccount>() {}.getType();
+        return new Gson().fromJson(upiAccountStr, listType);
+    }
+
+    public Card getCard(String cardStr){
+        Type listType = new TypeToken<Card>() {}.getType();
+        return this.gson.fromJson(cardStr, listType);
+    }
+
+    public static HashMap<Object, Object> getNonTransactionalReply() {
+        HashMap<Object, Object> reply = new HashMap<>();
+        return reply;
+    }
+
+    public void onUpiTurboResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
+        HashMap<Object, Object> reply = new HashMap<>();
+        this.linkAction = upiTurboLinkAction;
+        reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_EVENT);
+        reply.put("action", upiTurboLinkAction.name());
+        if (upiTurboLinkAction.getError() != null) {
+            onEventError(reply, this.gson.toJson(upiTurboLinkAction.getError()));
+            return;
+        }
+        switch (upiTurboLinkAction) {
+            case ASK_FOR_PERMISSION:
+                /*
+                   Callback is not coming from upiTurboLinkAction.requestPermission(); .
+                   Created manual function for ask permission adn handle it by PluginRegistry.RequestPermissionsResultListener()
+                */
+                reply.put("data", "");
+                onEventSuccess(reply);
+                break;
+            case SHOW_PERMISSION_ERROR:
+                break;
+            case SELECT_SIM:
+                reply.put("data", toJsonString(upiTurboLinkAction.getData()));
+                onEventSuccess(reply);
+                break;
+            case SELECT_BANK:
+                reply.put("data", toJsonString(upiTurboLinkAction.getData()));
+                onEventSuccess(reply);
+                break;
+            case SELECT_BANK_ACCOUNT:
+                reply.put("data", toJsonString(upiTurboLinkAction.getData()));
+                onEventSuccess(reply);
+                break;
+            case SETUP_UPI_PIN:
+                reply.put("data", "SETUP_UPI_PIN");
+                onEventSuccess(reply);
+                break;
+            case STATUS:
+                reply.put("data",  toJsonString(upiTurboLinkAction.getData()));
+                onEventSuccess(reply);
+                break;
+            case LOADER_DATA:
+                reply.put("data", "");
+                onEventSuccess(reply);
+                break;
+        }
+    }
+
+    private void sendReplyByEventSink(HashMap<Object, Object> reply) {
+        uiThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                RazorpayDelegate.this.eventSink.success(reply);
+            }
+        });
+    }
+
+    public void onEventSuccess(HashMap<Object, Object> reply) {
+            reply.put("type", CODE_EVENT_SUCCESS);
+            sendReplyByEventSink(reply);
+    }
+
+    public void onEventError(HashMap<Object, Object> reply , String error) {
+        reply.put("type", CODE_EVENT_ERROR);
+        reply.put("error", error);
+        sendReplyByEventSink(reply);
+    }
+
+    private String toJsonString(Object object){
+       return this.gson.toJson(object);
+    }
+
+    public void handlePermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+        razorpay.upiTurbo.onPermissionsRequestResult();
+    }
+
+    public  boolean isTurboPluginAvailable(Result result, EventChannel.EventSink eventSink) {
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        HashMap<Object, Object> reply = new HashMap<>();
+        try {
+            Class.forName("com.razorpay.RzpTurboExternalPlugin");
+            Class.forName("com.razorpay.UpiTurboLinkAccountListener");
+            reply.put("isTurboPluginAvailable", true);
+            sendReply(reply);
+            return true;
+        } catch (ClassNotFoundException e) {
+            // Class not found, so it doesn't exist
+            reply.put("isTurboPluginAvailable", false);
+            sendReply(reply);
+            return false;
+        }
+    }
+
+    /*
+         HeadLess TPV
+     */
+
+    public void linkNewUpiAccount(String customerMobile, String customerId, String  orderId , String tpvBankAccountStr , Result result,
+                                     EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        razorpay.upiTurbo.getTPV()
+                .setOrderId(orderId)
+                .setCustomerMobile(customerMobile)
+                .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
+                .setCustomerId(customerId)
+                .linkNewUpiAccount( new UpiTurboLinkAccountListener() {
+                    @Override
+                    public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
+                        onUpiTurboResponse(upiTurboLinkAction);
+                    }
+                });
+    }
+
+    public TPVBankAccount getTPVBankAccount(String tPVBankAccountStr){
+        if (tPVBankAccountStr == null){
+            return  null;
+        }
+        Type listType = new TypeToken<TPVBankAccount>() {}.getType();
+        return new Gson().fromJson(tPVBankAccountStr, listType);
+    }
 }
