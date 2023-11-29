@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.google.gson.Gson;
@@ -17,7 +19,9 @@ import com.razorpay.Razorpay;
 import com.razorpay.RzpUpiSupportedAppsCallback;
 import com.razorpay.SubscriptionAmountCallback;
 import com.razorpay.UpiTurboLinkAccountListener;
+import com.razorpay.UpiTurboLinkAccountResultListener;
 import com.razorpay.UpiTurboLinkAction;
+import com.razorpay.UpiTurboManageAccountListener;
 import com.razorpay.UpiTurboResultListener;
 import com.razorpay.ValidateVpaCallback;
 import com.razorpay.upi.AccountBalance;
@@ -574,7 +578,7 @@ public class RazorpayDelegate implements ActivityResultListener  {
                                      EventChannel.EventSink eventSink){
         this.pendingResult = result;
         this.eventSink = eventSink;
-        razorpay.upiTurbo.getTPV()
+        /*razorpay.upiTurbo.getTPV()
                 .setOrderId(orderId)
                 .setCustomerMobile(customerMobile)
                 .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
@@ -584,7 +588,7 @@ public class RazorpayDelegate implements ActivityResultListener  {
                     public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
                         onUpiTurboResponse(upiTurboLinkAction);
                     }
-                });
+                });*/
     }
 
     public TPVBankAccount getTPVBankAccount(String tPVBankAccountStr){
@@ -593,5 +597,42 @@ public class RazorpayDelegate implements ActivityResultListener  {
         }
         Type listType = new TypeToken<TPVBankAccount>() {}.getType();
         return new Gson().fromJson(tPVBankAccountStr, listType);
+    }
+
+    /*
+        UPI Turbo with custom UI (by checkout)
+     */
+    public void linkNewUpiAccountWithUI(String customerMobile, String color, Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        HashMap<Object, Object> reply = new HashMap<>();
+        razorpay.upiTurbo.linkNewUpiAccountWithUI(customerMobile, new UpiTurboLinkAccountResultListener() {
+            @Override
+            public void onSuccess(@NonNull List<UpiAccount> upiAccounts) {
+                if(upiAccounts.isEmpty()){
+                    reply.put("data", "");
+                }else {
+                    reply.put("data", toJsonString(upiAccounts));
+                }
+                sendReply(reply);
+            }
+
+            @Override
+            public void onError(@NonNull Error error) {
+                pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
+            }
+        },color);
+    }
+
+    public void manageUpiAccounts(String customerMobile,  Result result, EventChannel.EventSink eventSink){
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        razorpay.upiTurbo.manageUpiAccounts(customerMobile, new UpiTurboManageAccountListener() {
+            @Override
+            public void onError(@NonNull JSONObject jsonObject) {
+                pendingResult.error("", jsonObject.toString(), jsonObject.toString());
+            }
+        } );
+
     }
 }

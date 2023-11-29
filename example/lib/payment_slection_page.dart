@@ -553,6 +553,57 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
               },
               child: Text('TurboViaTPV')),
           SizedBox(height: 8.0),
+          ElevatedButton(
+              onPressed: () {
+                var error = validateTurboUpiFields();
+                if (error != '') {
+                  print(error);
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(error)));
+                  return;
+                }
+                setState(() {
+                  isLoading = true;
+                });
+
+                _razorpay.upiTurbo.linkNewUpiAccountWithUI(
+                    customerMobile: turboUPIModel?.mobileNumber, color: "#000000",
+                    onSuccess: (List<UpiAccount> upiAccounts) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (builder) {
+                            return GetLinkedUPIAccountPage(
+                                razorpay: _razorpay, upiAccounts: upiAccounts , keyValue :key);
+                          },
+                        ),
+                      );
+                    },
+                    onFailure: (Error error) { ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Error : ${error.errorDescription}")));});
+
+              },
+              child: Text('LinkNewUpiAccount_UI')),
+          SizedBox(height: 4.0),
+          ElevatedButton(
+              onPressed: () {
+                var error = validateTurboUpiFields();
+                if (error != '') {
+                  print(error);
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(error)));
+                  return;
+                }
+                setState(() {
+                  isLoading = true;
+                });
+
+                _razorpay.upiTurbo.manageUpiAccounts(
+                    customerMobile: turboUPIModel?.mobileNumber,
+                    onFailure: (Error error) {  });
+
+              },
+              child: Text('ManageUpiAccounts_UI')),
         ],
       ),
     );
