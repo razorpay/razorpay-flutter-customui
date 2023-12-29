@@ -239,7 +239,7 @@ class UpiTurbo {
       if(getLinkedUpiAccountsResponse["data"]!=""){
         onSuccess(_getUpiAccounts(getLinkedUpiAccountsResponse["data"]));
       }else {
-        onFailure(Error(errorCode:"" , errorDescription: "No Account Found"));
+        onFailure(Error(errorCode:"NO_ACCOUNT_FOUND" , errorDescription: "No Account Found"));
       }
 
     } on PlatformException catch (error) {
@@ -338,12 +338,12 @@ class UpiTurbo {
 
   _emitError(){
     final Map<String, dynamic> response = HashMap();
-    response["error"] = Error(errorCode: "", errorDescription: "No Turbo Plugin Found");
+    response["error"] = Error(errorCode: "AXIS_SDK_ERROR", errorDescription: "No Turbo Plugin Found");
     _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, response);
   }
 
   void _emitFailure(OnFailure<Error> onFailure) {
-    onFailure(Error(errorCode:"" , errorDescription: "No Turbo Plugin Found"));
+    onFailure(Error(errorCode:"AXIS_SDK_ERROR" , errorDescription: "No Turbo Plugin Found"));
   }
 
 }
