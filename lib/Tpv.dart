@@ -73,7 +73,7 @@ class Tpv {
 
   _emitError(){
     final Map<String, dynamic> response = HashMap();
-    response["error"] = Error(errorCode: "", errorDescription: "No Turbo Plugin Found");
+    response["error"] = Error(errorCode: "AXIS_SDK_ERROR", errorDescription: "No Turbo Plugin Found");
     _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, response);
   }
 
