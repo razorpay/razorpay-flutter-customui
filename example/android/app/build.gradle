@@ -53,7 +53,7 @@ android {
 
 dependencies {
     //implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/TurboLib/')
-    implementation fileTree(include: ['*.aar'], dir: '/Users/shibu.prasad/Desktop/FlutterHeadlessUATLibrary/')
+    //implementation fileTree(include: ['*.aar'], dir: '/Users/shibu.prasad/Desktop/FlutterHeadlessUATLibrary/')
     //implementation 'com.razorpay:customui:3.9.+'
 
     /*def room_version = "2.4.3"
