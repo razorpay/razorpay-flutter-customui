@@ -578,7 +578,7 @@ public class RazorpayDelegate implements ActivityResultListener  {
                                      EventChannel.EventSink eventSink){
         this.pendingResult = result;
         this.eventSink = eventSink;
-        /*razorpay.upiTurbo.getTPV()
+        razorpay.upiTurbo.getTPV()
                 .setOrderId(orderId)
                 .setCustomerMobile(customerMobile)
                 .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
@@ -588,7 +588,7 @@ public class RazorpayDelegate implements ActivityResultListener  {
                     public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
                         onUpiTurboResponse(upiTurboLinkAction);
                     }
-                });*/
+                });
     }
 
     public TPVBankAccount getTPVBankAccount(String tPVBankAccountStr){

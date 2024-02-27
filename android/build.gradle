@@ -53,8 +53,22 @@ android {
         implementation 'com.squareup.retrofit2:retrofit:2.9.0'
         implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
         implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
-        compileOnly fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/TurboLib/')
-        compileOnly fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/CustomUILib/')
+
+
+        //
+      /*  def room_version = "2.4.3"
+
+        implementation "androidx.room:room-runtime:$room_version"
+        annotationProcessor "androidx.room:room-compiler:$room_version"
+        implementation "androidx.room:room-ktx:$room_version"
+
+        implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0"
+
+        implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))*/
+
+       /* compileOnly fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/TurboLib/')
+        compileOnly fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/CustomUILib/')*/
+        compileOnly fileTree(include: ['*.aar'], dir: '/Users/shibu.prasad/Desktop/FlutterHeadlessUATLibrary/')
     }
 }
 
