@@ -52,8 +52,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/TurboLib/')
-    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/CustomUILib/')
+    implementation fileTree(include: ['*.aar'], dir: '/Users/shibu.prasad/Desktop/FlutterHeadlessUAT/')
     //implementation 'com.razorpay:customui:3.9.+'
 }
 
