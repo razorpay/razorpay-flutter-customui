@@ -9,6 +9,7 @@ class UpiAccount {
    String? ifsc;
    int? pinLength;
    Vpa? vpa;
+   String? type;
 
 
   UpiAccount({
@@ -19,6 +20,7 @@ class UpiAccount {
      this.ifsc,
      this.pinLength,
      this.vpa,
+     this.type
   });
 
   factory UpiAccount.fromJson(Map<String, dynamic> json) => UpiAccount(
@@ -29,6 +31,7 @@ class UpiAccount {
     ifsc: json['ifsc'],
     pinLength: json['pinLength'],
     vpa: Vpa.fromJson(json['vpa']),
+    type: json['type']
   );
 
   Map<String, dynamic> toJson() => {
@@ -39,6 +42,7 @@ class UpiAccount {
     'ifsc': ifsc,
     'pinLength': pinLength,
     'vpa': vpa?.toJson(),
+    'type': type
   };
 
 }

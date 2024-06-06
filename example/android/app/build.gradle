@@ -52,8 +52,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/TurboLib/')
-    implementation fileTree(include: ['*.aar'], dir: '/Users/atif.qamar/Desktop/CustomUI/CustomUILib/')
+    //TODO: Add Library folder path in implementation's dir
+    //implementation fileTree(include: ['*.aar'], dir: '')
     //implementation 'com.razorpay:customui:3.9.+'
 }
 
