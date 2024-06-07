@@ -217,7 +217,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           merchant can use this response["data"] upiAccounts or can again call
           _razorpay.getLinkedUpiAccounts(turboUPIModel?.mobileNumber)
        */
-        Navigator.pop(context);
+        //Navigator.pop(context);
         getLinkedUpiAccounts();
         break;
       case "SELECT_SIM":
