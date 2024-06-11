@@ -2,7 +2,7 @@ class AccountBalance {
   final String id;
   final int balance;
   final String currency;
-  final double outstanding;
+  final int outstanding;
 
   AccountBalance({
     required this.id,
@@ -16,7 +16,7 @@ class AccountBalance {
       id: json['id'] as String,
       balance: json['balance'] as int,
       currency: json['currency'] as String,
-      outstanding: json['outstanding'] as double
+      outstanding: json['outstanding'] as int
     );
   }
 
