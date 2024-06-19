@@ -33,11 +33,9 @@ android {
     productFlavors {
         customCheckout {
             dimension "sdk"
-            matchingFallbacks = ['debug', 'release']
         }
         customCheckoutWithTurbo {
             dimension "sdk"
-            matchingFallbacks = ['debug', 'release']
         }
     }
 
