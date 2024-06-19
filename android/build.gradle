@@ -67,7 +67,7 @@ android {
         implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
         implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
         //TODO: Add Library folder path in implementation's dir
-        customCheckoutWithTurboCompileOnly fileTree(include: ['*.aar'], dir: '/Users/shibu.prasad/Desktop/FlutterHeadlessUAT/')
+        customCheckoutWithTurboCompileOnly fileTree(include: ['*.aar'], dir: '')
     }
 }
 
