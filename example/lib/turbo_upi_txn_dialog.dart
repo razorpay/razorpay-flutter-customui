@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
+import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
 
 class TurboUPITxnDialog extends StatefulWidget {
 

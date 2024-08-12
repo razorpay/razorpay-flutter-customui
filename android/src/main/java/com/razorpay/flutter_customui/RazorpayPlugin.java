@@ -53,9 +53,9 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "razorpay_flutter_customui");
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "razorpay_flutter_customui_turbo");
     channel.setMethodCallHandler(this);
-    eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "razorpay_flutter_customui_with_turbo_upi");
+    eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "razorpay_flutter_customui_turbo_with_turbo_upi");
     eventChannel.setStreamHandler(this);
   }
 

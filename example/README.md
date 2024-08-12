@@ -1,6 +1,6 @@
-# razorpay_flutter_customui_example
+# razorpay_flutter_customui_turbo_example
 
-Demonstrates how to use the razorpay_flutter_customui plugin.
+Demonstrates how to use the razorpay_flutter_customui_turbo plugin.
 
 ## Getting Started
 

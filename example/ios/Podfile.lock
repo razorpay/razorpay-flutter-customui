@@ -1,13 +1,13 @@
 PODS:
   - Flutter (1.0.0)
   - razorpay-customui-pod (2.0.0)
-  - razorpay_flutter_customui (1.3.0):
+  - razorpay_flutter_customui_turbo (1.3.0):
     - Flutter
     - razorpay-customui-pod
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - razorpay_flutter_customui (from `.symlinks/plugins/razorpay_flutter_customui/ios`)
+  - razorpay_flutter_customui_turbo (from `.symlinks/plugins/razorpay_flutter_customui_turbo/ios`)
 
 SPEC REPOS:
   trunk:
@@ -16,13 +16,13 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  razorpay_flutter_customui:
-    :path: ".symlinks/plugins/razorpay_flutter_customui/ios"
+  razorpay_flutter_customui_turbo:
+    :path: ".symlinks/plugins/razorpay_flutter_customui_turbo/ios"
 
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   razorpay-customui-pod: 9efe71a2db94a89cfc340081195da2ca4b12adf2
-  razorpay_flutter_customui: 0d9f7c78bea3ed3050aa0ccea09bde0f7a193e11
+  razorpay_flutter_customui_turbo: 0d9f7c78bea3ed3050aa0ccea09bde0f7a193e11
 
 PODFILE CHECKSUM: 19289cbe2df8fae542329939000c2ed5ab8628ad
 

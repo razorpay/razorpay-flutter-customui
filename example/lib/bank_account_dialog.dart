@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui/model/bank_account.dart';
-import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
+import 'package:razorpay_flutter_customui_turbo/model/bank_account.dart';
+import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
 
 class BankAccountDialog extends StatelessWidget {
   final List<BankAccount> bankAccounts;

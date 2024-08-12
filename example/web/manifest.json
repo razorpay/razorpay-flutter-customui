@@ -1,11 +1,11 @@
 {
-    "name": "razorpay_flutter_customui_example",
-    "short_name": "razorpay_flutter_customui_example",
+    "name": "razorpay_flutter_customui_turbo_example",
+    "short_name": "razorpay_flutter_customui_turbo_example",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Demonstrates how to use the razorpay_flutter_customui plugin.",
+    "description": "Demonstrates how to use the razorpay_flutter_customui_turbo plugin.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

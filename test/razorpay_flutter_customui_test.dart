@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
+import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('razorpay_flutter_customui');
+  const MethodChannel channel = MethodChannel('razorpay_flutter_customui_turbo');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

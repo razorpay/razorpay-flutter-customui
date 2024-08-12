@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
-import 'package:razorpay_flutter_customui/model/tpv_bank_account.dart';
+import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
+import 'package:razorpay_flutter_customui_turbo/model/tpv_bank_account.dart';
 
 class TpvDialog extends StatefulWidget {
 

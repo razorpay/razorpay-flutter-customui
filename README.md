@@ -2,7 +2,7 @@
 
 Flutter plugin for Razorpay Custom SDK.
 
-[![pub package](https://img.shields.io/pub/v/razorpay_flutter_customui.svg)](https://pub.dartlang.org/packages/razorpay_flutter_customui)
+[![pub package](https://img.shields.io/pub/v/razorpay_flutter_customui_turbo.svg)](https://pub.dartlang.org/packages/razorpay_flutter_customui_turbo)
 
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
@@ -29,12 +29,12 @@ To know more about Razorpay payment flow and steps involved, read up here: [http
 
 ## Installation
 
-This plugin is available on Pub: [https://pub.dev/packages/razorpay_flutter_customui](https://pub.dev/packages/razorpay_flutter)
+This plugin is available on Pub: [https://pub.dev/packages/razorpay_flutter_customui_turbo](https://pub.dev/packages/razorpay_flutter)
 
 Add this to `dependencies` in your app's `pubspec.yaml`
 
 ```yaml
-razorpay_flutter_customui: ^1.3.3
+razorpay_flutter_customui_turbo: ^1.3.3
 ```
 
 **Note for Android**: Make sure that the minimum API level for your app is 19 or higher.
@@ -66,7 +66,7 @@ Sample code to integrate can be found in [example/lib/main.dart](example/lib/mai
 #### Import package
 
 ```dart
-import 'package:razorpay_flutter_customui/razorpay_flutter_customui.dart';
+import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
 ```
 
 #### Create Razorpay instance

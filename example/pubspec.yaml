@@ -1,5 +1,5 @@
-name: razorpay_flutter_customui_example
-description: Demonstrates how to use the razorpay_flutter_customui plugin.
+name: razorpay_flutter_customui_turbo_example
+description: Demonstrates how to use the razorpay_flutter_customui_turbo plugin.
 version: 1.0.0
 
 # The following line prevents the package from being accidentally published to
@@ -13,9 +13,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  razorpay_flutter_customui:
+  razorpay_flutter_customui_turbo:
     # When depending on this package from a real application you should use:
-    #   razorpay_flutter_customui: ^x.y.z
+    #   razorpay_flutter_customui_turbo: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.

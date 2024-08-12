@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui_example/payment_slection_page.dart';
-import 'package:razorpay_flutter_customui_example/sdk_initilize_dialog.dart';
+import 'package:razorpay_flutter_customui_turbo_example/payment_slection_page.dart';
+import 'package:razorpay_flutter_customui_turbo_example/sdk_initilize_dialog.dart';
 
 void main() {
   runApp(MyApp());
