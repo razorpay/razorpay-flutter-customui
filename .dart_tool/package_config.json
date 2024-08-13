@@ -356,13 +356,13 @@
       "languageVersion": "2.19"
     },
     {
-      "name": "razorpay_flutter_customui_turbo",
+      "name": "razorpay_turbo",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2024-08-12T13:07:03.188285Z",
+  "generated": "2024-08-13T12:34:58.935358Z",
   "generator": "pub",
   "generatorVersion": "3.4.3",
   "flutterRoot": "file:///Users/ramprasad.a/flutter",

@@ -1,9 +1,9 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint razorpay_flutter_customui_turbo.podspec` to validate before publishing.
+# Run `pod lib lint razorpay_turbo.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'razorpay_flutter_customui_turbo'
+  s.name             = 'razorpay_turbo'
   s.version          = '1.3.2'
   s.summary          = 'Flutter plugin for Razorpay Custom SDK.'
   s.description      =  'Flutter plugin for Razorpay Custom SDK.'

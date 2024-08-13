@@ -1,8 +1,8 @@
-# Razorpay Flutter Custom-UI
+# Razorpay Flutter Turbo-UI
 
 Flutter plugin for Razorpay Custom SDK.
 
-[![pub package](https://img.shields.io/pub/v/razorpay_flutter_customui_turbo.svg)](https://pub.dartlang.org/packages/razorpay_flutter_customui_turbo)
+[![pub package](https://img.shields.io/pub/v/razorpay_turbo.svg)](https://pub.dartlang.org/packages/razorpay_turbo)
 
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
@@ -18,7 +18,7 @@ This flutter plugin is a wrapper around our Android and iOS SDKs.
 
 The following documentation is only focused on the wrapper around our native Android and iOS SDKs. To know more about our SDKs and how to link them within the projects, refer to the following documentation:
 
-**iOS / Android**: [https://razorpay.com/docs/](https://razorpay.com/docs/payment-gateway/flutter-integration/custom/)
+**iOS / Android**: [https://razorpay.com/docs/](https://razorpay.com/docs/payments/payment-gateway/flutter-integration/custom/payment-methods/turbo-upi/integration-noui/)
 
 To know more about Razorpay payment flow and steps involved, read up here: [https://razorpay.com/docs/](https://razorpay.com/docs/)
 
@@ -29,12 +29,12 @@ To know more about Razorpay payment flow and steps involved, read up here: [http
 
 ## Installation
 
-This plugin is available on Pub: [https://pub.dev/packages/razorpay_flutter_customui_turbo](https://pub.dev/packages/razorpay_flutter)
+This plugin is available on Pub: [https://pub.dev/packages/razorpay_turbo](https://pub.dev/packages/razorpay_flutter)
 
 Add this to `dependencies` in your app's `pubspec.yaml`
 
 ```yaml
-razorpay_flutter_customui_turbo: ^1.3.3
+razorpay_turbo: ^1.0.0
 ```
 
 **Note for Android**: Make sure that the minimum API level for your app is 19 or higher.
@@ -66,7 +66,7 @@ Sample code to integrate can be found in [example/lib/main.dart](example/lib/mai
 #### Import package
 
 ```dart
-import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
+import 'package:razorpay_turbo/razorpay_turbo.dart';
 ```
 
 #### Create Razorpay instance

@@ -2,19 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
-import 'package:razorpay_flutter_customui_turbo_example/models/card_info_model.dart';
+import 'package:razorpay_turbo/razorpay_turbo.dart';
+import 'package:razorpay_turbo_example/models/card_info_model.dart';
 import 'package:flutter/services.dart';
-import 'package:razorpay_flutter_customui_turbo_example/tpv_dialog.dart';
+import 'package:razorpay_turbo_example/tpv_dialog.dart';
 import 'bank_account_dialog.dart';
 import 'bank_list_screen_page.dart';
 import 'card_dialog.dart';
 import 'models/turbo_upi_model.dart';
-import 'package:razorpay_flutter_customui_turbo/model/upi_account.dart';
+import 'package:razorpay_turbo/model/upi_account.dart';
 import 'get_linked_upi_account_page.dart';
 
 import 'sim_dialog.dart';
-import 'package:razorpay_flutter_customui_turbo/model/Error.dart';
+import 'package:razorpay_turbo/model/Error.dart';
 
 enum PaymentMethods { card, upi, nb, wallet, vas, turboUPI }
 

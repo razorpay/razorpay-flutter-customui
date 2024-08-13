@@ -3,9 +3,9 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
-import 'package:razorpay_flutter_customui_turbo/model/account_balance.dart';
-import 'package:razorpay_flutter_customui_turbo/model/empty.dart';
-import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
+import 'package:razorpay_turbo/model/account_balance.dart';
+import 'package:razorpay_turbo/model/empty.dart';
+import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'model/Error.dart';
 import 'model/Sim.dart';
 import 'model/all_banks.dart';
@@ -26,7 +26,7 @@ class UpiTurbo {
   final int _CODE_EVENT_ERROR = 201;
 
   // Turbo UPI
-  final _eventChannel = const EventChannel('razorpay_flutter_customui_turbo_with_turbo_upi');
+  final _eventChannel = const EventChannel('razorpay_turbo_with_turbo_upi');
   bool _isTurboPluginAvailable = false;
 
 

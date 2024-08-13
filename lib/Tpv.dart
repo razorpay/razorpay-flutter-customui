@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'package:flutter/src/services/platform_channel.dart';
-import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
+import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'model/tpv_bank_account.dart';
 import 'dart:convert';
 import 'model/Error.dart';

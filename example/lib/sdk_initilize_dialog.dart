@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
-import 'package:razorpay_flutter_customui_turbo/model/upi_account.dart';
-import 'package:razorpay_flutter_customui_turbo/card.dart' as RazorPayCard;
-import 'package:razorpay_flutter_customui_turbo/model/Error.dart';
-import 'package:razorpay_flutter_customui_turbo_example/payment_slection_page.dart';
+import 'package:razorpay_turbo/razorpay_turbo.dart';
+import 'package:razorpay_turbo/model/upi_account.dart';
+import 'package:razorpay_turbo/card.dart' as RazorPayCard;
+import 'package:razorpay_turbo/model/Error.dart';
+import 'package:razorpay_turbo_example/payment_slection_page.dart';
 
 class SDKInitilizeDialog extends StatelessWidget {
   String sdkKey ='';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui_turbo/model/Sim.dart';
-import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
+import 'package:razorpay_turbo/model/Sim.dart';
+import 'package:razorpay_turbo/razorpay_turbo.dart';
 
 class SimDialog extends StatefulWidget {
   final List<Sim> sims;

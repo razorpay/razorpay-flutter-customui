@@ -1,4 +1,4 @@
-name: razorpay_flutter_customui_turbo
+name: razorpay_turbo
 description: Flutter plugin for Razorpay SDK. To know more about Razorpay, visit http://razorpay.com.
 version: 1.0.0
 # author: Razorpay
@@ -35,7 +35,7 @@ flutter:
         pluginClass: RazorpayFlutterCustomuiPlugin
       web:
         pluginClass: RazorpayFlutterCustomuiWeb
-        fileName: razorpay_flutter_customui_turbo_web.dart
+        fileName: razorpay_turbo_web.dart
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

@@ -6,7 +6,7 @@
 
    <application
         tools:replace="android:label"
-        android:label="razorpay_flutter_customui_turbo_example"
+        android:label="razorpay_turbo_example"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

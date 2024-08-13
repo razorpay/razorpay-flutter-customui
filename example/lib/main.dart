@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui_turbo_example/payment_slection_page.dart';
-import 'package:razorpay_flutter_customui_turbo_example/sdk_initilize_dialog.dart';
+import 'package:razorpay_turbo_example/payment_slection_page.dart';
+import 'package:razorpay_turbo_example/sdk_initilize_dialog.dart';
 
 void main() {
   runApp(MyApp());
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         child: Text('Purchase'),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.green,
+                          backgroundColor: Colors.green,
                         ),
                       )
                     ],

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter_customui_turbo/model/account_balance.dart';
-import 'package:razorpay_flutter_customui_turbo/model/empty.dart';
-import 'package:razorpay_flutter_customui_turbo/model/upi_account.dart';
-import 'package:razorpay_flutter_customui_turbo/razorpay_flutter_customui_turbo.dart';
-import 'package:razorpay_flutter_customui_turbo_example/turbo_upi_txn_dialog.dart';
+import 'package:razorpay_turbo/model/account_balance.dart';
+import 'package:razorpay_turbo/model/empty.dart';
+import 'package:razorpay_turbo/model/upi_account.dart';
+import 'package:razorpay_turbo/razorpay_turbo.dart';
+import 'package:razorpay_turbo_example/turbo_upi_txn_dialog.dart';
 import 'card_dialog.dart';
-import 'package:razorpay_flutter_customui_turbo/model/Error.dart';
+import 'package:razorpay_turbo/model/Error.dart';
 
 class GetLinkedUPIAccountPage extends StatelessWidget {
   final List<UpiAccount> upiAccounts;

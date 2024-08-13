@@ -12,7 +12,7 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 class RazorpayFlutterCustomuiWeb {
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
-      'razorpay_flutter_customui_turbo',
+      'razorpay_turbo',
       const StandardMethodCodec(),
       registrar,
     );
@@ -32,7 +32,7 @@ class RazorpayFlutterCustomuiWeb {
       default:
         throw PlatformException(
           code: 'Unimplemented',
-          details: 'razorpay_flutter_customui_turbo for web doesn\'t implement \'${call.method}\'',
+          details: 'razorpay_turbo for web doesn\'t implement \'${call.method}\'',
         );
     }
   }

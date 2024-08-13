@@ -4,7 +4,7 @@ import UIKit
 public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
     
     private var razorpayDelegate = RazorpayDelegate()
-    private static var CHANNEL_NAME = "razorpay_flutter_customui_turbo";
+    private static var CHANNEL_NAME = "razorpay_turbo";
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: CHANNEL_NAME, binaryMessenger: registrar.messenger())

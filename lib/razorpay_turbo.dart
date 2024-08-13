@@ -21,7 +21,7 @@ class Razorpay  {
   static const TLS_ERROR = 3;
   static const INCOMPATIBLE_PLUGIN = 4;
   static const UNKNOWN_ERROR = 100;
-  static const MethodChannel _channel = const MethodChannel('razorpay_flutter_customui_turbo');
+  static const MethodChannel _channel = const MethodChannel('razorpay_turbo');
   late EventEmitter _eventEmitter;
   late UpiTurbo upiTurbo;
   late Tpv tpv;
