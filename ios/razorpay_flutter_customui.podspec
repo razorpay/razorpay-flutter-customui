@@ -16,8 +16,16 @@ Pod::Spec.new do |s|
   s.platform = :ios, '10.0'
 
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
-  s.dependency 'razorpay-customui-pod'
-
+  #s.dependency 'razorpay-customui-pod'
+  s.vendored_frameworks = [
+    'Frameworks/Razorpay.xcframework',
+    'Frameworks/TurboUpiPluginUAT.framework',
+    'Frameworks/RazorpayTurboUPI.framework',
+    'Frameworks/RazorpayTurboUPIUI.framework',
+    'Frameworks/CommonLibrary.framework',
+    'Frameworks/OlivePayLibrary.framework',
+    'Frameworks/Sentry.framework'
+    ]
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   s.swift_version = '5.0'

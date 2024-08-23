@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:math';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'package:razorpay_turbo/model/account_balance.dart';
@@ -270,6 +271,10 @@ class UpiTurbo {
     if (jsonString.toString().isEmpty){
       return <UpiAccount>[];
     }
+    
+    print('decoded form');
+    print(json.decode(jsonString));
+
 
     List<UpiAccount> upiAccounts = List<UpiAccount>.from(
       json.decode(jsonString).map((x) => UpiAccount.fromJson(x)),

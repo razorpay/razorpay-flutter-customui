@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><ns2:RespListKeys xmlns:ns2="http://npci.org/upi/schema/">
+    <Head msgId="5skv5ptRj1uBlSYA8Ny" orgId="NPCI" ts="2015-12-31T17:42:26+05:30" ver="1.0"/>
+    <Resp reqMsgId="d0kSkoT7PaUSbv0u" result="SUCCESS"/><Txn id="d0kSkoT7PaUStXEf" ts="2015-12-31T17:42:23+05:30"/>
+    <keyList>
+        <key code="NPCI" ki="20150822" owner="NPCI" type="PKI">
+            <keyValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4rIIEHkJ2TYgO/JUJQI/sxDgbDEAIuy9uTf4DItWeIMsG9AuilOj9R+dwAv8S6/9No/z0cwsw4UnsHQG1ALVIxFznLizMjaVJ7TJ+yTS9C9bYEFakRqH8b4jje7SC7rZ9/DtZGsaWaCaDTyuZ9dMHrgcmJjeklRKxl4YVmQJpzYLrK4zOpyY+lNPBqs+aiwJa53ZogcUGBhx/nIXfDDvVOtKzNb/08U7dZuXoiY0/McQ7xEiFcEtMpEJw5EB4o3RhE9j/IQOvc7l/BfD85+YQ5rJGk4HUb6GrQXHzfHvIOf53l1Yb0IX4v9q7HiAyOdggO+PVzXMSbrcFBrEjGZD7QIDAQAB</keyValue></key></keyList>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <SignedInfo>
+            <CanonicalizationMethod
+            Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+            <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+            <Reference URI="">
+                <Transforms>
+                    <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                </Transforms>
+                <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <DigestValue>GYiC65ThmzF0ka0DrD7/lLJuKcgTweu/DGNgp+n0JQE=</DigestValue>
+            </Reference></SignedInfo>
+        <SignatureValue>GjGo2YkxpUAOj+RLU3RUCLDhsPzaqHDEiUEOELjj0XYu9AuQEBEAvr6phgulwIi7zkmsrK/In47Y
+            QqsVhn9MVJZM/gr8Uym7EtgJzvx8M8TsecKoRf8NNkex8fYpBmX728kuQ73RPpbinVhn+zlqDl55
+            adDBevsucJNFkr0/fWDUX21coYYqZs5O/0OdHXBG+a/K5ruZ4DIsVaxYfbOMmZzVBjKHX0I88gqw
+            zHpiIBonax2YEhOaoDF9NaKcwKqt+xNdOJZbSj6gCE0+tKUfcpY15Xv40jheoEXiNl8xJvjX8wkd
+            SrIpNZFETpCpxnLl1dcBZFUrF+ZCZAyohmdGBw==
+        </SignatureValue>
+        <KeyInfo>
+            <KeyValue>
+                <RSAKeyValue>
+                    <Modulus>
+                        01DqzBsJTyMHT2S9MK5AIyFXNU646kwiOK3uymXIy9EW0nRKNKRkeIRTlGwX4wEnymGtGgX5B/Ij
+                        1elkLN4VJ9GplDV+wf0Lp2i2q4E6uRiWIzsqq42MCQgv8Fq/IPqjqPbeP9yh/8YPmBiMehBmhQd3
+                        qzl77C03k6d0yBIO5q/zXneTK9uFBNEL5yNpukrLGBcf3b9VHsjXpEaQrxGSMHCgNWpQgXpEcBr5
+                        OJ0/XxWbgMCZMlkYe1d6gswjuCRZ/xxJwEfbSO5AsnPtyqxSIjyhgEi9REtYnzaWwOBN4JCqt0pM
+                        L0ja23lUwVJuNwkwNGKBXvkGoXUln8Sf7PIv7w==
+                    </Modulus>
+                    <Exponent>
+                        AQAB
+                    </Exponent>
+                </RSAKeyValue>
+            </KeyValue>
+        </KeyInfo>
+    </Signature>
+</ns2:RespListKeys>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,24 +1,40 @@
 import Flutter
 import Razorpay
 import WebKit
+import TurboUpiPluginUAT
 
 class RazorpayDelegate: NSObject {  
-
     var pendingResult: FlutterResult!
-    private var razorpay: RazorpayCheckout?
+    var razorpay: RazorpayCheckout?
     var navController: UINavigationController?
     var webView: WKWebView?
     var parentVC = UIViewController()
+               //UPI Turbo
+    var eventSink: FlutterEventSink!
+    let CODE_EVENT_SUCCESS = 200
+    let CODE_EVENT_ERROR = 201
+    let LINK_NEW_UPI_ACCOUNT_EVENT = "linkNewUpiAccountEvent"
+    
+    var upiBanks:[UpiBank] = []
+    var upiBankAccounts:[UpiBankAccount] = []
+    var upiAccounts:[UpiAccount] = []
+    var selectedBankAccount: UpiBankAccount?
+    
+    var isTurboUI: Bool? = true
     
     public func submit(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
         pendingResult = result
         let key = options["key"] as? String ?? ""
         
         self.initilizeSDK(withKey: key, result: result)
-
+        
         var tempOptions = options
         if let isCredPayment = tempOptions["provider"] as? String, isCredPayment == "cred" {
             tempOptions["app_present"] = 0
+        }
+        if tempOptions["upiAccount"] != nil {
+            self.submitTurbo(tempOptions: tempOptions)
+            return
         }
         tempOptions["FRAMEWORK"] = "flutter"
         tempOptions.removeValue(forKey: "key")
@@ -159,14 +175,19 @@ extension RazorpayDelegate {
         self.webView?.backgroundColor = UIColor.white
     }
     
-    public func initilizeSDK(withKey key: String, result: @escaping FlutterResult) {
+    public func initilizeSDK(withKey key: String, ui: Bool? = nil, result: @escaping FlutterResult) {
             
         guard self.razorpay == nil else { return }
         
+        self.isTurboUI = ui
         pendingResult = result
         self.configureWebView()
         if let unwrappedWebView = self.webView {
-            self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
+            if let isUi = ui, isUi == true {
+                self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, UIPlugin: RazorpayTurboUPI.UIPluginInstance())
+            } else {
+                self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, plugin: RazorpayTurboUPI.pluginInstance())
+            }
             
             DispatchQueue.main.async {
                 let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))

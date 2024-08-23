@@ -6,7 +6,7 @@ import 'package:razorpay_turbo/model/Error.dart';
 import 'package:razorpay_turbo_example/payment_slection_page.dart';
 
 class SDKInitilizeDialog extends StatelessWidget {
-  String sdkKey ='';
+  String sdkKey ='rzp_test_0wFRWIZnH65uny';
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -24,6 +24,7 @@ class SDKInitilizeDialog extends StatelessWidget {
                   hintText: 'MerchantKey',
                 ),
                 onChanged: (newValue) => sdkKey = newValue,
+                controller: TextEditingController()..text = 'rzp_test_0wFRWIZnH65uny',
               ),
             ),
 
