@@ -128,6 +128,7 @@ class _TurboUPITxnDialogState extends State<TurboUPITxnDialog> {
               };
 
               widget.razorpay.submit(turboPayload);
+              Navigator.of(context).pop();
               setState(() {
                 isLoading = true;
               });

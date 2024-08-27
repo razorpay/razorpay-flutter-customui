@@ -23,8 +23,13 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
         switch call.method {
         case "initilizeSDK":
             if let key = call.arguments as? String {
-                razorpayDelegate.initilizeSDK(withKey: key, ui: true, result: result)
+                razorpayDelegate.initilizeSDK(withKey: key, ui: false, result: result)
+            } else if let options = call.arguments as? Dictionary<String, Any> {
+               if let key = options["key"] as? String, let ui = options["ui"] as? Bool {
+                razorpayDelegate.initilizeSDK(withKey: key, ui: ui, result: result)
+               }
             }
+              
         case "submit":
             if let options = call.arguments as? Dictionary<String, Any> {
                 razorpayDelegate.submit(options: options, result: result);
