@@ -589,7 +589,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         setState(() {
                           isLoading = false;
                         });
-                        Navigator.push(
+                        mobileNo = turboUPIModel?.mobileNumber ?? '';
+                        if (upiAccounts.length > 0) {
+                                     Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (builder) {
@@ -602,6 +604,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                             },
                           ),
                         );
+                        }
+             
                       },
                       onFailure: (Error error) {
                         setState(() {

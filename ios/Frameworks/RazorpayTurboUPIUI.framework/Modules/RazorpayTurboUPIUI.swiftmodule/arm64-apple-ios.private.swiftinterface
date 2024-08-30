@@ -22,9 +22,6 @@ import _StringProcessing
 import _SwiftConcurrencyShims
 import os.log
 import os
-@_hasMissingDesignatedInitializers public class SDKSessionAPI {
-  @objc deinit
-}
 public struct TurboSDKError {
   public var errorCode: Swift.String
   public var errorDescription: Swift.String
