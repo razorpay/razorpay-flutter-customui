@@ -18,6 +18,7 @@ extension RazorpayDelegate {
     func linkNewUpiAccountUI(mobileNumber: String, color: String, result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
         self.pendingResult = result
         self.eventSink = eventSink
+        self.initilizeSDK(withKey: self.merchantKey, result: result)
         self.razorpay?.upiTurboUI?.linkNewUpiAccount(mobileNumber: mobileNumber, color: color, completionHandler: { response, error in
             guard error == nil else {
                 let err = error as? TurboError
@@ -62,6 +63,7 @@ extension RazorpayDelegate {
     func getLinkedUpiAccounts(mobileNumber: String, result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
         self.pendingResult = result
         self.eventSink = eventSink
+        self.initilizeSDK(withKey: self.merchantKey, result: result)
         if let isUi = self.isTurboUI, isUi == true {
             razorpay?.upiTurboUI?.getLinkedUpiAccounts(mobileNumber: mobileNumber, resultDelegate: self)
         } else {
@@ -163,7 +165,7 @@ extension RazorpayDelegate {
     func manageAccount(customerMobile: String , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink) {
         self.pendingResult = result
         self.eventSink = eventSink
-        var reply = TurboDictionary()
+        self.initilizeSDK(withKey: self.merchantKey, result: result)
         self.razorpay?.upiTurboUI?.manageUpiAccount(mobileNumber: customerMobile, color: "")
     }
     
@@ -224,11 +226,11 @@ extension RazorpayDelegate {
         sendReplyByEventSink(reply)
     }
     
-    private func sendReplyByEventSink(_ reply: TurboDictionary) {
+    func sendReplyByEventSink(_ reply: TurboDictionary) {
         self.eventSink(reply)
     }
     
-    private func sendReply(data: TurboDictionary) {
+    func sendReply(data: TurboDictionary) {
         pendingResult(data)
     }
     

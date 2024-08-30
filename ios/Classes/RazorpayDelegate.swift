@@ -21,12 +21,29 @@ class RazorpayDelegate: NSObject {
     var selectedBankAccount: UpiBankAccount?
     
     var isTurboUI: Bool? = true
+    var merchantKey: String = ""
     
+    private var  CODE_PAYMENT_ERROR = 1
+    private var CODE_PAYMENT_SUCCESS = 0
+    private var NETWORK_ERROR = 2
+    private var INVALID_OPTIONS = 3
+    private var PAYMENT_CANCELLED = 0
+    private var TLS_ERROR = 6
+    private var UNKNOWN_ERROR = 100
+
     public func submit(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
         pendingResult = result
-        let key = options["key"] as? String ?? ""
-        
-        self.initilizeSDK(withKey: key, result: result)
+        var key = options["key"] as? String ?? ""
+        if key == "" {
+            let payload = options["payload"] as? [String: Any]
+            key = payload?["key"] as? String ?? ""
+            guard key != "" else {
+                self.pendingResult(["error": "Api key cannot be empty"])
+                return
+            }
+        }
+    
+        self.initilizeSDK(withKey: key, ui: self.isTurboUI, result: result)
         
         var tempOptions = options
         if let isCredPayment = tempOptions["provider"] as? String, isCredPayment == "cred" {
@@ -151,7 +168,9 @@ class RazorpayDelegate: NSObject {
     private func close() {
         razorpay?.close()
         if (self.webView != nil) {
-            webView?.stopLoading()
+            DispatchQueue.main.async {
+                self.webView?.stopLoading()
+            }
         }
         
         razorpay = nil
@@ -176,9 +195,9 @@ extension RazorpayDelegate {
     }
     
     public func initilizeSDK(withKey key: String, ui: Bool? = nil, result: @escaping FlutterResult) {
-            
+        guard key != "" else { return }
         guard self.razorpay == nil else { return }
-        
+        self.merchantKey = key
         self.isTurboUI = ui
         pendingResult = result
         self.configureWebView()
@@ -275,12 +294,38 @@ extension RazorpayDelegate: WKNavigationDelegate {
 extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
     
     func onPaymentSuccess(_ payment_id: String, andData response: [AnyHashable : Any]) {
-        pendingResult(response as NSDictionary)
+        var reply: TurboDictionary = [
+        "type": CODE_PAYMENT_SUCCESS
+        ]
+        var data: TurboDictionary = [
+            "razorpay_payment_id": payment_id
+        
+        ]
+        if let orderId = response["razorpay_order_id"] as? String {
+            data["razorpay_order_id"] = orderId
+        }
+        if let subscriptionId = response["razorpay_subscription_id"] as? String {
+            data["razorpay_signature"] = subscriptionId
+        }
+        if let signature = response["razorpay_signature"] as? String {
+            data["razorpay_signature"] = signature
+        }
+        
+        reply["data"] = data
+        sendReply(data: reply)
         self.close()
     }
     
     func onPaymentError(_ code: Int32, description str: String, andData response: [AnyHashable : Any]) {
-        pendingResult(response as NSDictionary)
+        var reply: TurboDictionary = [
+        "type": CODE_PAYMENT_ERROR
+        ]
+        let data: TurboDictionary = [
+        "code": code,
+         "message": str
+        ]
+        reply["data"] = data
+        sendReply(data: reply)
         self.close()
     }
 }
