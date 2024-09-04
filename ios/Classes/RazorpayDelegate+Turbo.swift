@@ -231,7 +231,6 @@ extension RazorpayDelegate {
                 
                 var pinNotSetArr = TurboArrayDictionary()
                 var pinSetArr = TurboArrayDictionary()
-                var finalPinSetArrDict = TurboDictionary()
 
                 if let upiAllAccount = response as? UpiAllAccounts {
                     if let accountWithPinNotSet = upiAllAccount.accountsWithPinNotSet {
@@ -244,14 +243,14 @@ extension RazorpayDelegate {
                     if let accountWithPinSet = upiAllAccount.accountsWithPinSet {
                         for account in accountWithPinSet {
                             if let bankAccount = account as? UpiBankAccount {
-                                finalPinSetArrDict[""] = self.getUpiBankAccountDict(bankAccount)
-                                finalPinSetArrDict["isUpiAccount"] = false
-                                pinSetArr.append(finalPinSetArrDict)
+                                var bankAccountsDict = self.getUpiBankAccountDict(bankAccount)
+                                bankAccountsDict["isUpiAccount"] = false
+                                pinSetArr.append(bankAccountsDict)
                             }
                             if let upiAccount = account as? UpiAccount {
-                                finalPinSetArrDict[""] = self.getUpiAccountDict(upiAccount)
-                                finalPinSetArrDict["isUpiAccount"] = true
-                                pinSetArr.append(finalPinSetArrDict)
+                                var upiAccountDict = self.getUpiAccountDict(upiAccount)
+                                upiAccountDict["isUpiAccount"] = true
+                                pinSetArr.append(upiAccountDict)
                             }
                         }
                     }
