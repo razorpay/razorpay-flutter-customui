@@ -1,5 +1,5 @@
 import 'bank_account.dart';
-import 'package:razorpay_flutter_customui/model/upi_account.dart';
+import 'package:razorpay_turbo/model/upi_account.dart';
 
 class PrefetchAccounts {
   List<dynamic>? accountsWithPinSet;

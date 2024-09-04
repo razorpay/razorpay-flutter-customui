@@ -137,7 +137,7 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
         case "linkNewUpiAccountTPV":
             //TODO: Implement TPV features
             break
-        case "prefetchAndLinkNewUpiAccountUI":
+        case "prefetchAndLinkUpiAccountsWithUI":
             if let prefetchDict = call.arguments as? [String: Any] {
                 razorpayDelegate.prefetchAndLinkNewUpiAccountUI(dict: prefetchDict, result: result, eventSink: self.eventSink)
             }
