@@ -73,10 +73,12 @@ class UpiTurbo {
             event["data"] = _getBankAccountList(bankAccountResponse: event["data"]);
             break;
         }
+        _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
       } else if (event["responseEvent"] == "prefetchAndLinkNewUpiAccountUIEvent") {
         _getAllPrefetchAccounts(event['data']);
+        _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT, null, event);
       }
-      _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
+      
     }
   }
 
