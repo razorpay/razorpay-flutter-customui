@@ -96,8 +96,9 @@ class UpiTurbo {
   }
 
   void prefetchAndLinkUpiAccountsWithUI({required String? customerMobile, color: String}) async {
+    print('prfetch called');
     final prefetchRequest = {'customerMobile': customerMobile, 'color': color};
-    _channel.invokeMethod('prefetchAndLinkUpiAccountsWithUI', prefetchRequest);
+    await _channel.invokeMethod('prefetchAndLinkUpiAccountsWithUI', prefetchRequest);
   }
 
   void register({required Sim sim}) async {
