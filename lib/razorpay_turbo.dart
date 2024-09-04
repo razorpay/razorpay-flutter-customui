@@ -13,6 +13,7 @@ class Razorpay  {
   static const EVENT_PAYMENT_SUCCESS = 'payment.success';
   static const EVENT_PAYMENT_ERROR = 'payment.error';
   static const EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT = "linkNewUpiAccount";
+  static const EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT = "prefetchAndLinkNewUpiAccountUIEvent";
 
   // Payment error codes
   static const NETWORK_ERROR = 0;
