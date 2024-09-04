@@ -532,8 +532,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         .showSnackBar(SnackBar(content: Text(error)));
                     return;
                   }
-                  _razorpay.upiTurbo.linkNewUpiAccount(
-                      customerMobile: turboUPIModel?.mobileNumber);
+                  _razorpay.upiTurbo.prefetchAndLinkUpiAccountsWithUI(customerMobile: turboUPIModel?.mobileNumber);
+                  // _razorpay.upiTurbo.linkNewUpiAccount(
+                  //     customerMobile: turboUPIModel?.mobileNumber);
                 },
                 child: Text('LinkNewUpiAccount')),
             ElevatedButton(
