@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:math';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'model/bank_account.dart';
 import 'model/bank_model.dart';
 import 'model/upi_account.dart';
 import 'card.dart';
+import 'model/prefetch_model.dart';
 
 typedef void OnSuccess<T>(T result);
 typedef void OnFailure<T>(T error);
@@ -71,6 +73,8 @@ class UpiTurbo {
             event["data"] = _getBankAccountList(bankAccountResponse: event["data"]);
             break;
         }
+      } else if (event["responseEvent"] == "prefetchAndLinkNewUpiAccountUIEvent") {
+        _getAllPrefetchAccounts(event['data']);
       }
       _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
     }
@@ -89,6 +93,11 @@ class UpiTurbo {
       return;
     }
     await _channel.invokeMethod('linkNewUpiAccount' , customerMobile);
+  }
+
+  void prefetchAndLinkUpiAccountsWithUI({required String? customerMobile, color: String}) async {
+    final prefetchRequest = {'customerMobile': customerMobile, 'color': color};
+    _channel.invokeMethod('prefetchAndLinkUpiAccountsWithUI', prefetchRequest);
   }
 
   void register({required Sim sim}) async {
@@ -351,4 +360,7 @@ class UpiTurbo {
     onFailure(Error(errorCode:"AXIS_SDK_ERROR" , errorDescription: "No Turbo Plugin Found"));
   }
 
+  PrefetchAccounts _getAllPrefetchAccounts(Map<String, dynamic> data) {
+      return PrefetchAccounts.fromMap(data);
+  }
 }
