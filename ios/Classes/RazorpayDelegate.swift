@@ -14,7 +14,8 @@ class RazorpayDelegate: NSObject {
     let CODE_EVENT_SUCCESS = 200
     let CODE_EVENT_ERROR = 201
     let LINK_NEW_UPI_ACCOUNT_EVENT = "linkNewUpiAccountEvent"
-    
+    let PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT = "prefetchAndLinkNewUpiAccountUIEvent"
+
     var upiBanks:[UpiBank] = []
     var upiBankAccounts:[UpiBankAccount] = []
     var upiAccounts:[UpiAccount] = []

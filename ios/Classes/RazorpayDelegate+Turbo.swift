@@ -207,6 +207,64 @@ extension RazorpayDelegate {
         #endif
         sendReply(data: reply)
     }
+    
+    func prefetchAndLinkNewUpiAccountUI(dict: TurboDictionary , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink) {
+        self.pendingResult = result
+        self.eventSink = eventSink
+        
+        var reply = TurboDictionary()
+        reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
+        
+        guard let customerMobile = dict["customerMobile"] as? String else { return }
+        let color = dict["color"] as? String ?? ""
+        
+        self.razorpay?.upiTurboUI?
+            .setCustomerMobile(mobile: customerMobile)
+            .setColor(color: color)
+            .prefetchAndLinkUpiAccountsWithUI(completionHandler: { response, error in
+                guard error == nil else {
+                    let err = error as? TurboError
+                    self.handleAndPublishTurboError(error: err)
+                    self.onEventError(reply: &reply, err?.errorDescription ?? "")
+                    return
+                }
+                
+                var pinNotSetArr = TurboArrayDictionary()
+                var pinSetArr = TurboArrayDictionary()
+                var finalPinSetArrDict = TurboDictionary()
+
+                if let upiAllAccount = response as? UpiAllAccounts {
+                    if let accountWithPinNotSet = upiAllAccount.accountsWithPinNotSet {
+                        for account in accountWithPinNotSet {
+                            let bankAccountDict = self.getUpiBankAccountDict(account)
+                            pinNotSetArr.append(bankAccountDict)
+                        }
+                    }
+                    
+                    if let accountWithPinSet = upiAllAccount.accountsWithPinSet {
+                        for account in accountWithPinSet {
+                            if let bankAccount = account as? UpiBankAccount {
+                                finalPinSetArrDict[""] = self.getUpiBankAccountDict(bankAccount)
+                                finalPinSetArrDict["isUpiAccount"] = false
+                                pinSetArr.append(finalPinSetArrDict)
+                            }
+                            if let upiAccount = account as? UpiAccount {
+                                finalPinSetArrDict[""] = self.getUpiAccountDict(upiAccount)
+                                finalPinSetArrDict["isUpiAccount"] = true
+                                pinSetArr.append(finalPinSetArrDict)
+                            }
+                        }
+                    }
+                }
+                
+                let finalDict = [
+                    "accountsWithPinNotSet": pinNotSetArr,
+                    "accountsWithPinSet": pinSetArr
+                ]
+                reply["data"] = finalDict
+                self.onEventSuccess(&reply)
+            })
+    }
 
     //MARK: File methods
     private func onEventSuccess(_ reply: inout TurboDictionary) {
