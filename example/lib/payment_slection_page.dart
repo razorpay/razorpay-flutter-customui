@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_turbo/model/prefetch_model.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo_example/models/card_info_model.dart';
 import 'package:flutter/services.dart';
@@ -75,6 +76,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT,
         _handleNewUpiAccountResponse);
+    _razorpay.on(Razorpay.EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT, _handleNewPrefetchAccountReponse);
     fetchAllPaymentMethods();
     print("=====> key ${key} ");
     netBankingOptions = {
@@ -174,6 +176,11 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print('Payment Error Response : $response');
+  }
+
+  void _handleNewPrefetchAccountReponse(PrefetchAccounts accounts) {
+    print(accounts.accountsWithPinNotSet?.length);
+    print(accounts.accountsWithPinSet?.length);
   }
 
   // UPI Turbo
