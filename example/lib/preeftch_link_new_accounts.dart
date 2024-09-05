@@ -30,9 +30,10 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
 
   void _handleNewPrefetchAccountReponse(dynamic response) {
     PrefetchAccounts prefetchAccounts = response["data"];
-
-    pinSetAccounts = prefetchAccounts.accountsWithPinSet ?? [];
-    pinNotSetAccounts = prefetchAccounts.accountsWithPinNotSet ?? [];
+    setState(() {
+      pinSetAccounts = prefetchAccounts.accountsWithPinSet ?? [];
+      pinNotSetAccounts = prefetchAccounts.accountsWithPinNotSet ?? [];
+    });
 
     print(prefetchAccounts.accountsWithPinNotSet);
     print(prefetchAccounts.accountsWithPinSet);
