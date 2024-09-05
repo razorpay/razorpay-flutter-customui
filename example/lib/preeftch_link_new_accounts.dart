@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:razorpay_turbo/model/bank_account.dart';
 import 'package:razorpay_turbo/model/upi_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo/model/prefetch_model.dart';
+import 'package:razorpay_turbo/model/Error.dart';
 
 class PrefetchAndLintNewAccounts extends StatefulWidget {
   final Razorpay razorpay;
@@ -69,9 +72,26 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
             child: ListView.builder(
               itemCount: pinNotSetAccounts.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(pinNotSetAccounts[index].bank.name),
-                  subtitle: Text(pinNotSetAccounts[index].maskedAccountNumber),
+                return GestureDetector(
+                  onTap: () {
+                    widget.razorpay.upiTurbo.setUpiPinUI(
+                      bankAccount: pinNotSetAccounts[index],
+                      onSuccess: (List<UpiAccount> upiAccounts) {
+                        setState(() {
+                          pinSetAccounts.add(upiAccounts.first);
+                          pinNotSetAccounts.removeAt(index);
+                        });
+                      },
+                      onFailure: (Error error) {
+                        print('Error Fetching payment methods: $error');
+                      },
+                    );
+                  },
+                  child: ListTile(
+                    title: Text(pinNotSetAccounts[index].bank.name),
+                    subtitle:
+                        Text(pinNotSetAccounts[index].maskedAccountNumber),
+                  ),
                 );
               },
             ),

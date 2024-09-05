@@ -21,7 +21,6 @@ typedef void OnSuccess<T>(T result);
 typedef void OnFailure<T>(T error);
 
 class UpiTurbo {
-
   // EventEmitter instance used for communication
   late EventEmitter _eventEmitter;
   late MethodChannel _channel;
@@ -61,8 +60,6 @@ class UpiTurbo {
           Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
       return;
     }
-
-    print('event received prefetch ${event["responseEvent"]}');
 
     if (event["responseEvent"] == "linkNewUpiAccountEvent") {
       if (event["data"] != null) {
@@ -312,6 +309,19 @@ class UpiTurbo {
       await _channel.invokeMethod('manageUpiAccounts', customerMobile);
     } on PlatformException catch (error) {
       onFailure(Error(errorCode: error.code, errorDescription: error.message!));
+    }
+  }
+
+  void setUpiPinUI(
+      {required BankAccount bankAccount,
+      required OnSuccess<UpiAccount> onSuccess,
+      required OnFailure<Error> onFailure}) async {
+    String account = await _channel.invokeMethod('setPrefetchUPIPinWithUI');
+    if (account != '') {
+      onSuccess(_getUpiAccount(account));
+    } else {
+      onFailure(Error(
+          errorCode: "NO_ACCOUNT_FOUND", errorDescription: "No Account Found"));
     }
   }
 
