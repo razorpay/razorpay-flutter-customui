@@ -322,8 +322,11 @@ class UpiTurbo {
     if (account != '') {
       onSuccess(_getUpiAccounts(account));
     } else {
-      onFailure(Error(
-          errorCode: "NO_ACCOUNT_FOUND", errorDescription: "No Account Found"));
+      onFailure(
+        Error(
+            errorCode: "NO_ACCOUNT_FOUND",
+            errorDescription: "No Account Found"),
+      );
     }
   }
 

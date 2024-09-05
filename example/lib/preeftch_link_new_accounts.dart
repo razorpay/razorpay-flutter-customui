@@ -60,6 +60,7 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
                 return ListTile(
                   title: Text(getName(pinSetAccounts[index])),
                   subtitle: Text(getAccountNumber(pinSetAccounts[index])),
+                  trailing: CircularProgressIndicator(),
                 );
               },
             ),
