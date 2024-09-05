@@ -6,6 +6,7 @@ import 'package:razorpay_turbo/model/prefetch_model.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo_example/models/card_info_model.dart';
 import 'package:flutter/services.dart';
+import 'package:razorpay_turbo_example/preeftch_link_new_accounts.dart';
 import 'package:razorpay_turbo_example/tpv_dialog.dart';
 import 'bank_account_dialog.dart';
 import 'bank_list_screen_page.dart';
@@ -82,7 +83,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT,
         _handleNewUpiAccountResponse);
-    _razorpay.on(Razorpay.EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT, _handleNewPrefetchAccountReponse);
     fetchAllPaymentMethods();
     print("=====> key ${key} ");
     netBankingOptions = {
@@ -182,12 +182,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print('Payment Error Response : $response');
-  }
-
-  void _handleNewPrefetchAccountReponse(dynamic response) {
-    PrefetchAccounts prefetchAccounts = response["data"];
-    print(prefetchAccounts.accountsWithPinNotSet);
-    print(prefetchAccounts.accountsWithPinSet);
   }
 
   // UPI Turbo
@@ -533,11 +527,16 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         .showSnackBar(SnackBar(content: Text(error)));
                     return;
                   }
-                  _razorpay.upiTurbo.prefetchAndLinkUpiAccountsWithUI(customerMobile: turboUPIModel?.mobileNumber);
-                  // _razorpay.upiTurbo.linkNewUpiAccount(
-                  //     customerMobile: turboUPIModel?.mobileNumber);
+                  _razorpay.upiTurbo.linkNewUpiAccount(
+                      customerMobile: turboUPIModel?.mobileNumber);
                 },
                 child: Text('LinkNewUpiAccount')),
+            ElevatedButton(
+              onPressed: () {
+                prefetchAndLinkNewAccounts();
+              },
+              child: Text('Prefeetch and Link Accounts'),
+            ),
             ElevatedButton(
                 onPressed: () {
                   var error = validateTurboUpiFields();
@@ -600,21 +599,20 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                         });
                         mobileNo = turboUPIModel?.mobileNumber ?? '';
                         if (upiAccounts.length > 0) {
-                                     Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (builder) {
-                              return GetLinkedUPIAccountPage(
-                                razorpay: _razorpay,
-                                upiAccounts: upiAccounts,
-                                keyValue: key,
-                                customerMobile: mobileNo,
-                              );
-                            },
-                          ),
-                        );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (builder) {
+                                return GetLinkedUPIAccountPage(
+                                  razorpay: _razorpay,
+                                  upiAccounts: upiAccounts,
+                                  keyValue: key,
+                                  customerMobile: mobileNo,
+                                );
+                              },
+                            ),
+                          );
                         }
-             
                       },
                       onFailure: (Error error) {
                         setState(() {
@@ -1002,6 +1000,18 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Error : ${error.errorDescription}")));
         });
+  }
+
+  void prefetchAndLinkNewAccounts() {
+    print('prefetch and link new accounts');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (builder) {
+        return PrefetchAndLintNewAccounts(
+            razorpay: _razorpay,
+            mobileNumber: turboUPIModel?.mobileNumber.toString() ?? '');
+      }),
+    );
   }
 }
 
