@@ -314,11 +314,11 @@ class UpiTurbo {
 
   void setUpiPinUI(
       {required BankAccount bankAccount,
-      required OnSuccess<UpiAccount> onSuccess,
+      required OnSuccess<List<UpiAccount>> onSuccess,
       required OnFailure<Error> onFailure}) async {
     String account = await _channel.invokeMethod('setPrefetchUPIPinWithUI');
     if (account != '') {
-      onSuccess(_getUpiAccount(account));
+      onSuccess(_getUpiAccounts(account));
     } else {
       onFailure(Error(
           errorCode: "NO_ACCOUNT_FOUND", errorDescription: "No Account Found"));
