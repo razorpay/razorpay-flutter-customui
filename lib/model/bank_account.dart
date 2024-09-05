@@ -9,6 +9,7 @@ class BankAccount {
   String? id;
   String? ifsc;
   String? type;
+  String? state;
 
   BankAccount({
     this.creds,
@@ -18,25 +19,28 @@ class BankAccount {
     this.id,
     this.ifsc,
     this.type,
+    this.state,
   });
 
   factory BankAccount.fromJson(Map<String, dynamic> json) => BankAccount(
-    creds: AccountCredentials.fromJson(json['creds']),
-    maskedAccountNumber: json['masked_account_number'],
-    bank: Bank.fromJson(json['bank']),
-    beneficiaryName: json['beneficiary_name'],
-    id: json['id'],
-    ifsc: json['ifsc'],
-    type: json['type'],
-  );
+        creds: AccountCredentials.fromJson(json['creds']),
+        maskedAccountNumber: json['masked_account_number'],
+        bank: Bank.fromJson(json['bank']),
+        beneficiaryName: json['beneficiary_name'],
+        id: json['id'],
+        ifsc: json['ifsc'],
+        type: json['type'],
+        state: json['state'],
+      );
 
   Map<String, dynamic> toJson() => {
-    'creds': creds?.toJson(),
-    'masked_account_number': maskedAccountNumber,
-    'bank': bank?.toJson(),
-    'beneficiary_name': beneficiaryName,
-    'id': id,
-    'ifsc': ifsc,
-    'type': type,
-  };
+        'creds': creds?.toJson(),
+        'masked_account_number': maskedAccountNumber,
+        'bank': bank?.toJson(),
+        'beneficiary_name': beneficiaryName,
+        'id': id,
+        'ifsc': ifsc,
+        'type': type,
+        'state': state,
+      };
 }

@@ -60,7 +60,7 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
                 return ListTile(
                   title: Text(getName(pinSetAccounts[index])),
                   subtitle: Text(getAccountNumber(pinSetAccounts[index])),
-                  trailing: CircularProgressIndicator(),
+                  trailing: getWidgetForState(pinSetAccounts[index]),
                 );
               },
             ),
@@ -119,6 +119,24 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
       return pinSetAccount.accountNumber ?? '';
     } else {
       return 'Unknown Name';
+    }
+  }
+
+  Widget? getWidgetForState(dynamic pinSetAccounts) {
+    final state = (pinSetAccounts as BankAccount).state ?? '';
+    switch (state) {
+      case 'linkingInProgress':
+        return CircularProgressIndicator();
+      case 'linkingSuccess':
+        return Checkbox(value: true, onChanged: (bool? value) {});
+      case 'linkingFailed':
+        return Checkbox(
+          activeColor: Color(0xFFFF0000),
+          value: false,
+          onChanged: (bool? value) {},
+        );
+      default:
+        return null;
     }
   }
 }
