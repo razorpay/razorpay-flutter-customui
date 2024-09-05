@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:razorpay_turbo/model/bank_account.dart';
+import 'package:razorpay_turbo/model/upi_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo/model/prefetch_model.dart';
 
@@ -53,8 +55,8 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
               itemCount: pinSetAccounts.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text('Bank Name'),
-                  subtitle: Text('Account Number : xxxxx7862'),
+                  title: Text(getName(pinSetAccounts[index])),
+                  subtitle: Text(getAccountNumber(pinSetAccounts[index])),
                 );
               },
             ),
@@ -68,8 +70,8 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
               itemCount: pinNotSetAccounts.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text('Bank Name - PIN Not set'),
-                  subtitle: Text('Account number : xxxx1234'),
+                  title: Text(pinNotSetAccounts[index].bank.name),
+                  subtitle: Text(pinNotSetAccounts[index].maskedAccountNumber),
                 );
               },
             ),
@@ -77,5 +79,25 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
         ],
       ),
     );
+  }
+
+  String getName(dynamic pinSetAccount) {
+    if (pinSetAccount is BankAccount) {
+      return pinSetAccount.bank?.name ?? '';
+    } else if (pinSetAccount is UpiAccount) {
+      return pinSetAccount.bankName ?? '';
+    } else {
+      return 'Unknown Name';
+    }
+  }
+
+  String getAccountNumber(dynamic pinSetAccount) {
+    if (pinSetAccount is BankAccount) {
+      return pinSetAccount.maskedAccountNumber ?? '';
+    } else if (pinSetAccount is UpiAccount) {
+      return pinSetAccount.accountNumber ?? '';
+    } else {
+      return 'Unknown Name';
+    }
   }
 }
