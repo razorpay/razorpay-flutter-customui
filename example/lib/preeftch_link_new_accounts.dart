@@ -122,8 +122,13 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
     }
   }
 
-  Widget? getWidgetForState(dynamic pinSetAccounts) {
-    final state = (pinSetAccounts as BankAccount).state ?? '';
+  Widget? getWidgetForState(dynamic pinSetAccount) {
+    var state = '';
+    if (pinSetAccount is BankAccount) {
+      state = pinSetAccount.state ?? '';
+    } else if (pinSetAccount is UpiAccount) {
+      state = pinSetAccount.vpa?.bankAccount?.state ?? '';
+    }
     switch (state) {
       case 'linkingInProgress':
         return CircularProgressIndicator();
