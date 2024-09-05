@@ -184,9 +184,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     print('Payment Error Response : $response');
   }
 
-  void _handleNewPrefetchAccountReponse(PrefetchAccounts accounts) {
-    print(accounts.accountsWithPinNotSet?.length);
-    print(accounts.accountsWithPinSet?.length);
+  void _handleNewPrefetchAccountReponse(dynamic response) {
+    PrefetchAccounts prefetchAccounts = response["data"];
+    print(prefetchAccounts.accountsWithPinNotSet);
+    print(prefetchAccounts.accountsWithPinSet);
   }
 
   // UPI Turbo

@@ -12,7 +12,7 @@ class PrefetchAccounts {
 
   factory PrefetchAccounts.fromMap(Map<String, dynamic> response) {
     final List<dynamic> upiPinNotSetAccounts = response['accountsWithPinNotSet'];
-    final List<Map<String, dynamic>> upiPinSetAccounts = response['accountsWithPinSet'];
+    final List<dynamic> upiPinSetAccounts = response['accountsWithPinSet'];
 
     final bankAccounts = upiPinNotSetAccounts.map((account) => BankAccount.fromJson(account)).toList();
     final combinedAccount = upiPinSetAccounts.map( (pinSetAccount) {
