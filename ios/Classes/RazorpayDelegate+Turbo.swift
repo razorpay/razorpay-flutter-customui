@@ -218,8 +218,8 @@ extension RazorpayDelegate {
         
         var reply = TurboDictionary()
         reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
-        
-        let dict = [
+        /*
+        let dict1 = [
             "accountsWithPinSet": [
                 ["bank_logo_url": "https://cdn.razorpay.com/bank/AXIS.gif", "vpa": ["bank_account": ["state": "linkingInProgress","beneficiary_name": "PRIYANK PRAVINCHANDRA SHAH", "bank": ["ifsc": "AXIS0000003", "id": "607153", "logo": "https://cdn.razorpay.com/bank/AXIS.gif", "code": "607153", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "name": "AXIS"], "masked_account_number": "XXXX474120", "ifsc": "AXIS0000003", "creds": ["atmpin": ["set": false, "length": 6], "upipin": ["set": true, "length": 6], "sms": ["set": false, "length": 6]]], "default": false, "username": "917012969837-1", "handle": "axis", "address": "917012969837-1@axis", "active": false, "validated": false], "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AXIS0000003", "bank_name": "AXIS", "account_number": "XXXX474120", "isUpiAccount": true],
                 
@@ -228,19 +228,20 @@ extension RazorpayDelegate {
                 ["account_number": "XXXXXXXXXX000052", "bank_logo_url": "https://cdn.razorpay.com/bank/AABC.gif", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "isUpiAccount": true, "bank_name": "MYPSP", "ifsc": "AABC0000823", "vpa": ["validated": false, "address": "917012969837-3@axis", "bank_account": ["state": "linkingFailed","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]], "default": false, "username": "917012969837-3", "handle": "axis", "active": false]]
             ],
             "accountsWithPinNotSet": [
-                ["state": "linkingSuccess","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]
+                ["type": "SAVINGS","id": "","state": "linkingSuccess","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]
                 ],
                 
-                ["state": "linkingSuccess","beneficiary_name": "ABC", "ifsc": "AABE0877543", "bank": ["name": "Mybene", "logo": "https://cdn.razorpay.com/bank/AABE.gif", "code": "000000", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AABE0877543", "id": "000000"], "creds": ["upipin": ["length": 6, "set": true], "sms": ["length": 6, "set": false], "atmpin": ["length": 6, "set": false]], "masked_account_number": "857775XXXXXXXX9"]
+                ["type": "CREDIT","id": "","state": "linkingSuccess","beneficiary_name": "ABC", "ifsc": "AABE0877543", "bank": ["name": "Mybene", "logo": "https://cdn.razorpay.com/bank/AABE.gif", "code": "000000", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AABE0877543", "id": "000000"], "creds": ["upipin": ["length": 6, "set": true], "sms": ["length": 6, "set": false], "atmpin": ["length": 6, "set": false]], "masked_account_number": "857775XXXXXXXX9"]
             ]
         ]
         
-        if let finalDictStr = self.convertDictionaryToJSON(dict) {
-            reply["data"] = finalDictStr
-            self.onEventSuccess(&reply)
-        }
-        return
-        
+//        if let finalDictStr = self.convertDictionaryToJSON(dict1) {
+//            reply["data"] = finalDictStr
+//            self.onEventSuccess(&reply)
+//        }
+//        
+//        return
+        */
         guard let customerMobile = dict["customerMobile"] as? String else { return }
         let color = dict["color"] as? String ?? ""
         
@@ -260,6 +261,7 @@ extension RazorpayDelegate {
 
                 if let upiAllAccount = response as? UpiAllAccounts {
                     if let accountWithPinNotSet = upiAllAccount.accountsWithPinNotSet {
+                        self.upiBankAccounts = accountWithPinNotSet
                         for account in accountWithPinNotSet {
                             let bankAccountDict = self.getUpiBankAccountDict(account)
                             pinNotSetArr.append(bankAccountDict)
@@ -272,6 +274,7 @@ extension RazorpayDelegate {
                                 var bankAccountsDict = self.getUpiBankAccountDict(bankAccount)
                                 bankAccountsDict["isUpiAccount"] = false
                                 pinSetArr.append(bankAccountsDict)
+                                
                             }
                             if let upiAccount = account as? UpiAccount {
                                 var upiAccountDict = self.getUpiAccountDict(upiAccount)
@@ -428,6 +431,7 @@ extension RazorpayDelegate {
         }
         return nil
     }
+
     
     private func getUpicard(_ cardStr: String) -> UpiCard? {
         if let bankAccount = convertToDictionary(cardStr) {
@@ -463,9 +467,12 @@ extension RazorpayDelegate {
         dict["masked_account_number"] = account.accountNumber
         dict["beneficiary_name"] = account.beneficiaryName
         dict["state"] = self.getStringStateFromBankAccounutState(account.state)
+        dict["id"] = "123"
+        dict["type"] = "SAVING"
         if let bank = account.bank {
             var bankDict = bank.toDictionary()
             bankDict["data"] = nil
+            bankDict["upi"] = true
             dict["bank"] = bankDict
         }
         if let creds = account.creds {
