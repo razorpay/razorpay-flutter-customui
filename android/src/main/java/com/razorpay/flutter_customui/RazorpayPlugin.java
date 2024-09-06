@@ -203,7 +203,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
                 String colorPrefetch = "#000000";
                 try {
                     colorPrefetch = (String) _arguments.get("color");
-                    if(colorPrefetch.isEmpty() && colorPrefetch.isBlank()){
+                    if (colorPrefetch.isEmpty() && colorPrefetch.isBlank()) {
                         colorPrefetch = "#000000";
                     }
 
@@ -211,6 +211,11 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
                     colorPrefetch = "#000000";
                 }
                 razorpayDelegate.prefetchAndLinkNewUpiAccountUI(customerMobile, colorPrefetch, result, this.eventSink);
+                break;
+
+            case "setPrefetchUPIPinWithUI":
+                bankAccountStr = call.arguments().toString();
+                razorpayDelegate.setPrefetchUPIPinWithUI(bankAccountStr, result, eventSink);
                 break;
 
             default:

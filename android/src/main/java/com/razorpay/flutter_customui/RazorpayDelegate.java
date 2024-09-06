@@ -26,6 +26,7 @@ import com.razorpay.UpiTurboLinkAccountResultListener;
 import com.razorpay.UpiTurboLinkAction;
 import com.razorpay.UpiTurboManageAccountListener;
 import com.razorpay.UpiTurboResultListener;
+import com.razorpay.UpiTurboSetPinResultListener;
 import com.razorpay.ValidateVpaCallback;
 import com.razorpay.upi.AccountBalance;
 import com.razorpay.upi.BankAccount;
@@ -706,6 +707,57 @@ public class RazorpayDelegate implements ActivityResultListener {
             pendingResult.error(exception.toString(), exception.toString(), exception);
         }
     }
+
+    public void setPrefetchUPIPinWithUI(String bankAccountString, Result result, EventChannel.EventSink eventSink) {
+        this.pendingResult = result;
+        this.eventSink = eventSink;
+        BankAccount bankAccount = getBankAccount(bankAccountString);
+        if (bankAccount != null) {
+            razorpay
+                    .upiTurbo
+                    .setUpiPinWithUI(bankAccount, new UpiTurboSetPinResultListener() {
+                        @Override
+                        public void onSuccess(@NonNull UpiAccount upiAccount) {
+                            HashMap<Object, Object> reply = new HashMap<>();
+                            if (upiAccount != null) {
+                                reply.put("data", toJsonString(upiAccount));
+                            } else {
+                                reply.put("data", "");
+                            }
+                            sendReply(reply);
+
+                        }
+
+                        @Override
+                        public void onError(@NonNull Error error) {
+                            pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
+                        }
+                    });
+        }
+
+    }
+
+
+//    func setPrefetchUPIPinWithUI(bankAccountStr: String , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
+//        self.pendingResult = result
+//        self.eventSink = eventSink
+//        if let bankAccount = getBankAccount(bankAccountStr) {
+//            self.razorpay?
+//                .upiTurboUI?
+//                .setUpiPinWithUI(bankAccount, completionHandler: { response, error in
+//                guard error == nil else {
+//                    let err = error as? TurboError
+//                    self.handleAndPublishTurboError(error: err)
+//                    return
+//                }
+//                if let accList = response as? [TurboUpiPluginUAT.UpiAccount] {
+//                    var reply = Dictionary<String,Any>()
+//                    reply["data"] = self.getUpiAccountJSON(accList)
+//                    self.sendReply(data: reply)
+//                }
+//            })
+//        }
+//    }
 
     public void manageUpiAccounts(String customerMobile, Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
