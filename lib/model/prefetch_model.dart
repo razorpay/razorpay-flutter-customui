@@ -5,21 +5,21 @@ class PrefetchAccounts {
   List<dynamic>? accountsWithPinSet;
   List<BankAccount>? accountsWithPinNotSet;
 
-  PrefetchAccounts([
-    this.accountsWithPinSet,
-    this.accountsWithPinNotSet
-  ]);
+  PrefetchAccounts([this.accountsWithPinSet, this.accountsWithPinNotSet]);
 
   factory PrefetchAccounts.fromMap(Map<String, dynamic> response) {
-    final List<dynamic> upiPinNotSetAccounts = response['accountsWithPinNotSet'];
+    final List<dynamic> upiPinNotSetAccounts =
+        response['accountsWithPinNotSet'];
     final List<dynamic> upiPinSetAccounts = response['accountsWithPinSet'];
 
-    final bankAccounts = upiPinNotSetAccounts.map((account) => BankAccount.fromJson(account)).toList();
-    final combinedAccount = upiPinSetAccounts.map( (pinSetAccount) {
-      if (pinSetAccount['isUpiAccount']) {
-        return UpiAccount.fromJson(pinSetAccount);
-      } else {
+    final bankAccounts = upiPinNotSetAccounts
+        .map((account) => BankAccount.fromJson(account))
+        .toList();
+    final combinedAccount = upiPinSetAccounts.map((pinSetAccount) {
+      if (pinSetAccount['vpa'] == null) {
         return BankAccount.fromJson(pinSetAccount);
+      } else {
+        return UpiAccount.fromJson(pinSetAccount);
       }
     }).toList();
     return PrefetchAccounts(combinedAccount, bankAccounts);
