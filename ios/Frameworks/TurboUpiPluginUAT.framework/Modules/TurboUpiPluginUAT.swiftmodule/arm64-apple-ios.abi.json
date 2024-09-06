@@ -27256,7 +27256,7 @@
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 6346,
+      "offset": 6347,
       "length": 13,
       "value": "4"
     },
@@ -27291,196 +27291,196 @@
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 6346,
+      "offset": 6347,
       "length": 13,
       "value": "4"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "StringLiteral",
-      "offset": 6382,
+      "offset": 6383,
       "length": 25,
       "value": "\"TurboUpiPluginUAT.UpiBankAccountCredentials\""
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "StringLiteral",
-      "offset": 6768,
+      "offset": 6769,
       "length": 17,
       "value": "\"TurboUpiPluginUAT.UpiBankAccountPin\""
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "StringLiteral",
-      "offset": 7002,
+      "offset": 7003,
       "length": 7,
       "value": "\"TurboUpiPluginUAT.UpiCard\""
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7409,
+      "offset": 7410,
       "length": 10,
       "value": "1"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7421,
+      "offset": 7422,
       "length": 17,
       "value": "2"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7440,
+      "offset": 7441,
       "length": 9,
       "value": "3"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7451,
+      "offset": 7452,
       "length": 19,
       "value": "4"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7471,
+      "offset": 7472,
       "length": 10,
       "value": "5"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7482,
+      "offset": 7483,
       "length": 7,
       "value": "6"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7409,
+      "offset": 7410,
       "length": 10,
       "value": "1"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7421,
+      "offset": 7422,
       "length": 17,
       "value": "2"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7440,
+      "offset": 7441,
       "length": 9,
       "value": "3"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7451,
+      "offset": 7452,
       "length": 19,
       "value": "4"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7471,
+      "offset": 7472,
       "length": 10,
       "value": "5"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7482,
+      "offset": 7483,
       "length": 7,
       "value": "6"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7554,
+      "offset": 7555,
       "length": 9,
       "value": "1"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7565,
+      "offset": 7566,
       "length": 19,
       "value": "2"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7586,
+      "offset": 7587,
       "length": 10,
       "value": "3"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7554,
+      "offset": 7555,
       "length": 9,
       "value": "1"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7565,
+      "offset": 7566,
       "length": 19,
       "value": "2"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 7586,
+      "offset": 7587,
       "length": 10,
       "value": "3"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "StringLiteral",
-      "offset": 7619,
+      "offset": 7620,
       "length": 17,
       "value": "\"TurboUpiPluginUAT.UpiAccountBalance\""
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "StringLiteral",
-      "offset": 9352,
+      "offset": 9353,
       "length": 14,
       "value": "\"TurboUpiPluginUAT.TPVBankAccount\""
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "StringLiteral",
-      "offset": 9806,
+      "offset": 9807,
       "length": 10,
       "value": "\"TurboUpiPluginUAT.TurboError\""
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "StringLiteral",
-      "offset": 11620,
+      "offset": 11621,
       "length": 7,
       "value": "\"TurboUpiPluginUAT.Consent\""
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 12499,
+      "offset": 12500,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/justin.joseph\/Documents\/RzpProjects\/razorpay-ios\/RazorpayIOS\/TurboUpiPlugin\/TurboPluginModel.swift",
       "kind": "IntegerLiteral",
-      "offset": 12499,
+      "offset": 12500,
       "length": 1,
       "value": "0"
     }

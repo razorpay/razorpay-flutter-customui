@@ -316,11 +316,11 @@ class UpiTurbo {
       {required BankAccount bankAccount,
       required OnSuccess<List<UpiAccount>> onSuccess,
       required OnFailure<Error> onFailure}) async {
-    String bankAccountString = bankAccount.toJson().toString();
-    String account = await _channel.invokeMethod(
+    String bankAccountString = _getBankAccountStr(bankAccount);
+    final Map<dynamic, dynamic> account = await _channel.invokeMethod(
         'setPrefetchUPIPinWithUI', bankAccountString);
-    if (account != '') {
-      onSuccess(_getUpiAccounts(account));
+    if (account['data'] != '') {
+      onSuccess(_getUpiAccounts(account['data']));
     } else {
       onFailure(
         Error(
