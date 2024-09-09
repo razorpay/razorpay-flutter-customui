@@ -719,6 +719,7 @@ public class RazorpayDelegate implements ActivityResultListener {
                         @Override
                         public void onSuccess(@NonNull UpiAccount upiAccount) {
                             HashMap<Object, Object> reply = new HashMap<>();
+                            reply.put("responseEvent", LINK_PREFETCH_UPI_ACCOUNT_EVENT);
                             if (upiAccount != null) {
                                 reply.put("data", toJsonString(upiAccount));
                             } else {
@@ -730,7 +731,9 @@ public class RazorpayDelegate implements ActivityResultListener {
 
                         @Override
                         public void onError(@NonNull Error error) {
-                            pendingResult.error(error.getErrorCode(), error.getErrorDescription(), toJsonString(error));
+                            HashMap<Object, Object> reply = new HashMap<>();
+                            reply.put("responseEvent", LINK_PREFETCH_UPI_ACCOUNT_EVENT);
+                            onEventError(reply, new Gson().toJson(error));
                         }
                     });
         }
