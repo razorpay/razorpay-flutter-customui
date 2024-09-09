@@ -736,28 +736,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         }
 
     }
-
-
-//    func setPrefetchUPIPinWithUI(bankAccountStr: String , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
-//        self.pendingResult = result
-//        self.eventSink = eventSink
-//        if let bankAccount = getBankAccount(bankAccountStr) {
-//            self.razorpay?
-//                .upiTurboUI?
-//                .setUpiPinWithUI(bankAccount, completionHandler: { response, error in
-//                guard error == nil else {
-//                    let err = error as? TurboError
-//                    self.handleAndPublishTurboError(error: err)
-//                    return
-//                }
-//                if let accList = response as? [TurboUpiPluginUAT.UpiAccount] {
-//                    var reply = Dictionary<String,Any>()
-//                    reply["data"] = self.getUpiAccountJSON(accList)
-//                    self.sendReply(data: reply)
-//                }
-//            })
-//        }
-//    }
+    
 
     public void manageUpiAccounts(String customerMobile, Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
