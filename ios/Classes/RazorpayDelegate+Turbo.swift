@@ -228,15 +228,16 @@ extension RazorpayDelegate {
                 ["account_number": "XXXXXXXXXX000052", "bank_logo_url": "https://cdn.razorpay.com/bank/AABC.gif", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "isUpiAccount": true, "bank_name": "MYPSP", "ifsc": "AABC0000823", "vpa": ["validated": false, "address": "917012969837-3@axis", "bank_account": ["state": "linkingFailed","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]], "default": false, "username": "917012969837-3", "handle": "axis", "active": false]]
             ],
             "accountsWithPinNotSet": [
-                ["type": "SAVINGS","id": "","state": "linkingSuccess","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]
-                ],
-                
-                ["type": "CREDIT","id": "","state": "linkingSuccess","beneficiary_name": "ABC", "ifsc": "AABE0877543", "bank": ["name": "Mybene", "logo": "https://cdn.razorpay.com/bank/AABE.gif", "code": "000000", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AABE0877543", "id": "000000"], "creds": ["upipin": ["length": 6, "set": true], "sms": ["length": 6, "set": false], "atmpin": ["length": 6, "set": false]], "masked_account_number": "857775XXXXXXXX9"]
+//                ["type": "SAVINGS","id": "","state": "linkingSuccess","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]
+//                ],
+//                
+//                ["type": "CREDIT","id": "","state": "linkingSuccess","beneficiary_name": "ABC", "ifsc": "AABE0877543", "bank": ["name": "Mybene", "logo": "https://cdn.razorpay.com/bank/AABE.gif", "code": "000000", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AABE0877543", "id": "000000"], "creds": ["upipin": ["length": 6, "set": true], "sms": ["length": 6, "set": false], "atmpin": ["length": 6, "set": false]], "masked_account_number": "857775XXXXXXXX9"]
             ]
         ]
         
 //        if let finalDictStr = self.convertDictionaryToJSON(dict1) {
 //            reply["data"] = finalDictStr
+//            print(reply)
 //            self.onEventSuccess(&reply)
 //        }
 //        
@@ -272,13 +273,11 @@ extension RazorpayDelegate {
                         for account in accountWithPinSet {
                             if let bankAccount = account as? UpiBankAccount {
                                 var bankAccountsDict = self.getUpiBankAccountDict(bankAccount)
-                                bankAccountsDict["isUpiAccount"] = false
                                 pinSetArr.append(bankAccountsDict)
                                 
                             }
                             if let upiAccount = account as? UpiAccount {
                                 var upiAccountDict = self.getUpiAccountDict(upiAccount)
-                                upiAccountDict["isUpiAccount"] = true
                                 pinSetArr.append(upiAccountDict)
                             }
                         }
