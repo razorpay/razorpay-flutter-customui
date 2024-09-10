@@ -23,6 +23,8 @@ import com.razorpay.UpiTurboLinkAccountResultListener;
 import com.razorpay.UpiTurboLinkAction;
 import com.razorpay.UpiTurboManageAccountListener;
 import com.razorpay.UpiTurboResultListener;
+import com.razorpay.UpiTurboTpvLinkAccountListener;
+import com.razorpay.UpiTurboTpvLinkAction;
 import com.razorpay.ValidateVpaCallback;
 import com.razorpay.upi.AccountBalance;
 import com.razorpay.upi.Bank;
@@ -578,17 +580,23 @@ public class RazorpayDelegate implements ActivityResultListener  {
                                      EventChannel.EventSink eventSink){
         this.pendingResult = result;
         this.eventSink = eventSink;
-        /*razorpay.upiTurbo.getTPV()
+        razorpay.upiTurbo.getTPV()
                 .setOrderId(orderId)
                 .setCustomerMobile(customerMobile)
                 .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
                 .setCustomerId(customerId)
-                .linkNewUpiAccount( new UpiTurboLinkAccountListener() {
+                .linkNewUpiAccountWithUI(new UpiTurboLinkAccountResultListener(){
+
                     @Override
-                    public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
-                        onUpiTurboResponse(upiTurboLinkAction);
+                    public void onSuccess(@NonNull List<UpiAccount> list) {
+                        Log.e("Success","Successful");
                     }
-                });*/
+
+                    @Override
+                    public void onError(@NonNull Error error) {
+                        Log.e("Error","Error "+error);
+                    }
+                });
     }
 
     public TPVBankAccount getTPVBankAccount(String tPVBankAccountStr){
