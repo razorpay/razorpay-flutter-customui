@@ -585,11 +585,12 @@ public class RazorpayDelegate implements ActivityResultListener  {
                 .setCustomerMobile(customerMobile)
                 .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
                 .setCustomerId(customerId)
-                .linkNewUpiAccountWithUI(new UpiTurboLinkAccountResultListener(){
+                .linkNewUpiAccount(new UpiTurboLinkAccountResultListener(){
 
                     @Override
                     public void onSuccess(@NonNull List<UpiAccount> list) {
-                        Log.e("Success","Successful");
+                        Log.e("Success","Success callback"+list);
+//                       onUpiTurboResponse();
                     }
 
                     @Override
