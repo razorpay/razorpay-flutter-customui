@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.razorpay.ApplicationDetails;
@@ -721,7 +722,9 @@ public class RazorpayDelegate implements ActivityResultListener {
                             HashMap<Object, Object> reply = new HashMap<>();
                             reply.put("responseEvent", LINK_PREFETCH_UPI_ACCOUNT_EVENT);
                             if (upiAccount != null) {
-                                reply.put("data", toJsonString(upiAccount));
+                                List<UpiAccount> upiAccounts = new ArrayList();
+                                upiAccounts.add(upiAccount);
+                                reply.put("data", toJsonString(upiAccounts));
                             } else {
                                 reply.put("data", "");
                             }
@@ -739,7 +742,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         }
 
     }
-    
+
 
     public void manageUpiAccounts(String customerMobile, Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
