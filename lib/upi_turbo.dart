@@ -5,6 +5,7 @@ import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'package:razorpay_turbo/model/account_balance.dart';
 import 'package:razorpay_turbo/model/empty.dart';
+import 'package:razorpay_turbo/model/tpv_bank_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'model/Error.dart';
 import 'model/Sim.dart';
@@ -18,7 +19,6 @@ typedef void OnSuccess<T>(T result);
 typedef void OnFailure<T>(T error);
 
 class UpiTurbo {
-
   // EventEmitter instance used for communication
   late EventEmitter _eventEmitter;
   late MethodChannel _channel;
@@ -29,8 +29,7 @@ class UpiTurbo {
   final _eventChannel = const EventChannel('razorpay_turbo_with_turbo_upi');
   bool _isTurboPluginAvailable = false;
 
-
-  UpiTurbo(MethodChannel channel, EventEmitter eventEmitter){
+  UpiTurbo(MethodChannel channel, EventEmitter eventEmitter) {
     this._channel = channel;
     this._eventEmitter = eventEmitter;
     _streamFromNative();
@@ -38,8 +37,10 @@ class UpiTurbo {
   }
 
   void _checkTurboPluginAvailable() async {
-    final Map<dynamic, dynamic> turboPluginAvailableResponse = await _channel.invokeMethod('isTurboPluginAvailable');
-    _isTurboPluginAvailable = turboPluginAvailableResponse["isTurboPluginAvailable"];
+    final Map<dynamic, dynamic> turboPluginAvailableResponse =
+        await _channel.invokeMethod('isTurboPluginAvailable');
+    _isTurboPluginAvailable =
+        turboPluginAvailableResponse["isTurboPluginAvailable"];
   }
 
   /*
@@ -47,19 +48,21 @@ class UpiTurbo {
    */
 
   void _streamFromNative() {
-    _eventChannel.receiveBroadcastStream().listen(_onEvent , onError: _onError);
+    _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
   void _onEvent(dynamic event) {
+    print("TPV :- Event received $event");
     if (event["type"] == _CODE_EVENT_ERROR) {
-       event["error"] = _getError(errorResponse: event["error"]);
-       _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
-       return;
+      event["error"] = _getError(errorResponse: event["error"]);
+      _eventEmitter.emit(
+          Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
+      return;
     }
 
     if (event["responseEvent"] == "linkNewUpiAccountEvent") {
-      if(event["data"] != null){
-        switch(event["action"]){
+      if (event["data"] != null) {
+        switch (event["action"]) {
           case "SELECT_SIM":
             event["data"] = _getSims(simResponse: event["data"]);
             break;
@@ -67,15 +70,26 @@ class UpiTurbo {
             event["data"] = _getAllBank(bankResponse: event["data"]);
             break;
           case "SELECT_BANK_ACCOUNT":
-            event["data"] = _getBankAccountList(bankAccountResponse: event["data"]);
+            event["data"] =
+                _getBankAccountList(bankAccountResponse: event["data"]);
             break;
         }
       }
-      _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
+      _eventEmitter.emit(
+          Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
+    } else if (event["responseEvent"] == "linkNewUpiAccountTPVWithUIEvent") {
+      final dataSnapshot = event['data'];
+      print("Data received on Wrapper event $dataSnapshot");
+      event['data'] = _getTPVBankList(dataSnapshot);
+
+      print("Event Emitter${_eventEmitter != null}");
+      _eventEmitter.emit(
+          Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT, null, event);
     }
   }
 
   void _onError(dynamic event) {
+    print("TPV - rError has occurred " + event);
   }
 
   /*
@@ -83,15 +97,15 @@ class UpiTurbo {
    */
 
   void linkNewUpiAccount({required String? customerMobile}) async {
-    if(!_isTurboPluginAvailable){
+    if (!_isTurboPluginAvailable) {
       _emitError();
       return;
     }
-    await _channel.invokeMethod('linkNewUpiAccount' , customerMobile);
+    await _channel.invokeMethod('linkNewUpiAccount', customerMobile);
   }
 
   void register({required Sim sim}) async {
-    if(!_isTurboPluginAvailable){
+    if (!_isTurboPluginAvailable) {
       _emitError();
       return;
     }
@@ -99,7 +113,7 @@ class UpiTurbo {
   }
 
   void getBankAccounts({required Bank bank}) async {
-    if(!_isTurboPluginAvailable){
+    if (!_isTurboPluginAvailable) {
       _emitError();
       return;
     }
@@ -107,23 +121,24 @@ class UpiTurbo {
   }
 
   void selectedBankAccount({required BankAccount bankAccount}) async {
-    if(!_isTurboPluginAvailable){
+    if (!_isTurboPluginAvailable) {
       _emitError();
       return;
     }
-    await _channel.invokeMethod('selectedBankAccount', _getBankAccountStr(bankAccount));
+    await _channel.invokeMethod(
+        'selectedBankAccount', _getBankAccountStr(bankAccount));
   }
 
   void setupUpiPin({required Card card}) async {
-    if(!_isTurboPluginAvailable){
+    if (!_isTurboPluginAvailable) {
       _emitError();
       return;
     }
-    await _channel.invokeMethod('setUpUPIPin' , _getCardStr(card));
+    await _channel.invokeMethod('setUpUPIPin', _getCardStr(card));
   }
 
   void askForPermission() async {
-    if(!_isTurboPluginAvailable){
+    if (!_isTurboPluginAvailable) {
       _emitError();
       return;
     }
@@ -133,141 +148,164 @@ class UpiTurbo {
   /*
       Non-transactional Flow Turbo UPI
    */
-  void getLinkedUpiAccounts({required String? customerMobile, required OnSuccess<List<UpiAccount>> onSuccess,
-    required OnFailure<Error> onFailure} ) async {
-      try {
-        if(!_isTurboPluginAvailable){
-          _emitFailure(onFailure);
-          return;
-        }
-        final Map<dynamic, dynamic> getLinkedUpiAccountsResponse = await _channel.invokeMethod('getLinkedUpiAccounts', customerMobile);
-        if(getLinkedUpiAccountsResponse["data"]!=""){
-          onSuccess(_getUpiAccounts(getLinkedUpiAccountsResponse["data"]));
-        }else {
-          onFailure(Error(errorCode:"" , errorDescription: "No Account Found"));
-        }
-      } on PlatformException catch (error) {
-        onFailure(Error(errorCode:error.code , errorDescription: error.message!));
-      }
-  }
-
-  void getBalance({required UpiAccount upiAccount , required OnSuccess<AccountBalance> onSuccess,
+  void getLinkedUpiAccounts(
+      {required String? customerMobile,
+      required OnSuccess<List<UpiAccount>> onSuccess,
       required OnFailure<Error> onFailure}) async {
-      try {
-         if(!_isTurboPluginAvailable){
-          _emitFailure(onFailure);
-          return;
-         }
-         final Map<dynamic, dynamic> getBalanceResponse = await _channel.invokeMethod('getBalance' , _getUpiAccountStr(upiAccount));
-         onSuccess(AccountBalance.fromJson(jsonDecode(getBalanceResponse["data"])));
-      } on PlatformException catch (error) {
-        onFailure(Error(errorCode:error.code , errorDescription: error.message!));
-      }
-  }
-
-  void changeUpiPin({ required UpiAccount upiAccount, required OnSuccess<UpiAccount> onSuccess,
-    required OnFailure<Error> onFailure}) async {
     try {
-      if(!_isTurboPluginAvailable){
+      if (!_isTurboPluginAvailable) {
         _emitFailure(onFailure);
         return;
       }
-      final Map<dynamic, dynamic> changeUpiPinResponse = await _channel.invokeMethod('changeUpiPin' , _getUpiAccountStr(upiAccount));
-      if(changeUpiPinResponse["data"]!=""){
+      final Map<dynamic, dynamic> getLinkedUpiAccountsResponse =
+          await _channel.invokeMethod('getLinkedUpiAccounts', customerMobile);
+      if (getLinkedUpiAccountsResponse["data"] != "") {
+        onSuccess(_getUpiAccounts(getLinkedUpiAccountsResponse["data"]));
+      } else {
+        onFailure(Error(errorCode: "", errorDescription: "No Account Found"));
+      }
+    } on PlatformException catch (error) {
+      onFailure(Error(errorCode: error.code, errorDescription: error.message!));
+    }
+  }
+
+  void getBalance(
+      {required UpiAccount upiAccount,
+      required OnSuccess<AccountBalance> onSuccess,
+      required OnFailure<Error> onFailure}) async {
+    try {
+      if (!_isTurboPluginAvailable) {
+        _emitFailure(onFailure);
+        return;
+      }
+      final Map<dynamic, dynamic> getBalanceResponse = await _channel
+          .invokeMethod('getBalance', _getUpiAccountStr(upiAccount));
+      onSuccess(
+          AccountBalance.fromJson(jsonDecode(getBalanceResponse["data"])));
+    } on PlatformException catch (error) {
+      onFailure(Error(errorCode: error.code, errorDescription: error.message!));
+    }
+  }
+
+  void changeUpiPin(
+      {required UpiAccount upiAccount,
+      required OnSuccess<UpiAccount> onSuccess,
+      required OnFailure<Error> onFailure}) async {
+    try {
+      if (!_isTurboPluginAvailable) {
+        _emitFailure(onFailure);
+        return;
+      }
+      final Map<dynamic, dynamic> changeUpiPinResponse = await _channel
+          .invokeMethod('changeUpiPin', _getUpiAccountStr(upiAccount));
+      if (changeUpiPinResponse["data"] != "") {
         onSuccess(_getUpiAccount(changeUpiPinResponse["data"]));
       }
     } on PlatformException catch (error) {
-        onFailure(Error(errorCode:error.code , errorDescription: error.message!));
+      onFailure(Error(errorCode: error.code, errorDescription: error.message!));
     }
   }
 
-  void resetUpiPin({ required UpiAccount upiAccount , required Card card , required OnSuccess<UpiAccount> onSuccess,
-    required OnFailure<Error> onFailure}) async {
-    try {
-        if(!_isTurboPluginAvailable){
-          _emitFailure(onFailure);
-          return;
-        }
-         var resetUpiPinInput =  <String, dynamic>{
-          "upiAccount": _getUpiAccountStr(upiAccount),
-          "card": _getCardStr(card)
-        };
-
-        final Map<dynamic, dynamic> resetUpiPinResponse = await _channel.invokeMethod('resetUpiPin' , resetUpiPinInput);
-        if(resetUpiPinResponse["data"]!=""){
-          onSuccess(_getUpiAccount(resetUpiPinResponse["data"]));
-        }
-    } on PlatformException catch (error) {
-      onFailure(Error(errorCode:error.code , errorDescription: error.message!));
-    }
-  }
-
-  void delink({required UpiAccount upiAccount, required OnSuccess<Empty> onSuccess,
+  void resetUpiPin(
+      {required UpiAccount upiAccount,
+      required Card card,
+      required OnSuccess<UpiAccount> onSuccess,
       required OnFailure<Error> onFailure}) async {
-     try {
-         if(!_isTurboPluginAvailable){
-           _emitFailure(onFailure);
-           return;
-         }
-        final Map<dynamic, dynamic> delinkResponse =  await _channel.invokeMethod('delink' , _getUpiAccountStr(upiAccount));
-        var empty = Empty();
-        onSuccess(empty);
-     } on PlatformException catch (error) {
-       onFailure(Error(errorCode:error.code , errorDescription: error.message!));
-     }
+    try {
+      if (!_isTurboPluginAvailable) {
+        _emitFailure(onFailure);
+        return;
+      }
+      var resetUpiPinInput = <String, dynamic>{
+        "upiAccount": _getUpiAccountStr(upiAccount),
+        "card": _getCardStr(card)
+      };
+
+      final Map<dynamic, dynamic> resetUpiPinResponse =
+          await _channel.invokeMethod('resetUpiPin', resetUpiPinInput);
+      if (resetUpiPinResponse["data"] != "") {
+        onSuccess(_getUpiAccount(resetUpiPinResponse["data"]));
+      }
+    } on PlatformException catch (error) {
+      onFailure(Error(errorCode: error.code, errorDescription: error.message!));
+    }
   }
 
-    /*
+  void delink(
+      {required UpiAccount upiAccount,
+      required OnSuccess<Empty> onSuccess,
+      required OnFailure<Error> onFailure}) async {
+    try {
+      if (!_isTurboPluginAvailable) {
+        _emitFailure(onFailure);
+        return;
+      }
+      final Map<dynamic, dynamic> delinkResponse =
+          await _channel.invokeMethod('delink', _getUpiAccountStr(upiAccount));
+      var empty = Empty();
+      onSuccess(empty);
+    } on PlatformException catch (error) {
+      onFailure(Error(errorCode: error.code, errorDescription: error.message!));
+    }
+  }
+
+  /*
      UPI Turbo with custom UI
    */
 
-  void linkNewUpiAccountWithUI({required String? customerMobile, required String? color , required OnSuccess<List<UpiAccount>> onSuccess,
-    required OnFailure<Error> onFailure} ) async {
+  void linkNewUpiAccountWithUI(
+      {required String? customerMobile,
+      required String? color,
+      required OnSuccess<List<UpiAccount>> onSuccess,
+      required OnFailure<Error> onFailure}) async {
     try {
-
-      if(!_isTurboPluginAvailable){
+      if (!_isTurboPluginAvailable) {
         _emitFailure(onFailure);
         return;
       }
 
-      var requestLinkNewUpiAccountWithUI =  <String, dynamic>{
+      var requestLinkNewUpiAccountWithUI = <String, dynamic>{
         "customerMobile": customerMobile,
         "color": color
       };
 
-      final Map<dynamic, dynamic> getLinkedUpiAccountsResponse = await _channel.invokeMethod('linkNewUpiAccountWithUI', requestLinkNewUpiAccountWithUI);
-      if(getLinkedUpiAccountsResponse["data"]!=""){
+      final Map<dynamic, dynamic> getLinkedUpiAccountsResponse =
+          await _channel.invokeMethod(
+              'linkNewUpiAccountWithUI', requestLinkNewUpiAccountWithUI);
+      if (getLinkedUpiAccountsResponse["data"] != "") {
         onSuccess(_getUpiAccounts(getLinkedUpiAccountsResponse["data"]));
-      }else {
-        onFailure(Error(errorCode:"NO_ACCOUNT_FOUND" , errorDescription: "No Account Found"));
+      } else {
+        onFailure(Error(
+            errorCode: "NO_ACCOUNT_FOUND",
+            errorDescription: "No Account Found"));
       }
-
     } on PlatformException catch (error) {
-      onFailure(Error(errorCode:error.code , errorDescription: error.message!));
+      onFailure(Error(errorCode: error.code, errorDescription: error.message!));
     }
   }
 
-  void manageUpiAccounts({required String? customerMobile, required OnFailure<Error> onFailure} ) async {
+  void manageUpiAccounts(
+      {required String? customerMobile,
+      required OnFailure<Error> onFailure}) async {
     try {
-      if(!_isTurboPluginAvailable){
+      if (!_isTurboPluginAvailable) {
         _emitFailure(onFailure);
         return;
       }
       await _channel.invokeMethod('manageUpiAccounts', customerMobile);
     } on PlatformException catch (error) {
-      onFailure(Error(errorCode:error.code , errorDescription: error.message!));
+      onFailure(Error(errorCode: error.code, errorDescription: error.message!));
     }
   }
 
-
   UpiAccount _getUpiAccount(jsonString) {
-    var upiAccountMap =  json.decode(jsonString);
+    var upiAccountMap = json.decode(jsonString);
     UpiAccount upiAccount = UpiAccount.fromJson(upiAccountMap);
     return upiAccount;
   }
 
   List<UpiAccount> _getUpiAccounts(jsonString) {
-    if (jsonString.toString().isEmpty){
+    if (jsonString.toString().isEmpty) {
       return <UpiAccount>[];
     }
 
@@ -277,19 +315,33 @@ class UpiTurbo {
     return upiAccounts;
   }
 
-  String _getUpiAccountStr(UpiAccount upiAccount){
-    return jsonEncode( UpiAccount(accountNumber: upiAccount.accountNumber,
-        bankLogoUrl: upiAccount.bankLogoUrl, bankName: upiAccount.bankName,
-        bankPlaceholderUrl: upiAccount.bankPlaceholderUrl, ifsc: upiAccount.ifsc,
-        pinLength: upiAccount.pinLength, vpa: upiAccount.vpa).toJson());
+  String _getUpiAccountStr(UpiAccount upiAccount) {
+    return jsonEncode(UpiAccount(
+            accountNumber: upiAccount.accountNumber,
+            bankLogoUrl: upiAccount.bankLogoUrl,
+            bankName: upiAccount.bankName,
+            bankPlaceholderUrl: upiAccount.bankPlaceholderUrl,
+            ifsc: upiAccount.ifsc,
+            pinLength: upiAccount.pinLength,
+            vpa: upiAccount.vpa)
+        .toJson());
   }
 
-  String _getCardStr(Card card){
-    return jsonEncode(Card(expiryMonth: card.expiryMonth, expiryYear: card.expiryYear, lastSixDigits: card.lastSixDigits).toJson());
+  String _getCardStr(Card card) {
+    return jsonEncode(Card(
+            expiryMonth: card.expiryMonth,
+            expiryYear: card.expiryYear,
+            lastSixDigits: card.lastSixDigits)
+        .toJson());
   }
 
-  String _getSimStr(Sim sim){
-    return jsonEncode( Sim(id: sim.id, provider: sim.provider, slotNumber: sim.slotNumber, number: sim.number).toJson());
+  String _getSimStr(Sim sim) {
+    return jsonEncode(Sim(
+            id: sim.id,
+            provider: sim.provider,
+            slotNumber: sim.slotNumber,
+            number: sim.number)
+        .toJson());
   }
 
   _getBankAccountStr(BankAccount bankAccount) {
@@ -300,50 +352,70 @@ class UpiTurbo {
     return jsonEncode(bank.toJson());
   }
 
- _getSims({required String simResponse}){
+  _getSims({required String simResponse}) {
     final decodedResponse = json.decode(simResponse);
     final List<dynamic> simListJson = decodedResponse['sims'];
     List<Sim> sims = simListJson.map((json) => Sim.fromJson(json)).toList();
     return sims;
   }
 
-  _getAllBank({required String bankResponse}){
+  _getAllBank({required String bankResponse}) {
     final decodedResponse = json.decode(bankResponse);
     final List<dynamic> bankListJson = decodedResponse['banks'];
     AllBanks allBanks = AllBanks();
-    if(bankListJson.isNotEmpty) {
-      List<Bank> banks = bankListJson.map((json) => Bank.fromJson(json)).toList();
+    if (bankListJson.isNotEmpty) {
+      List<Bank> banks =
+          bankListJson.map((json) => Bank.fromJson(json)).toList();
       allBanks.banks = banks;
     }
     final List<dynamic> popularBanksJson = decodedResponse['popularBanks'];
-    if(popularBanksJson.isNotEmpty) {
-      List<Bank> popularBanks = bankListJson.map((json) => Bank.fromJson(json)).toList();
+    if (popularBanksJson.isNotEmpty) {
+      List<Bank> popularBanks =
+          bankListJson.map((json) => Bank.fromJson(json)).toList();
       allBanks.banks = popularBanks;
     }
 
     return allBanks;
-
   }
 
-  _getBankAccountList({required String bankAccountResponse}){
+  _getBankAccountList({required String bankAccountResponse}) {
     List<BankAccount> bankAccounts = List<BankAccount>.from(
-      json.decode(bankAccountResponse).map((bankAccount) => BankAccount.fromJson(bankAccount)),
+      json
+          .decode(bankAccountResponse)
+          .map((bankAccount) => BankAccount.fromJson(bankAccount)),
     );
     return bankAccounts;
   }
 
-  _getError({required String errorResponse}){
+  _getError({required String errorResponse}) {
     return Error.fromJson(json.decode(errorResponse));
   }
 
-  _emitError(){
+  _emitError() {
     final Map<String, dynamic> response = HashMap();
-    response["error"] = Error(errorCode: "AXIS_SDK_ERROR", errorDescription: "No Turbo Plugin Found");
-    _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, response);
+    response["error"] = Error(
+        errorCode: "AXIS_SDK_ERROR", errorDescription: "No Turbo Plugin Found");
+    _eventEmitter.emit(
+        Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, response);
   }
 
   void _emitFailure(OnFailure<Error> onFailure) {
-    onFailure(Error(errorCode:"AXIS_SDK_ERROR" , errorDescription: "No Turbo Plugin Found"));
+    onFailure(Error(
+        errorCode: "AXIS_SDK_ERROR",
+        errorDescription: "No Turbo Plugin Found"));
   }
 
+  List<TPVBankAccount> _getTPVBankList(dynamic dataSnapshot) {
+    Iterable iterable = json.decode(dataSnapshot);
+    return List<TPVBankAccount>.from(
+        iterable.map((model) => _upiBankAccountToTPVBankAccount(model)));
+  }
+
+  TPVBankAccount _upiBankAccountToTPVBankAccount(dynamic model) {
+    UpiAccount upiAccount = UpiAccount.fromJson(model);
+    return TPVBankAccount(
+        account_number: upiAccount.accountNumber,
+        ifsc: upiAccount.ifsc,
+        bank_name: upiAccount.bankName);
+  }
 }

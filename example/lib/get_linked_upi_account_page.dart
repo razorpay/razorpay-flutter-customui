@@ -11,15 +11,14 @@ import 'package:razorpay_turbo/model/Error.dart';
 class GetLinkedUPIAccountPage extends StatelessWidget {
   final List<UpiAccount> upiAccounts;
   final Razorpay razorpay;
-  final String  keyValue;
+  final String keyValue;
   final String customerMobile;
 
-  const GetLinkedUPIAccountPage({
-    required this.upiAccounts,
-    required this.razorpay,
-    required this.keyValue,
-    required this.customerMobile
-  });
+  const GetLinkedUPIAccountPage(
+      {required this.upiAccounts,
+      required this.razorpay,
+      required this.keyValue,
+      required this.customerMobile});
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +43,11 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text("Bank Name : ${upiAccounts[index].bankName}", style: TextStyle(fontSize: 18, color: Colors.white)),
-                      Text("Account Number : ${upiAccounts[index].accountNumber}", style: TextStyle(fontSize: 18, color: Colors.white)),
+                      Text("Bank Name : ${upiAccounts[index].bankName}",
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
+                      Text(
+                          "Account Number : ${upiAccounts[index].accountNumber}",
+                          style: TextStyle(fontSize: 18, color: Colors.white)),
                       Text("VPA : ${upiAccounts[index].vpa?.address}",
                           style: TextStyle(fontSize: 18, color: Colors.white)),
                       SizedBox(
@@ -58,7 +60,8 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                               builder: (BuildContext context) {
                                 return TurboUPITxnDialog(
                                   razorpay: razorpay,
-                                  upiAccount : getUpiAccountStr(upiAccounts[index]),
+                                  upiAccount:
+                                      getUpiAccountStr(upiAccounts[index]),
                                   mobileNumber: customerMobile,
                                   sdkKey: keyValue,
                                 );
@@ -76,26 +79,35 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                               onPressed: () {
                                 razorpay.upiTurbo.getBalance(
                                     upiAccount: upiAccounts[index],
-                                    onSuccess: (AccountBalance accountBalance){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text(" Balance : Rs ${accountBalance.balance}")));
+                                    onSuccess: (AccountBalance accountBalance) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  " Balance : Rs ${accountBalance.balance}")));
                                     },
-                                    onFailure: (Error error){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Error : ${error.errorDescription}")));
-                                    } );
+                                    onFailure: (Error error) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Error : ${error.errorDescription}")));
+                                    });
                               },
                               child: Text('Get Balance')),
                           ElevatedButton(
                               onPressed: () {
-                                razorpay.upiTurbo.changeUpiPin(upiAccount: upiAccounts[index],
-                                    onSuccess: (UpiAccount upiAccount){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Upi Pin Changed")));
+                                razorpay.upiTurbo.changeUpiPin(
+                                    upiAccount: upiAccounts[index],
+                                    onSuccess: (UpiAccount upiAccount) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content:
+                                                  Text("Upi Pin Changed")));
                                     },
-                                    onFailure: (Error error){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Error : ${error.errorDescription}")));
+                                    onFailure: (Error error) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Error : ${error.errorDescription}")));
                                     });
                               },
                               child: Text('Change UPI Pin Done')),
@@ -113,7 +125,7 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return CardDialog(
-                                      upiAccount : upiAccounts[index],
+                                      upiAccount: upiAccounts[index],
                                       razorpay: razorpay,
                                     );
                                   },
@@ -122,15 +134,19 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                               child: Text('Reset PIN')),
                           ElevatedButton(
                               onPressed: () {
-                                razorpay.upiTurbo.delink(upiAccount: upiAccounts[index],
-                                    onSuccess: (Empty empty){
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("DeLink Done")));
-                                },
-                                onFailure: (Error error){
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Error : ${error.errorDescription}")));
-                                });
+                                razorpay.upiTurbo.delink(
+                                    upiAccount: upiAccounts[index],
+                                    onSuccess: (Empty empty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text("DeLink Done")));
+                                    },
+                                    onFailure: (Error error) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  "Error : ${error.errorDescription}")));
+                                    });
                               },
                               child: Text('DeLink')),
                         ],
@@ -144,10 +160,15 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
     );
   }
 
-  String getUpiAccountStr(UpiAccount upiAccount){
-    return jsonEncode( UpiAccount(accountNumber: upiAccount.accountNumber,
-        bankLogoUrl: upiAccount.bankLogoUrl, bankName: upiAccount.bankName,
-        bankPlaceholderUrl: upiAccount.bankPlaceholderUrl, ifsc: upiAccount.ifsc,
-        pinLength: upiAccount.pinLength, vpa: upiAccount.vpa).toJson());
+  String getUpiAccountStr(UpiAccount upiAccount) {
+    return jsonEncode(UpiAccount(
+            accountNumber: upiAccount.accountNumber,
+            bankLogoUrl: upiAccount.bankLogoUrl,
+            bankName: upiAccount.bankName,
+            bankPlaceholderUrl: upiAccount.bankPlaceholderUrl,
+            ifsc: upiAccount.ifsc,
+            pinLength: upiAccount.pinLength,
+            vpa: upiAccount.vpa)
+        .toJson());
   }
 }

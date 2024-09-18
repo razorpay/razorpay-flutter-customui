@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'Tpv.dart';
 import 'upi_turbo.dart';
 
-class Razorpay  {
+class Razorpay {
   // Response codes from platform
   static const _CODE_PAYMENT_SUCCESS = 0;
   static const _CODE_PAYMENT_ERROR = 1;
@@ -13,6 +13,8 @@ class Razorpay  {
   static const EVENT_PAYMENT_SUCCESS = 'payment.success';
   static const EVENT_PAYMENT_ERROR = 'payment.error';
   static const EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT = "linkNewUpiAccount";
+  static const EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT =
+      "linkNewUpiAccountTPVWithUIEvent";
 
   // Payment error codes
   static const NETWORK_ERROR = 0;
@@ -29,8 +31,8 @@ class Razorpay  {
   Razorpay(String key) {
     _channel.invokeMethod('initilizeSDK', key);
     _eventEmitter = new EventEmitter();
-    upiTurbo = new UpiTurbo( _channel, _eventEmitter);
-    tpv = Tpv(_channel , _eventEmitter);
+    upiTurbo = new UpiTurbo(_channel, _eventEmitter);
+    tpv = Tpv(_channel, _eventEmitter);
   }
 
   // Maintain a map to store callbacks for each data exchange
@@ -86,8 +88,7 @@ class Razorpay  {
   }
 
   Future<String> getBankLogoUrl(String bankName) async {
-    final bankLogoUrl =
-        await _channel.invokeMethod('getBankLogoUrl', bankName);
+    final bankLogoUrl = await _channel.invokeMethod('getBankLogoUrl', bankName);
     return bankLogoUrl;
   }
 
@@ -113,7 +114,6 @@ class Razorpay  {
     final dynamic isValidVpa = await _channel.invokeMethod('isValidVpa', vpa);
     return isValidVpa;
   }
-
 
   submit(Map<String, dynamic> options) async {
     Map<String, dynamic> validationResult = _validateOptions(options);
@@ -191,8 +191,8 @@ class Razorpay  {
 
   /// Validate payment options
   static Map<String, dynamic> _validateOptions(Map<String, dynamic> options) {
-    if (options['upiAccount']!=null){
-      if ( options['payload']!=null) {
+    if (options['upiAccount'] != null) {
+      if (options['payload'] != null) {
         if (options['payload']['key'] != null) {
           return {'success': true};
         }
@@ -238,8 +238,3 @@ class PaymentFailureResponse {
     return new PaymentFailureResponse(code, message);
   }
 }
-
-
-
-
-
