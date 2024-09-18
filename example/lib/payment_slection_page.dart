@@ -571,6 +571,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       return TpvDialog(
                         customerMobile: turboUPIModel!.mobileNumber,
                         razorpay: _razorpay,
+                        sdkKey: widget.sdkKey,
                       );
                     },
                   );

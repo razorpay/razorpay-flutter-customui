@@ -51,13 +51,10 @@ class _TpvDialogState extends State<TpvDialog> {
   }
 
   void _handleLinkNewTPVAccountReponse(dynamic response) {
-    print("TPV :- Response delivered to sample app");
-
     List<TPVBankAccount> tpvBankAccount = response["data"];
     setState(() {
       isLoading = false;
     });
-    print("TPV :- Response converted in sample app");
 
     UpiAccount upiAccount = UpiAccount(
         accountNumber: tpvBankAccount[0].account_number,
