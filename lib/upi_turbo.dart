@@ -52,7 +52,6 @@ class UpiTurbo {
   }
 
   void _onEvent(dynamic event) {
-    print("TPV :- Event received $event");
     if (event["type"] == _CODE_EVENT_ERROR) {
       event["error"] = _getError(errorResponse: event["error"]);
       _eventEmitter.emit(
@@ -79,18 +78,13 @@ class UpiTurbo {
           Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
     } else if (event["responseEvent"] == "linkNewUpiAccountTPVWithUIEvent") {
       final dataSnapshot = event['data'];
-      print("Data received on Wrapper event $dataSnapshot");
       event['data'] = _getTPVBankList(dataSnapshot);
-
-      print("Event Emitter${_eventEmitter != null}");
       _eventEmitter.emit(
           Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT, null, event);
     }
   }
 
-  void _onError(dynamic event) {
-    print("TPV - rError has occurred " + event);
-  }
+  void _onError(dynamic event) {}
 
   /*
       OnBoarding Flow Turbo UPI

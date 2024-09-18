@@ -65,7 +65,6 @@ class Tpv {
       "tpvBankAccount": _getTpvBankAccountStr(this.tpvBankAccount)
     };
 
-    print("TPV Dart is hit");
     await this
         ._channel
         ?.invokeMethod('linkNewUpiAccountTPVWithUI', linkNewUpiAccountTPVInput);

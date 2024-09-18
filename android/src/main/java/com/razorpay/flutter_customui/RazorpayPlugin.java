@@ -178,7 +178,6 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
         orderId = (String) _arguments.get("orderId");
         tpvBankAccount = (String) _arguments.get("tpvBankAccount");
         razorpayDelegate.linkNewUpiAccount(customerMobile, customerId, orderId , tpvBankAccount , result , this.eventSink);
-        Log.e("TPV","Razorpay plugin KT is hit");
         break;
 
       case "linkNewUpiAccountWithUI":
