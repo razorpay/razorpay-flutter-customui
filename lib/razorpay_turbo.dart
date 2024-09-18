@@ -3,6 +3,7 @@ import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'Tpv.dart';
 import 'upi_turbo.dart';
+import 'dart:io' show Platform;
 
 class Razorpay {
   // Response codes from platform
@@ -15,6 +16,8 @@ class Razorpay {
   static const EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT = "linkNewUpiAccount";
   static const EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT =
       "linkNewUpiAccountTPVWithUIEvent";
+  static const EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT =
+      "prefetchAndLinkNewUpiAccountUIEvent";
 
   // Payment error codes
   static const NETWORK_ERROR = 0;
@@ -34,7 +37,18 @@ class Razorpay {
     upiTurbo = new UpiTurbo(_channel, _eventEmitter);
     tpv = Tpv(_channel, _eventEmitter);
   }
-
+  Razorpay.initWith(String key, bool ui) {
+    if (Platform.isAndroid) {
+      _channel.invokeMethod('initilizeSDK', key);
+      // Android-specific code
+    } else if (Platform.isIOS) {
+      final Map<dynamic, dynamic> keyFinal = {'key': key, 'ui': ui};
+      _channel.invokeMethod('initilizeSDK', keyFinal);
+    }
+    _eventEmitter = new EventEmitter();
+    upiTurbo = new UpiTurbo(_channel, _eventEmitter);
+    tpv = Tpv(_channel, _eventEmitter);
+  }
   // Maintain a map to store callbacks for each data exchange
   final Map<String, Function(dynamic)> _callbackMap = {};
 

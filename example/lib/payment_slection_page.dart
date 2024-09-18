@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_turbo/model/prefetch_model.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo_example/models/card_info_model.dart';
 import 'package:flutter/services.dart';
+import 'package:razorpay_turbo_example/preeftch_link_new_accounts.dart';
 import 'package:razorpay_turbo_example/tpv_dialog.dart';
 import 'bank_account_dialog.dart';
 import 'bank_list_screen_page.dart';
@@ -15,6 +17,7 @@ import 'get_linked_upi_account_page.dart';
 
 import 'sim_dialog.dart';
 import 'package:razorpay_turbo/model/Error.dart';
+import 'dart:io' show Platform;
 
 enum PaymentMethods { card, upi, nb, wallet, vas, turboUPI }
 
@@ -70,7 +73,12 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     turboUPIModel = TurboUPIModel();
     initValueForTurboUPI();
     key = widget.sdkKey;
-    _razorpay = Razorpay(widget.sdkKey);
+    if (Platform.isAndroid) {
+      _razorpay = Razorpay(widget.sdkKey);
+    } else if (Platform.isIOS) {
+      _razorpay = Razorpay.initWith(widget.sdkKey, true);
+    }
+
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT,
@@ -462,153 +470,181 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   // Mobile Number
   Widget buildForTurboUPI() {
     return Container(
-      margin: EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          SizedBox(height: 16.0),
-          Flexible(
-            child: TextField(
-              controller: _controllerHandle,
-              textAlign: TextAlign.start,
-              decoration: InputDecoration(
-                hintText: 'Handle',
-              ),
-              onChanged: (newValue) => turboUPIModel?.handle = newValue,
-            ),
-          ),
-          SizedBox(height: 16.0),
-          Flexible(
-            child: TextField(
-              controller: _controllerMobile,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.start,
-              decoration: InputDecoration(
-                hintText: 'Mobile Number',
-              ),
-              onChanged: (newValue) => turboUPIModel?.mobileNumber = newValue,
-            ),
-          ),
-          SizedBox(height: 6.0),
-          isLoading
-              ? CircularProgressIndicator(
-                  backgroundColor: Colors.grey,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                )
-              : SizedBox(
-                  height: 2,
+      height: 200.0,
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Flexible(
+                  child: TextField(
+                    controller: _controllerHandle,
+                    textAlign: TextAlign.start,
+                    decoration: InputDecoration(
+                      hintText: 'Handle',
+                    ),
+                    onChanged: (newValue) => turboUPIModel?.handle = newValue,
+                  ),
                 ),
-          ElevatedButton(
+              ],
+            ),
+            SizedBox(height: 16.0),
+            Row(
+              children: [
+                Flexible(
+                  child: TextField(
+                    controller: _controllerMobile,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.start,
+                    decoration: InputDecoration(
+                      hintText: 'Mobile Number',
+                    ),
+                    onChanged: (newValue) =>
+                        turboUPIModel?.mobileNumber = newValue,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 6.0),
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.grey,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    ),
+                  )
+                : SizedBox(
+                    height: 2,
+                  ),
+            ElevatedButton(
+                onPressed: () {
+                  var error = validateTurboUpiFields();
+                  if (error != '') {
+                    print(error);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(error)));
+                    return;
+                  }
+                  _razorpay.upiTurbo.linkNewUpiAccount(
+                      customerMobile: turboUPIModel?.mobileNumber);
+                },
+                child: Text('LinkNewUpiAccount')),
+            ElevatedButton(
               onPressed: () {
-                var error = validateTurboUpiFields();
-                if (error != '') {
-                  print(error);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(error)));
-                  return;
-                }
-                _razorpay.upiTurbo.linkNewUpiAccount(
-                    customerMobile: turboUPIModel?.mobileNumber);
+                prefetchAndLinkNewAccounts();
               },
-              child: Text('LinkNewUpiAccount')),
-          SizedBox(height: 6.0),
-          ElevatedButton(
-              onPressed: () {
-                var error = validateTurboUpiFields();
-                if (error != '') {
-                  print(error);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(error)));
-                  return;
-                }
-                setState(() {
-                  isLoading = true;
-                });
-                getLinkedUpiAccounts();
-              },
-              child: Text('GetLinkedUpiAccounts')),
-          SizedBox(height: 8.0),
-          ElevatedButton(
-              onPressed: () {
-                var error = validateTurboUpiFields();
-                if (error != '') {
-                  print(error);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(error)));
-                  return;
-                }
-                setState(() {
-                  isLoading = true;
-                });
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return TpvDialog(
-                      customerMobile: turboUPIModel!.mobileNumber,
-                      razorpay: _razorpay,
-                      sdkKey: widget.sdkKey,
-                    );
-                  },
-                );
-              },
-              child: Text('TurboViaTPV')),
-          SizedBox(height: 8.0),
-          ElevatedButton(
-              onPressed: () {
-                var error = validateTurboUpiFields();
-                if (error != '') {
-                  print(error);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(error)));
-                  return;
-                }
-                setState(() {
-                  isLoading = true;
-                });
-
-                _razorpay.upiTurbo.linkNewUpiAccountWithUI(
-                    customerMobile: turboUPIModel?.mobileNumber,
-                    color: "#000000",
-                    onSuccess: (List<UpiAccount> upiAccounts) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (builder) {
-                            return GetLinkedUPIAccountPage(
-                              razorpay: _razorpay,
-                              upiAccounts: upiAccounts,
-                              keyValue: key,
-                              customerMobile: mobileNo,
-                            );
-                          },
-                        ),
+              child: Text('Prefeetch and Link Accounts'),
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  var error = validateTurboUpiFields();
+                  if (error != '') {
+                    print(error);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(error)));
+                    return;
+                  }
+                  setState(() {
+                    isLoading = true;
+                  });
+                  getLinkedUpiAccounts();
+                },
+                child: Text('GetLinkedUpiAccounts')),
+            SizedBox(height: 8.0),
+            ElevatedButton(
+                onPressed: () {
+                  var error = validateTurboUpiFields();
+                  if (error != '') {
+                    print(error);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(error)));
+                    return;
+                  }
+                  setState(() {
+                    isLoading = true;
+                  });
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return TpvDialog(
+                        customerMobile: turboUPIModel!.mobileNumber,
+                        razorpay: _razorpay,
                       );
                     },
-                    onFailure: (Error error) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Error : ${error.errorDescription}")));
-                    });
-              },
-              child: Text('LinkNewUpiAccount_UI')),
-          SizedBox(height: 4.0),
-          ElevatedButton(
-              onPressed: () {
-                var error = validateTurboUpiFields();
-                if (error != '') {
-                  print(error);
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(error)));
-                  return;
-                }
-                setState(() {
-                  isLoading = true;
-                });
+                  );
+                },
+                child: Text('TurboViaTPV')),
+            SizedBox(height: 8.0),
+            ElevatedButton(
+                onPressed: () {
+                  var error = validateTurboUpiFields();
+                  if (error != '') {
+                    print(error);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(error)));
+                    return;
+                  }
+                  setState(() {
+                    isLoading = true;
+                  });
 
-                _razorpay.upiTurbo.manageUpiAccounts(
-                    customerMobile: turboUPIModel?.mobileNumber,
-                    onFailure: (Error error) {});
-              },
-              child: Text('ManageUpiAccounts_UI')),
-        ],
+                  _razorpay.upiTurbo.linkNewUpiAccountWithUI(
+                      customerMobile: turboUPIModel?.mobileNumber,
+                      color: "#000000",
+                      onSuccess: (List<UpiAccount> upiAccounts) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        mobileNo = turboUPIModel?.mobileNumber ?? '';
+                        if (upiAccounts.length > 0) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (builder) {
+                                return GetLinkedUPIAccountPage(
+                                  razorpay: _razorpay,
+                                  upiAccounts: upiAccounts,
+                                  keyValue: key,
+                                  customerMobile: mobileNo,
+                                );
+                              },
+                            ),
+                          );
+                        }
+                      },
+                      onFailure: (Error error) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content:
+                                Text("Error : ${error.errorDescription}")));
+                      });
+                },
+                child: Text('LinkNewUpiAccount_UI')),
+            SizedBox(height: 4.0),
+            ElevatedButton(
+                onPressed: () {
+                  var error = validateTurboUpiFields();
+                  if (error != '') {
+                    print(error);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(error)));
+                    return;
+                  }
+                  setState(() {
+                    isLoading = true;
+                  });
+
+                  _razorpay.upiTurbo.manageUpiAccounts(
+                      customerMobile: turboUPIModel?.mobileNumber,
+                      onFailure: (Error error) {});
+                },
+                child: Text('ManageUpiAccounts_UI')),
+          ],
+        ),
       ),
     );
   }
@@ -940,6 +976,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     _razorpay.upiTurbo.getLinkedUpiAccounts(
         customerMobile: turboUPIModel?.mobileNumber,
         onSuccess: (List<UpiAccount> upiAccounts) {
+          setState(() {
+            isLoading = false;
+          });
           print("onSuccess() upiAccounts");
           Navigator.push(
             context,
@@ -955,9 +994,24 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
           );
         },
         onFailure: (Error error) {
+          setState(() {
+            isLoading = false;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Error : ${error.errorDescription}")));
         });
+  }
+
+  void prefetchAndLinkNewAccounts() {
+    print('prefetch and link new accounts');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (builder) {
+        return PrefetchAndLintNewAccounts(
+            razorpay: _razorpay,
+            mobileNumber: turboUPIModel?.mobileNumber.toString() ?? '');
+      }),
+    );
   }
 }
 

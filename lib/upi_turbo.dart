@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:ffi';
+import 'dart:math';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'package:razorpay_turbo/model/account_balance.dart';
@@ -14,6 +16,7 @@ import 'model/bank_account.dart';
 import 'model/bank_model.dart';
 import 'model/upi_account.dart';
 import 'card.dart';
+import 'model/prefetch_model.dart';
 
 typedef void OnSuccess<T>(T result);
 typedef void OnFailure<T>(T error);
@@ -74,23 +77,31 @@ class UpiTurbo {
                 _getBankAccountList(bankAccountResponse: event["data"]);
             break;
         }
-      }
-      _eventEmitter.emit(
-          Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
-    } else if (event["responseEvent"] == "linkNewUpiAccountTPVWithUIEvent") {
-      final dataSnapshot = event['data'];
-      print("Data received on Wrapper event $dataSnapshot");
-      event['data'] = _getTPVBankList(dataSnapshot);
+        _eventEmitter.emit(
+            Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, event);
+      } else if (event["responseEvent"] == "linkNewUpiAccountTPVWithUIEvent") {
+        final dataSnapshot = event['data'];
+        print("Data received on Wrapper event $dataSnapshot");
+        event['data'] = _getTPVBankList(dataSnapshot);
 
-      print("Event Emitter${_eventEmitter != null}");
-      _eventEmitter.emit(
-          Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT, null, event);
+        print("Event Emitter${_eventEmitter != null}");
+        _eventEmitter.emit(
+            Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT, null, event);
+      } else if (event["responseEvent"] ==
+          "prefetchAndLinkNewUpiAccountUIEvent") {
+        final dataSnapshot = event['data'];
+        Map<String, dynamic> data = json.decode(dataSnapshot);
+        final prefetchAccount = _getAllPrefetchAccounts(data);
+        event['data'] = prefetchAccount;
+        _eventEmitter.emit(
+            Razorpay.EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT,
+            null,
+            event);
+      }
     }
   }
 
-  void _onError(dynamic event) {
-    print("TPV - rError has occurred " + event);
-  }
+  void _onError(dynamic event) {}
 
   /*
       OnBoarding Flow Turbo UPI
@@ -102,6 +113,19 @@ class UpiTurbo {
       return;
     }
     await _channel.invokeMethod('linkNewUpiAccount', customerMobile);
+  }
+
+  void prefetchAndLinkUpiAccountsWithUI(
+      {required String? customerMobile, String? color}) async {
+    print('prfetch called');
+    //final prefetchRequest = {'customerMobile': customerMobile, 'color': color};
+    var prefetchRequest = <String, dynamic>{
+      "customerMobile": customerMobile,
+      "color": color ?? ''
+    };
+    print(_channel);
+    await _channel.invokeMethod(
+        'prefetchAndLinkUpiAccountsWithUI', prefetchRequest);
   }
 
   void register({required Sim sim}) async {
@@ -145,7 +169,7 @@ class UpiTurbo {
     await _channel.invokeMethod('askForPermission');
   }
 
-  /*
+  /*x
       Non-transactional Flow Turbo UPI
    */
   void getLinkedUpiAccounts(
@@ -298,6 +322,24 @@ class UpiTurbo {
     }
   }
 
+  void setUpiPinUI(
+      {required BankAccount bankAccount,
+      required OnSuccess<List<UpiAccount>> onSuccess,
+      required OnFailure<Error> onFailure}) async {
+    String bankAccountString = _getBankAccountStr(bankAccount);
+    final Map<dynamic, dynamic> account = await _channel.invokeMethod(
+        'setPrefetchUPIPinWithUI', bankAccountString);
+    if (account['data'] != '') {
+      onSuccess(_getUpiAccounts(account['data']));
+    } else {
+      onFailure(
+        Error(
+            errorCode: "NO_ACCOUNT_FOUND",
+            errorDescription: "No Account Found"),
+      );
+    }
+  }
+
   UpiAccount _getUpiAccount(jsonString) {
     var upiAccountMap = json.decode(jsonString);
     UpiAccount upiAccount = UpiAccount.fromJson(upiAccountMap);
@@ -308,6 +350,9 @@ class UpiTurbo {
     if (jsonString.toString().isEmpty) {
       return <UpiAccount>[];
     }
+
+    print('decoded form');
+    print(json.decode(jsonString));
 
     List<UpiAccount> upiAccounts = List<UpiAccount>.from(
       json.decode(jsonString).map((x) => UpiAccount.fromJson(x)),
@@ -417,5 +462,9 @@ class UpiTurbo {
         account_number: upiAccount.accountNumber,
         ifsc: upiAccount.ifsc,
         bank_name: upiAccount.bankName);
+  }
+
+  PrefetchAccounts _getAllPrefetchAccounts(Map<String, dynamic> data) {
+    return PrefetchAccounts.fromMap(data);
   }
 }
