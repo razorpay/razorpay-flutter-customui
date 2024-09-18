@@ -630,92 +630,31 @@ public class RazorpayDelegate implements ActivityResultListener {
                                   EventChannel.EventSink eventSink) {
         this.pendingResult = result;
         this.eventSink = eventSink;
-        Log.e("TPV","Razorpay Delegate is hit");
         razorpay.upiTurbo.getTPV();
 
-//        razorpay.upiTurbo.getTPV()
-//                .setOrderId(orderId)
-//                .setCustomerMobile(customerMobile)
-//                .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
-//                .setCustomerId(customerId)
-//                .linkNewUpiAccount(new UpiTurboLinkAccountResultListener(){
-//
-//                    @Override
-//                    public void onSuccess(@NonNull List<UpiAccount> list) {
-//                        Log.e("Success","Success callback"+list);
-//                        HashMap<Object, Object> reply = new HashMap<>();
-//                        reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_TPV);
-//                        reply.put("data", toJsonString(list));
-//                        onEventSuccess(reply);
-//                    }
-//
-//                    @Override
-//                    public void onError(@NonNull Error error) {
-//                        HashMap<Object, Object> reply = new HashMap<>();
-//                        reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_TPV);
-//                        onEventError(reply, new Gson().toJson(error));
-//                    }
-//                });
+       razorpay.upiTurbo.getTPV()
+               .setOrderId(orderId)
+               .setCustomerMobile(customerMobile)
+               .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
+               .setCustomerId(customerId)
+               .linkNewUpiAccount(new UpiTurboLinkAccountResultListener(){
+                   @Override
+                   public void onSuccess(@NonNull List<UpiAccount> list) {
+                       HashMap<Object, Object> reply = new HashMap<>();
+                       reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_TPV);
+                       reply.put("data", toJsonString(list));
+                       onEventSuccess(reply);
+                   }
+
+                   @Override
+                   public void onError(@NonNull Error error) {
+                       HashMap<Object, Object> reply = new HashMap<>();
+                       reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_TPV);
+                       onEventError(reply, new Gson().toJson(error));
+                   }
+               });
 
 
-        String validateData = "{\n" +
-                "  \"account_number\": \"XXXX059839\",\n" +
-                "  \"ifsc\": \"AXIS0000004\",\n" +
-                "  \"bank_name\": \"AXIS\",\n" +
-                "  \"bank_id\": \"607153\",\n" +
-                "  \"bank_logo_url\": \"https://cdn.razorpay.com/bank/UTIB.gif\",\n" +
-                "  \"vpa\": {\n" +
-                "    \"id\": \"vpa12345\",\n" +
-                "    \"address\": \"7760235318-6@axis\",\n" +
-                "    \"handle\": \"axis\",\n" +
-                "    \"username\": \"7760235318-6\",\n" +
-                "    \"beneficiary_name\": \"SUKHADA N DIXITHARDIKAR EE\",\n" +
-                "    \"bank_account\": {\n" +
-                "      \"id\": \"607153\",\n" +
-                "      \"ifsc\": \"AXIS0000004\",\n" +
-                "      \"masked_account_number\": \"XXXX059839\",\n" +
-                "      \"type\": \"bank_account\",\n" +
-                "      \"beneficiary_name\": \"SUKHADA N DIXITHARDIKAR EE\",\n" +
-                "      \"creds\": {\n" +
-                "        \"atmpin\": {\n" +
-                "          \"set\": true,\n" +
-                "          \"length\": 4\n" +
-                "        },\n" +
-                "        \"upipin\": {\n" +
-                "          \"set\": true,\n" +
-                "          \"length\": 6\n" +
-                "        },\n" +
-                "        \"sms\": {\n" +
-                "          \"set\": false,\n" +
-                "          \"length\": 0\n" +
-                "        }\n" +
-                "      },\n" +
-                "      \"bank\": {\n" +
-                "        \"id\": \"607153\",\n" +
-                "        \"ifsc\": \"AXIS0000004\",\n" +
-                "        \"name\": \"AXIS\",\n" +
-                "        \"upi\": false,\n" +
-                "        \"logo\": \"https://cdn.razorpay.com/bank/UTIB.gif\",\n" +
-                "        \"bankPlaceholderUrl\": \"https://cdn.razorpay.com/placeholder/bank_placeholder.png\"\n" +
-                "      },\n" +
-                "      \"state\": \"ACTIVE\"\n" +
-                "    },\n" +
-                "    \"active\": true,\n" +
-                "    \"validated\": false,\n" +
-                "    \"default\": false\n" +
-                "  },\n" +
-                "  \"type\": \"bank_account\",\n" +
-                "  \"pinLength\": 6,\n" +
-                "  \"bankPlaceholderUrl\": \"https://cdn.razorpay.com/placeholder/bank_placeholder.png\"\n" +
-                "}\n";
-
-        UpiAccount upiAccount =new Gson().fromJson(validateData,UpiAccount.class);
-        List<UpiAccount> upiAccounts = new ArrayList<>();
-        upiAccounts.add(upiAccount);
-        HashMap<Object, Object> reply = new HashMap<>();
-        reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_TPV);
-        reply.put("data", toJsonString(upiAccounts));
-        onEventSuccess(reply);
     }
 
     public TPVBankAccount getTPVBankAccount(String tPVBankAccountStr) {
