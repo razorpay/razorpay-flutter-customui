@@ -41,46 +41,7 @@ class _TpvDialogState extends State<TpvDialog> {
   void initState() {
     initValueForTurboUPI();
 
-    key = widget.sdkKey;
-    _razorpay = Razorpay(widget.sdkKey);
-
-    widget.razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT,
-        _handleLinkNewTPVAccountReponse);
-    print("SDK listener initialised");
     super.initState();
-  }
-
-  void _handleLinkNewTPVAccountReponse(dynamic response) {
-    print("TPV :- Response delivered to sample app");
-
-    List<TPVBankAccount> tpvBankAccount = response["data"];
-    setState(() {
-      isLoading = false;
-    });
-    print("TPV :- Response converted in sample app");
-
-    UpiAccount upiAccount = UpiAccount(
-        accountNumber: tpvBankAccount[0].account_number,
-        bankLogoUrl: "",
-        bankName: tpvBankAccount[0].bank_name,
-        bankPlaceholderUrl: "",
-        ifsc: tpvBankAccount[0].ifsc,
-        pinLength: 0,
-        vpa: null,
-        type: "");
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (builder) {
-          return GetLinkedUPIAccountPage(
-              razorpay: _razorpay,
-              upiAccounts: [upiAccount],
-              keyValue: key,
-              customerMobile: turboUPIModel!.mobileNumber.toString());
-        },
-      ),
-    );
   }
 
   void initValueForTurboUPI() {

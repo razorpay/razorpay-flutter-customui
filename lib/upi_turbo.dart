@@ -405,7 +405,7 @@ class UpiTurbo {
         errorDescription: "No Turbo Plugin Found"));
   }
 
-  List<TPVBankAccount> _getTPVBankList(dynamic dataSnapshot) {
+  dynamic _getTPVBankList(dynamic dataSnapshot) {
     Iterable iterable = json.decode(dataSnapshot);
     return List<TPVBankAccount>.from(
         iterable.map((model) => _upiBankAccountToTPVBankAccount(model)));

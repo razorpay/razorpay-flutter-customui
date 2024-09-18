@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_turbo/model/tpv_bank_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo_example/models/card_info_model.dart';
 import 'package:flutter/services.dart';
@@ -75,6 +76,11 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT,
         _handleNewUpiAccountResponse);
+
+    _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT,
+        _handleLinkNewTPVAccountReponse);
+    print("SDK listener initialised");
+
     fetchAllPaymentMethods();
     print("=====> key ${key} ");
     netBankingOptions = {
@@ -98,6 +104,39 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     commonPaymentOptions = {};
 
     super.initState();
+  }
+
+  void _handleLinkNewTPVAccountReponse(dynamic response) {
+    print("TPV :- Response delivered to sample app");
+
+    List<TPVBankAccount> tpvBankAccount = response["data"];
+    setState(() {
+      isLoading = false;
+    });
+    print("TPV :- Response converted in sample app");
+
+    UpiAccount upiAccount = UpiAccount(
+        accountNumber: tpvBankAccount[0].account_number,
+        bankLogoUrl: "",
+        bankName: tpvBankAccount[0].bank_name,
+        bankPlaceholderUrl: "",
+        ifsc: tpvBankAccount[0].ifsc,
+        pinLength: 0,
+        vpa: null,
+        type: "");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (builder) {
+          return GetLinkedUPIAccountPage(
+              razorpay: _razorpay,
+              upiAccounts: [upiAccount],
+              keyValue: key,
+              customerMobile: turboUPIModel!.mobileNumber.toString());
+        },
+      ),
+    );
   }
 
   void handleCallback(String result) {
