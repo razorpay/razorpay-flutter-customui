@@ -87,6 +87,7 @@ public class RazorpayDelegate implements ActivityResultListener {
 
     private static final String LINK_NEW_UPI_ACCOUNT_EVENT = "linkNewUpiAccountEvent";
     private static final String LINK_PREFETCH_UPI_ACCOUNT_EVENT = "prefetchAndLinkNewUpiAccountUIEvent";
+    private static final String LINK_NEW_UPI_ACCOUNT_TPV = "linkNewUpiAccountTPVWithUIEvent";
     Gson gson;
     private Handler uiThreadHandler = new Handler(Looper.getMainLooper());
 
@@ -605,21 +606,31 @@ public class RazorpayDelegate implements ActivityResultListener {
          HeadLess TPV
      */
 
-    public void linkNewUpiAccount(String customerMobile, String customerId, String orderId, String tpvBankAccountStr, Result result,
-                                  EventChannel.EventSink eventSink) {
+    public void linkNewUpiAccount(String customerMobile, String customerId, String orderId, String tpvBankAccountStr, Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
         this.eventSink = eventSink;
-        /*razorpay.upiTurbo.getTPV()
+        razorpay.upiTurbo.getTPV()
                 .setOrderId(orderId)
                 .setCustomerMobile(customerMobile)
                 .setTpvBankAccount(getTPVBankAccount(tpvBankAccountStr))
                 .setCustomerId(customerId)
-                .linkNewUpiAccount( new UpiTurboLinkAccountListener() {
+                .linkNewUpiAccount(new UpiTurboLinkAccountResultListener() {
+
                     @Override
-                    public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
-                        onUpiTurboResponse(upiTurboLinkAction);
+                    public void onSuccess(@NonNull List<UpiAccount> list) {
+                        HashMap<Object, Object> reply = new HashMap<>();
+                        reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_TPV);
+                        reply.put("data", toJsonString(list));
+                        onEventSuccess(reply);
                     }
-                });*/
+
+                    @Override
+                    public void onError(@NonNull Error error) {
+                        HashMap<Object, Object> reply = new HashMap<>();
+                        reply.put("responseEvent", LINK_NEW_UPI_ACCOUNT_TPV);
+                        onEventError(reply, new Gson().toJson(error));
+                    }
+                });
     }
 
     public TPVBankAccount getTPVBankAccount(String tPVBankAccountStr) {

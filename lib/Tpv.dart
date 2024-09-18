@@ -16,18 +16,18 @@ class Tpv {
   late EventEmitter _eventEmitter;
   bool _isTurboPluginAvailable = false;
 
-
-  Tpv(MethodChannel channel, EventEmitter eventEmitter){
+  Tpv(MethodChannel channel, EventEmitter eventEmitter) {
     this._channel = channel;
     this._eventEmitter = eventEmitter;
     _checkTurboPluginAvailable();
   }
 
   void _checkTurboPluginAvailable() async {
-    final Map<dynamic, dynamic> turboPluginAvailableResponse = await _channel?.invokeMethod('isTurboPluginAvailable');
-    _isTurboPluginAvailable = turboPluginAvailableResponse["isTurboPluginAvailable"];
+    final Map<dynamic, dynamic> turboPluginAvailableResponse =
+        await _channel?.invokeMethod('isTurboPluginAvailable');
+    _isTurboPluginAvailable =
+        turboPluginAvailableResponse["isTurboPluginAvailable"];
   }
-
 
   Tpv setOrderId(String? orderId) {
     this.orderId = orderId;
@@ -42,7 +42,6 @@ class Tpv {
   Tpv setCustomerMobile(String customerMobile) {
     this.customerMobile = customerMobile;
     return this;
-
   }
 
   Tpv setTpvBankAccount(TPVBankAccount? tpvBankAccount) {
@@ -51,30 +50,32 @@ class Tpv {
   }
 
   void linkNewUpiAccount() async {
-    if(!_isTurboPluginAvailable){
+    if (!_isTurboPluginAvailable) {
       _emitError();
       return;
     }
-      var linkNewUpiAccountTPVInput =  <String, dynamic>{
-        "customerId": this.customerId,
-        "orderId":  this.orderId,
-        "customerMobile" : this.customerMobile,
-        "tpvBankAccount": _getTpvBankAccountStr(this.tpvBankAccount)
-      };
+    var linkNewUpiAccountTPVInput = <String, dynamic>{
+      "customerId": this.customerId,
+      "orderId": this.orderId,
+      "customerMobile": this.customerMobile,
+      "tpvBankAccount": _getTpvBankAccountStr(this.tpvBankAccount)
+    };
 
-      await this._channel?.invokeMethod('linkNewUpiAccountTPV' , linkNewUpiAccountTPVInput);
+    await this
+        ._channel
+        ?.invokeMethod('linkNewUpiAccountTPVWithUI', linkNewUpiAccountTPVInput);
   }
 
-   _getTpvBankAccountStr(TPVBankAccount? tPVBankAccount) {
-    if(tPVBankAccount==null)
-      return null;
+  _getTpvBankAccountStr(TPVBankAccount? tPVBankAccount) {
+    if (tPVBankAccount == null) return null;
     return jsonEncode(tPVBankAccount?.toJson());
   }
 
-  _emitError(){
+  _emitError() {
     final Map<String, dynamic> response = HashMap();
-    response["error"] = Error(errorCode: "AXIS_SDK_ERROR", errorDescription: "No Turbo Plugin Found");
-    _eventEmitter.emit(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, response);
+    response["error"] = Error(
+        errorCode: "AXIS_SDK_ERROR", errorDescription: "No Turbo Plugin Found");
+    _eventEmitter.emit(
+        Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT, null, response);
   }
-
 }

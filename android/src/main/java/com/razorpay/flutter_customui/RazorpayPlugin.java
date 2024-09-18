@@ -176,7 +176,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
         /*
            Turbo TPV
          */
-            case "linkNewUpiAccountTPV":
+            case "linkNewUpiAccountTPVWithUI":
                 _arguments = call.arguments();
                 String customerId = (String) _arguments.get("customerId");
                 customerMobile = (String) _arguments.get("customerMobile");

@@ -3,10 +3,12 @@ import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo/model/tpv_bank_account.dart';
 
 class TpvDialog extends StatefulWidget {
-
   final Razorpay razorpay;
   String? customerMobile;
-  TpvDialog({ required this.customerMobile ,required this.razorpay,});
+  TpvDialog({
+    required this.customerMobile,
+    required this.razorpay,
+  });
 
   @override
   State<TpvDialog> createState() => _TpvDialogState();
@@ -14,10 +16,10 @@ class TpvDialog extends StatefulWidget {
 
 class _TpvDialogState extends State<TpvDialog> {
   String? orderId;
-  String? accountNumber="";
-  String? ifsc="";
-  String? bankName="";
-  String? customerId="";
+  String? accountNumber = "";
+  String? ifsc = "";
+  String? bankName = "";
+  String? customerId = "";
 
   bool isLoading = false;
 
@@ -33,7 +35,7 @@ class _TpvDialogState extends State<TpvDialog> {
     super.initState();
   }
 
-  void initValueForTurboUPI(){
+  void initValueForTurboUPI() {
     _controllerOrderId.text = "";
     _controllerCustomerId.text = customerId!;
     _controllerAccountNumber.text = accountNumber!;
@@ -43,8 +45,6 @@ class _TpvDialogState extends State<TpvDialog> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: Container(
@@ -52,10 +52,10 @@ class _TpvDialogState extends State<TpvDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-
-            Text("Turbo TPV UPI",style: TextStyle(fontSize: 18)),
-
-            SizedBox(height: 20,),
+            Text("Turbo TPV UPI", style: TextStyle(fontSize: 18)),
+            SizedBox(
+              height: 20,
+            ),
             Flexible(
               child: TextField(
                 controller: _controllerCustomerId,
@@ -64,8 +64,7 @@ class _TpvDialogState extends State<TpvDialog> {
                 decoration: InputDecoration(
                   hintText: 'CustomerId',
                 ),
-                onChanged: (newValue) =>
-                customerId = newValue,
+                onChanged: (newValue) => customerId = newValue,
               ),
             ),
             Flexible(
@@ -76,11 +75,12 @@ class _TpvDialogState extends State<TpvDialog> {
                 decoration: InputDecoration(
                   hintText: 'OrderId',
                 ),
-                onChanged: (newValue) =>
-                orderId = newValue,
+                onChanged: (newValue) => orderId = newValue,
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Flexible(
               child: TextField(
                 controller: _controllerAccountNumber,
@@ -89,11 +89,12 @@ class _TpvDialogState extends State<TpvDialog> {
                 decoration: InputDecoration(
                   hintText: 'Account Number',
                 ),
-                onChanged: (newValue) =>
-                accountNumber = newValue,
+                onChanged: (newValue) => accountNumber = newValue,
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Flexible(
               child: TextField(
                 controller: _controllerIFSC,
@@ -102,11 +103,12 @@ class _TpvDialogState extends State<TpvDialog> {
                 decoration: InputDecoration(
                   hintText: 'Ifsc code',
                 ),
-                onChanged: (newValue) =>
-                ifsc = newValue,
+                onChanged: (newValue) => ifsc = newValue,
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Flexible(
               child: TextField(
                 controller: _controllerBankName,
@@ -115,35 +117,43 @@ class _TpvDialogState extends State<TpvDialog> {
                 decoration: InputDecoration(
                   hintText: 'Bank Name',
                 ),
-                onChanged: (newValue) =>
-                bankName = newValue,
+                onChanged: (newValue) => bankName = newValue,
               ),
             ),
-            SizedBox(height: 5,),
+            SizedBox(
+              height: 5,
+            ),
             isLoading
                 ? CircularProgressIndicator(
-              backgroundColor: Colors.grey,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-            )
-                : SizedBox(height: 5,),
+                    backgroundColor: Colors.grey,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  )
+                : SizedBox(
+                    height: 5,
+                  ),
+            ElevatedButton(
+                onPressed: () {
+                  var tpvBankAccount = null;
+                  if (accountNumber!.isNotEmpty &&
+                      bankName!.isNotEmpty &&
+                      ifsc!.isNotEmpty) {
+                    tpvBankAccount = TPVBankAccount(
+                        account_number: accountNumber,
+                        bank_name: bankName,
+                        ifsc: ifsc);
+                  }
+                  widget.razorpay.tpv
+                      .setOrderId(orderId)
+                      .setCustomerId(customerId)
+                      .setCustomerMobile(widget.customerMobile!)
+                      .setTpvBankAccount(tpvBankAccount)
+                      .linkNewUpiAccount();
 
-            ElevatedButton(onPressed: () {
-              var tpvBankAccount = null;
-              if(accountNumber!.isNotEmpty && bankName!.isNotEmpty && ifsc!.isNotEmpty){
-                tpvBankAccount = TPVBankAccount(account_number: accountNumber, bank_name:bankName , ifsc: ifsc );
-              }
-              widget.razorpay.tpv
-                    .setOrderId(orderId)
-                    .setCustomerId(customerId)
-                    .setCustomerMobile(widget.customerMobile!)
-                    .setTpvBankAccount(tpvBankAccount)
-                    .linkNewUpiAccount();
-
-              setState(() {
-                isLoading = true;
-              });
-
-            }, child: Text('LinkNewUpiAccount TPV')),
+                  setState(() {
+                    isLoading = true;
+                  });
+                },
+                child: Text('LinkNewUpiAccount TPV')),
           ],
         ),
       ),
