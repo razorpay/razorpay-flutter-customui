@@ -354,7 +354,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       'contact': '9663976539',
                       'method': 'upi',
                       '_[flow]': 'intent',
-                      'upi_app_package_name': 'paytm',
+                      // 'upi_app_package_name': 'paytm',
                     };
                     _razorpay.submit(options);
                   },
