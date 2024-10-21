@@ -14,7 +14,10 @@ class Razorpay {
   static const EVENT_PAYMENT_SUCCESS = 'payment.success';
   static const EVENT_PAYMENT_ERROR = 'payment.error';
   static const EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT = "linkNewUpiAccount";
-  static const EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT = "prefetchAndLinkNewUpiAccountUIEvent";
+  static const EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT =
+      "prefetchAndLinkNewUpiAccountUIEvent";
+  static const EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT =
+      "linkNewUpiAccountTPVWithUIEvent";
 
   // Payment error codes
   static const NETWORK_ERROR = 0;
@@ -36,10 +39,10 @@ class Razorpay {
   }
   Razorpay.initWith(String key, bool ui) {
     if (Platform.isAndroid) {
-       _channel.invokeMethod('initilizeSDK', key);
+      _channel.invokeMethod('initilizeSDK', key);
       // Android-specific code
     } else if (Platform.isIOS) {
-      final Map<dynamic, dynamic> keyFinal = {'key':key,'ui':ui};
+      final Map<dynamic, dynamic> keyFinal = {'key': key, 'ui': ui};
       _channel.invokeMethod('initilizeSDK', keyFinal);
     }
     _eventEmitter = new EventEmitter();
@@ -249,8 +252,3 @@ class PaymentFailureResponse {
     return new PaymentFailureResponse(code, message);
   }
 }
-
-
-
-
-

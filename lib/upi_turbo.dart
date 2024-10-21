@@ -7,6 +7,7 @@ import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'package:razorpay_turbo/model/account_balance.dart';
 import 'package:razorpay_turbo/model/empty.dart';
+import 'package:razorpay_turbo/model/tpv_bank_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'model/Error.dart';
 import 'model/Sim.dart';
@@ -88,6 +89,11 @@ class UpiTurbo {
           Razorpay.EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT,
           null,
           event);
+    } else if (event["responseEvent"] == "linkNewUpiAccountTPVWithUIEvent") {
+      final dataSnapshot = event['data'];
+      event['data'] = _getTPVBankList(dataSnapshot);
+      _eventEmitter.emit(
+          Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT, null, event);
     }
   }
 
@@ -442,5 +448,19 @@ class UpiTurbo {
 
   PrefetchAccounts _getAllPrefetchAccounts(Map<String, dynamic> data) {
     return PrefetchAccounts.fromMap(data);
+  }
+
+  dynamic _getTPVBankList(dynamic dataSnapshot) {
+    Iterable iterable = json.decode(dataSnapshot);
+    return List<TPVBankAccount>.from(
+        iterable.map((model) => _upiBankAccountToTPVBankAccount(model)));
+  }
+
+  TPVBankAccount _upiBankAccountToTPVBankAccount(dynamic model) {
+    UpiAccount upiAccount = UpiAccount.fromJson(model);
+    return TPVBankAccount(
+        account_number: upiAccount.accountNumber,
+        ifsc: upiAccount.ifsc,
+        bank_name: upiAccount.bankName);
   }
 }
