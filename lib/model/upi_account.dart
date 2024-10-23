@@ -1,5 +1,4 @@
 import 'bank_account.dart';
-import 'bank_model.dart';
 
 class UpiAccount {
    String? accountNumber;

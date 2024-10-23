@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:razorpay_turbo/razorpay_turbo.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('razorpay_turbo');

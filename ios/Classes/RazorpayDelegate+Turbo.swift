@@ -2,7 +2,7 @@
 import Flutter
 import Razorpay
 import WebKit
-import TurboUpiPluginUAT
+import TurboUpiPluginTwoP
 
 typealias TurboDictionary = Dictionary<String,Any>
 typealias TurboArrayDictionary = Array<TurboDictionary>
@@ -176,7 +176,7 @@ extension RazorpayDelegate {
         self.pendingResult = result
         self.eventSink = eventSink
         var reply = TurboDictionary()
-#if canImport(TurboUpiPluginUAT)
+#if canImport(TurboUpiPluginTwoP)
         reply["isTurboPluginAvailable"] =  true
         #else
         reply["isTurboPluginAvailable"] =  false
@@ -196,7 +196,7 @@ extension RazorpayDelegate {
                 self.handleAndPublishTurboError(error: err)
                 return
             }
-            if let accList = response as? [TurboUpiPluginUAT.UpiAccount] {
+            if let accList = response as? [TurboUpiPluginTwoP.UpiAccount] {
                 var reply = Dictionary<String,Any>()
                 reply["data"] = self.getUpiAccountJSON(accList)
                 self.sendReply(data: reply)
@@ -307,7 +307,7 @@ extension RazorpayDelegate {
                         self.handleAndPublishTurboError(error: err)
                         return
                     }
-                    if let accList = response as? [TurboUpiPluginUAT.UpiAccount] {
+                    if let accList = response as? [TurboUpiPluginTwoP.UpiAccount] {
                         var reply = Dictionary<String,Any>()
                         reply["data"] = self.getUpiAccountJSON(accList)
                         self.sendReply(data: reply)
@@ -645,6 +645,8 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
              onEventSuccess(&reply)
         case .consent:
             break
+        case .askForPermission:
+            break
         @unknown default:
             break
         }
@@ -653,11 +655,11 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
 
 
 extension RazorpayDelegate: UPITurboResultDelegate {
-    func onErrorFetchingLinkedAcc(_ error: TurboUpiPluginUAT.TurboError?) {
+    func onErrorFetchingLinkedAcc(_ error: TurboUpiPluginTwoP.TurboError?) {
         self.handleAndPublishTurboError(error: error)
     }
     
-    func onSuccessFetchingLinkedAcc(_ accList: [TurboUpiPluginUAT.UpiAccount]) {
+    func onSuccessFetchingLinkedAcc(_ accList: [TurboUpiPluginTwoP.UpiAccount]) {
         var reply = Dictionary<String,Any>()
         reply["data"] = getUpiAccountJSON(accList)
         sendReply(data: reply)
