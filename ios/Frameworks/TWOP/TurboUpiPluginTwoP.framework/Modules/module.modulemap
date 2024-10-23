@@ -1,0 +1,4 @@
+framework module TurboUpiPluginTwoP {
+  header "TurboUpiPluginTwoP-Swift.h"
+  requires objc
+}

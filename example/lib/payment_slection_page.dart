@@ -1,12 +1,8 @@
-import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:razorpay_turbo/model/prefetch_model.dart';
 import 'package:razorpay_turbo/model/tpv_bank_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo_example/models/card_info_model.dart';
-import 'package:flutter/services.dart';
 import 'package:razorpay_turbo_example/preeftch_link_new_accounts.dart';
 import 'package:razorpay_turbo_example/tpv_dialog.dart';
 import 'bank_account_dialog.dart';
@@ -19,6 +15,8 @@ import 'get_linked_upi_account_page.dart';
 import 'sim_dialog.dart';
 import 'package:razorpay_turbo/model/Error.dart';
 import 'dart:io' show Platform;
+import 'location_service.dart';
+
 
 enum PaymentMethods { card, upi, nb, wallet, vas, turboUPI }
 
@@ -67,6 +65,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String turboUpiHandle = 'axisbank';
   String mobileNo = "";
   late Razorpay _razorpay;
+
+   final LocationService _locationService = LocationService();
+
 
   @override
   void initState() {
@@ -480,6 +481,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       case PaymentMethods.vas:
         return buildForVas();
       case PaymentMethods.turboUPI:
+            _getLocation();
         return buildForTurboUPI();
       default:
         return buildUPIForm();
@@ -1045,6 +1047,19 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             mobileNumber: turboUPIModel?.mobileNumber.toString() ?? '');
       }),
     );
+  }
+
+
+
+  Future<void> _getLocation() async {
+    final status = await _locationService.requestLocationPermission();
+    if (status.isGranted) {
+    } else {
+      // Show dialog or snackbar with status.message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(status.message)),
+      );
+    }
   }
 }
 

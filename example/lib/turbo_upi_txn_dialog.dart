@@ -28,7 +28,7 @@ class _TurboUPITxnDialogState extends State<TurboUPITxnDialog> {
     if ((amount == '') || (amount == 0.0)) {
       return 'Please enter zero';
     }
-    if (email == '' || email == null ) {
+    if (email == '' ) {
       return 'Enter email';
     }
     return '';
