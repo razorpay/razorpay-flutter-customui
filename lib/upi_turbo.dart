@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'package:eventify/eventify.dart';
@@ -101,6 +102,8 @@ class UpiTurbo {
   /*
       OnBoarding Flow Turbo UPI
    */
+
+  void updateSessionToken({required String token}) {}
 
   void linkNewUpiAccount({required String? customerMobile}) async {
     if (!_isTurboPluginAvailable) {
