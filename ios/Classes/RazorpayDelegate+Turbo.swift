@@ -172,7 +172,7 @@ extension RazorpayDelegate {
         self.pendingResult = result
         self.eventSink = eventSink
         var reply = TurboDictionary()
-#if canImport(TurboUpiPluginTwoP)
+#if canImport(TurboUpiPluginUI)
         reply["isTurboPluginAvailable"] =  true
         #else
         reply["isTurboPluginAvailable"] =  false

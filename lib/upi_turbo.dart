@@ -103,7 +103,13 @@ class UpiTurbo {
       OnBoarding Flow Turbo UPI
    */
 
-  void updateSessionToken({required String token}) {}
+  void updateSessionToken({required String token}) {
+    if (!_isTurboPluginAvailable) {
+      _emitError();
+      return;
+    }
+     _channel.invokeMethod('refreshSessionToken', token);
+  }
 
   void linkNewUpiAccount({required String? customerMobile}) async {
     if (!_isTurboPluginAvailable) {

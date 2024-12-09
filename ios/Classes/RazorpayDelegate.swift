@@ -190,8 +190,8 @@ class RazorpayDelegate: NSObject {
     }
 
     func updateToken(token: String) {
-        self.sessionTokenCompletion(Session(sessionToken: token))
-    } 
+        self.sessionTokenCompletion?(Session(token: token))
+    }
 }
 
 //MARK: Initial Setup:
@@ -216,8 +216,10 @@ extension RazorpayDelegate {
         if let unwrappedWebView = self.webView {
             if let isUi = ui, isUi == true {
                 self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, UIPlugin: RZPTurboUPI.UIPluginInstance())
+                self.razorpay?.upiTurboUI?.initialize(self)
             } else {
                 self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, plugin: RZPTurboUPI.pluginInstance())
+                self.razorpay?.upiTurbo?.initialize(self)
             }
             
             DispatchQueue.main.async {
@@ -348,11 +350,13 @@ extension RazorpayDelegate: TurboSessionDelegate {
     func fetchToken(completion: @escaping (Session) -> Void) {
         if sessionTokenCompletion != nil {
             // Request new Token
-            var reply = TurboDictionary()
-            reply["responseEvent"] = "refreshSessionToken"
-            onEventSuccess(&reply)
+           
         } else {
             self.sessionTokenCompletion = completion
         }
+        
+        var reply = TurboDictionary()
+        reply["responseEvent"] = "refreshSessionToken"
+        onEventSuccess(&reply)
     }
 }
