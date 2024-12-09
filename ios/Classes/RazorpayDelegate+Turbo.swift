@@ -54,7 +54,7 @@ extension RazorpayDelegate {
         self.pendingResult = result
         self.eventSink = eventSink
         if let upiCard = getUpicard(cardStr), let selectedBankAccount = self.selectedBankAccount {
-            self.action?.setUpiPin(selectedBankAccount, upiCard)
+            self.action?.setUpiPin(upiCard)
         }
     }
     func linkNewUpiAccount(mobileNumber: String, result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
@@ -316,7 +316,7 @@ extension RazorpayDelegate {
         self.pendingResult = result
         self.eventSink = eventSink
         var reply = TurboDictionary()
-        reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
+        reply["responseEvent"] = LINK_NEW_UPI_ACCOUNT_TPV
         guard let customerMobile = tpvDict["customerMobile"] as? String else { return }
         let orderId = tpvDict["orderId"] as? String ?? ""
         let customerId = tpvDict["customerId"] as? String ?? ""
@@ -333,16 +333,17 @@ extension RazorpayDelegate {
             .setOrderId(orderId: orderId)
             .setTpvBankAccount(tpvBankAccount: tpvBankAccount)
             .linkNewUpiAccountWithUI(color: "#0000FF", completionHandler: { upiAccounts, error in
-
                 guard error == nil else {
+                    let err = error as? TurboError
+                    self.handleAndPublishTurboError(error: err)
                     return
                 }
-                guard let vpaAccounts = upiAccounts as? [UpiAccount] else {
-                    return
+                if let vpaAccounts = upiAccounts as? [UpiAccount]  {
+                    var reply = Dictionary<String,Any>()
+                    reply["data"] = self.getUpiAccountJSON(vpaAccounts)
+                    self.sendReply(data: reply)
                 }
             })
-
-        //getTPVBankAccount
     }
 
     //MARK: File methods
@@ -702,7 +703,7 @@ extension RazorpayDelegate: UPITurboResultDelegate {
         reply["data"] = getUpiAccountJSON(accList)
         sendReply(data: reply)
     }
-    
+        
     func onErrorFetchingLinkedAcc(_ error: TurboError?) {
         self.handleAndPublishTurboError(error: error)
     }

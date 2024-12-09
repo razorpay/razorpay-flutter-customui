@@ -15,6 +15,7 @@ class RazorpayDelegate: NSObject {
     let CODE_EVENT_ERROR = 201
     let LINK_NEW_UPI_ACCOUNT_EVENT = "linkNewUpiAccountEvent"
     let PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT = "prefetchAndLinkNewUpiAccountUIEvent"
+    let LINK_NEW_UPI_ACCOUNT_TPV = "linkNewUpiAccountTPVWithUIEvent"
 
     var upiBanks:[UpiBank] = []
     var upiBankAccounts:[UpiBankAccount] = []
@@ -210,9 +211,9 @@ extension RazorpayDelegate {
         
         if let unwrappedWebView = self.webView {
             if let isUi = ui, isUi == true {
-                self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, UIPlugin: RazorpayTurboUPI.UIPluginInstance())
+                self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, UIPlugin: RZPTurboUPI.UIPluginInstance())
             } else {
-                self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, plugin: RazorpayTurboUPI.pluginInstance())
+                self.razorpay =  RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, plugin: RZPTurboUPI.pluginInstance())
             }
             
             DispatchQueue.main.async {
@@ -339,9 +340,9 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
 }
 
 // MARK: Session Token Handle
-extension RazorpayDelegate: UPITurboResultDelegate {
+extension RazorpayDelegate: TurboSessionDelegate {
     func fetchToken(completion: @escaping (Session) -> Void) {
-        if let sessionTokenCompletion = sessionTokenCompletion {
+        if sessionTokenCompletion != nil {
             // Request new Token
             var reply = TurboDictionary()
             //reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
