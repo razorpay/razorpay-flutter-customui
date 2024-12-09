@@ -15,6 +15,8 @@ import 'sim_dialog.dart';
 import 'package:razorpay_turbo/model/Error.dart';
 import 'dart:io' show Platform;
 import 'location_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 enum PaymentMethods { card, upi, nb, wallet, vas, turboUPI }
 
@@ -110,8 +112,14 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     super.initState();
   }
 
-  void _handleRefreshToken() {
-    //TODO: Implemet the API call.
+  void _handleRefreshToken(dynamic response) async {
+    var url = Uri.parse(
+        "https://api-web-turbo-upi.ext.dev.razorpay.in/v1/upi/turbo/customer/session");
+    final basicToken =
+        'cnpwX3Rlc3RfMHdGUldJWm5INjV1bnk6dGhpc2lzc3VwZXJzZWNyZXQ';
+    final response =
+        await http.get(url, headers: {"Authorization": "Basic $basicToken"});
+    print(response.body);
     _razorpay.upiTurbo.updateSessionToken(token: "XYZ_uasdf");
   }
 
