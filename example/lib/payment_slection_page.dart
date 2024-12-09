@@ -117,8 +117,11 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         "https://api-web-turbo-upi.ext.dev.razorpay.in/v1/upi/turbo/customer/session");
     final basicToken =
         'cnpwX3Rlc3RfMHdGUldJWm5INjV1bnk6dGhpc2lzc3VwZXJzZWNyZXQ';
-    final response =
-        await http.get(url, headers: {"Authorization": "Basic $basicToken"});
+    final response = await http.post(
+      url,
+      headers: {"Authorization": "Basic $basicToken"},
+      body: {'customer_reference': 'ram_uat'},
+    );
     print(response.body);
     _razorpay.upiTurbo.updateSessionToken(token: "XYZ_uasdf");
   }
