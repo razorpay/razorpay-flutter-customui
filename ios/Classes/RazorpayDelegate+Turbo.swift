@@ -2,7 +2,7 @@
 import Flutter
 import Razorpay
 import WebKit
-import TurboUpiPluginTwoP
+import TurboUpiPluginUI
 
 typealias TurboDictionary = Dictionary<String,Any>
 typealias TurboArrayDictionary = Array<TurboDictionary>
@@ -54,8 +54,7 @@ extension RazorpayDelegate {
         self.pendingResult = result
         self.eventSink = eventSink
         if let upiCard = getUpicard(cardStr), let selectedBankAccount = self.selectedBankAccount {
-            let selectBankAction = LinkUpiAction(action: .setUpiPin)
-            selectBankAction.setUpiPin(selectedBankAccount, upiCard)
+            self.action?.setUpiPin(selectedBankAccount, upiCard)
         }
     }
     func linkNewUpiAccount(mobileNumber: String, result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
@@ -67,8 +66,7 @@ extension RazorpayDelegate {
     func register(result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
         self.pendingResult = result
         self.eventSink = eventSink
-        let register = LinkUpiAction(action: .sendSms)
-        register.registerDevice()
+        self.action?.registerDevice()
     }
 
     
@@ -76,8 +74,7 @@ extension RazorpayDelegate {
         self.pendingResult = result
         self.eventSink = eventSink
         if let bank = getBank(bankStr) {
-            let selectBankAction = LinkUpiAction(action: .selectBank)
-            selectBankAction.selectedBank(bank)
+            self.action?.selectedBank(bank)
         }
     }
     
@@ -86,8 +83,7 @@ extension RazorpayDelegate {
         self.eventSink = eventSink
         if let bankAccount = getBankAccount(bankAccountStr) {
             self.selectedBankAccount = bankAccount
-            let selectBankAction = LinkUpiAction(action: .selectBankAccount)
-            selectBankAction.selectedBankAccount(bankAccount)
+            self.action?.selectedBankAccount(bankAccount)
         }
      }
     
@@ -196,7 +192,7 @@ extension RazorpayDelegate {
                 self.handleAndPublishTurboError(error: err)
                 return
             }
-            if let accList = response as? [TurboUpiPluginTwoP.UpiAccount] {
+            if let accList = response as? [UpiAccount] {
                 var reply = Dictionary<String,Any>()
                 reply["data"] = self.getUpiAccountJSON(accList)
                 self.sendReply(data: reply)
@@ -307,7 +303,7 @@ extension RazorpayDelegate {
                         self.handleAndPublishTurboError(error: err)
                         return
                     }
-                    if let accList = response as? [TurboUpiPluginTwoP.UpiAccount] {
+                    if let accList = response as? [UpiAccount] {
                         var reply = Dictionary<String,Any>()
                         reply["data"] = self.getUpiAccountJSON(accList)
                         self.sendReply(data: reply)
@@ -315,14 +311,47 @@ extension RazorpayDelegate {
                 })
         }
     }
+    
+    func linkTPVAccountWithUI(tpvDict: TurboDictionary , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink) {
+        self.pendingResult = result
+        self.eventSink = eventSink
+        var reply = TurboDictionary()
+        reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
+        guard let customerMobile = tpvDict["customerMobile"] as? String else { return }
+        let orderId = tpvDict["orderId"] as? String ?? ""
+        let customerId = tpvDict["customerId"] as? String ?? ""
+        var tpvBankAccount: TurboTPVBankAccount?
+        if let tpvBankAccountJson = tpvDict["tpvBankAccount"] as? String {
+            if let tpvBankAccountGet = self.getTPVBankAccount(tpvBankAccountJson) {
+                tpvBankAccount = tpvBankAccountGet
+            }
+        }
+        
+        self.razorpay?.upiTurboUI?.TPV?
+            .setMobileNumber(mobile: customerMobile)
+            .setCustomerId(customerId: customerId)
+            .setOrderId(orderId: orderId)
+            .setTpvBankAccount(tpvBankAccount: tpvBankAccount)
+            .linkNewUpiAccountWithUI(color: "#0000FF", completionHandler: { upiAccounts, error in
+
+                guard error == nil else {
+                    return
+                }
+                guard let vpaAccounts = upiAccounts as? [UpiAccount] else {
+                    return
+                }
+            })
+
+        //getTPVBankAccount
+    }
 
     //MARK: File methods
-    private func onEventSuccess(_ reply: inout TurboDictionary) {
+    func onEventSuccess(_ reply: inout TurboDictionary) {
         reply["type"] = CODE_EVENT_SUCCESS
         sendReplyByEventSink(reply)
     }
 
-    private func onEventError(reply: inout TurboDictionary , _ errorDescription: String) {
+    func onEventError(reply: inout TurboDictionary , _ errorDescription: String) {
         reply["type"] = CODE_EVENT_ERROR
         reply["error"] = errorDescription
         sendReplyByEventSink(reply)
@@ -438,6 +467,18 @@ extension RazorpayDelegate {
                 return nil
             }
             return UpiCard(expMonth: expiryMonth, expYear: expiryYear, lastSixDigits: lastSixDigits)
+            
+        }
+        return nil
+    }
+    
+    private func getTPVBankAccount(_ tpvStr: String) -> TurboTPVBankAccount? {
+        if let tpvBankAccount = convertToDictionary(tpvStr) {
+            guard let accountNumber = tpvBankAccount["account_number"] as? String, let ifscCode = tpvBankAccount["ifsc"] as? String else {
+                return nil
+            }
+            let bankName = tpvBankAccount["bank_name"] as? String ?? ""
+            return TurboTPVBankAccount(ifsc: ifscCode, bankName: bankName, accountNumber: accountNumber)
             
         }
         return nil
@@ -577,6 +618,7 @@ extension RazorpayDelegate {
 
 extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccActionDelegate
     func onResponse(_ action: LinkUpiAction) {
+        self.action = action
         var reply = TurboDictionary()
         reply["responseEvent"] = LINK_NEW_UPI_ACCOUNT_EVENT
         switch action.code {
@@ -655,14 +697,14 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
 
 
 extension RazorpayDelegate: UPITurboResultDelegate {
-    func onErrorFetchingLinkedAcc(_ error: TurboUpiPluginTwoP.TurboError?) {
-        self.handleAndPublishTurboError(error: error)
-    }
-    
-    func onSuccessFetchingLinkedAcc(_ accList: [TurboUpiPluginTwoP.UpiAccount]) {
+    func onSuccessFetchingLinkedAcc(_ accList: [UpiAccount]) {
         var reply = Dictionary<String,Any>()
         reply["data"] = getUpiAccountJSON(accList)
         sendReply(data: reply)
+    }
+    
+    func onErrorFetchingLinkedAcc(_ error: TurboError?) {
+        self.handleAndPublishTurboError(error: error)
     }
 }
 

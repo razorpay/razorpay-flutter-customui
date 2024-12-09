@@ -1,4 +1,0 @@
-framework module RazorpayTurboUPIUITwoParty {
-  header "RazorpayTurboUPIUITwoParty-Swift.h"
-  requires objc
-}

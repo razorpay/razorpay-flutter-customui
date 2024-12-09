@@ -1,7 +1,7 @@
 import Flutter
 import Razorpay
 import WebKit
-import TurboUpiPluginTwoP
+import TurboUpiPluginUI
 
 class RazorpayDelegate: NSObject {  
     var pendingResult: FlutterResult!
@@ -24,6 +24,11 @@ class RazorpayDelegate: NSObject {
     var isTurboUI: Bool? = true
     var merchantKey: String = ""
     
+    var sessionToken: String?
+    var sessionTokenCompletion: ((Session)-> Void)?
+    
+    var action: LinkUpiAction?
+
     private var  CODE_PAYMENT_ERROR = 1
     private var CODE_PAYMENT_SUCCESS = 0
     private var NETWORK_ERROR = 2
@@ -330,5 +335,22 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
         reply["data"] = data
         sendReply(data: reply)
         self.close()
+    }
+}
+
+// MARK: Session Token Handle
+extension RazorpayDelegate: UPITurboResultDelegate {
+    func fetchToken(completion: @escaping (Session) -> Void) {
+        if let sessionTokenCompletion = sessionTokenCompletion {
+            // Request new Token
+            var reply = TurboDictionary()
+            //reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
+            onEventSuccess(&reply)
+        } else {
+            self.sessionTokenCompletion = completion
+            if let sessionToken = sessionToken {
+                completion(Session(token: sessionToken))
+            }
+        }
     }
 }

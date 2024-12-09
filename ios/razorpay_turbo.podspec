@@ -17,24 +17,13 @@ Pod::Spec.new do |s|
 
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
   #s.dependency 'razorpay-customui-pod'
-  # s.vendored_frameworks = [
-  #   'Frameworks/Razorpay.xcframework',
-  #   'Frameworks/TurboUpiPluginUAT.framework',
-  #   'Frameworks/RazorpayTurboUPI.framework',
-  #   'Frameworks/RazorpayTurboUPIUI.framework',
-  #   'Frameworks/CommonLibrary.framework',
-  #   'Frameworks/OlivePayLibrary.framework',
-  #   'Frameworks/Sentry.framework'
-  #   ]
-
-  # TWOP Sdk's
   s.vendored_frameworks = [
-    'Frameworks/TWOP/Razorpay.xcframework',
-    'Frameworks/TWOP/TurboUpiPluginTwoP.framework',
-    'Frameworks/TWOP/RazorpayTurboUPIUITwoParty.framework',
-    'Frameworks/TWOP/CommonLibrary.framework',
-    'Frameworks/TWOP/two_party.framework',
-    'Frameworks/TWOP/Sentry.framework'
+    'Frameworks/Razorpay.xcframework',
+    'Frameworks/TurboUpiPluginUI.framework',
+    'Frameworks/RazorpayTurboUPIUI.framework',
+    'Frameworks/CommonLibrary.framework',
+    'Frameworks/two_party.framework',
+    'Frameworks/Sentry.framework'
     ]
 
   # Flutter.framework does not contain a i386 slice.

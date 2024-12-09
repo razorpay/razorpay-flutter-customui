@@ -145,6 +145,11 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             if let bankAccountStr = call.arguments as? String {
                 razorpayDelegate.setPrefetchUPIPinWithUI(bankAccountStr: bankAccountStr, result: result, eventSink: self.eventSink)
             }
+            
+        case "linkNewUpiAccountTPVWithUI":
+            if let tpvData = call.arguments as? [String: Any] {
+                razorpayDelegate.linkTPVAccountWithUI(tpvDict: tpvData, result: result, eventSink: self.eventSink)
+            }
         default:
             print("no method")
         }
