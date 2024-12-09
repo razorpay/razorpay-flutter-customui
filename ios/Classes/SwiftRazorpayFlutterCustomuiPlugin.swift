@@ -150,6 +150,12 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             if let tpvData = call.arguments as? [String: Any] {
                 razorpayDelegate.linkTPVAccountWithUI(tpvDict: tpvData, result: result, eventSink: self.eventSink)
             }
+
+        case "updateToken":
+            if let newToken = call.arguments as? String {
+                razorpayDelegate.updateToken(token: newToken)
+            }
+
         default:
             print("no method")
         }

@@ -91,6 +91,8 @@ class UpiTurbo {
       event['data'] = _getTPVBankList(dataSnapshot);
       _eventEmitter.emit(
           Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT, null, event);
+    } else if (event["responseEvent"] == "refreshSessionToken") {
+      _eventEmitter.emit(Razorpay.EVENT_FETCH_SESSION_TOKEN, null, event);
     }
   }
 

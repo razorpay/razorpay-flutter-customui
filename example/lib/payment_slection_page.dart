@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:razorpay_turbo/model/tpv_bank_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
@@ -16,7 +15,6 @@ import 'sim_dialog.dart';
 import 'package:razorpay_turbo/model/Error.dart';
 import 'dart:io' show Platform;
 import 'location_service.dart';
-
 
 enum PaymentMethods { card, upi, nb, wallet, vas, turboUPI }
 
@@ -66,8 +64,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String mobileNo = "";
   late Razorpay _razorpay;
 
-   final LocationService _locationService = LocationService();
-
+  final LocationService _locationService = LocationService();
 
   @override
   void initState() {
@@ -87,6 +84,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         _handleNewUpiAccountResponse);
     _razorpay.on(Razorpay.EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT,
         _handleLinkNewTPVAccountReponse);
+    _razorpay.on(Razorpay.EVENT_FETCH_SESSION_TOKEN, _handleRefreshToken);
     fetchAllPaymentMethods();
     print("=====> key ${key} ");
     netBankingOptions = {
@@ -110,6 +108,11 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     commonPaymentOptions = {};
 
     super.initState();
+  }
+
+  void _handleRefreshToken() {
+    //TODO: Implemet the API call.
+    _razorpay.upiTurbo.updateSessionToken(token: "XYZ_uasdf");
   }
 
   void _handleLinkNewTPVAccountReponse(dynamic response) {
@@ -481,7 +484,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       case PaymentMethods.vas:
         return buildForVas();
       case PaymentMethods.turboUPI:
-            _getLocation();
+        _getLocation();
         return buildForTurboUPI();
       default:
         return buildUPIForm();
@@ -1048,8 +1051,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       }),
     );
   }
-
-
 
   Future<void> _getLocation() async {
     final status = await _locationService.requestLocationPermission();

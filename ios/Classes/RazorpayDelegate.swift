@@ -188,6 +188,10 @@ class RazorpayDelegate: NSObject {
             }
         }
     }
+
+    func updateToken(token: String) {
+        self.sessionTokenCompletion(Session(sessionToken: token))
+    } 
 }
 
 //MARK: Initial Setup:
@@ -345,13 +349,10 @@ extension RazorpayDelegate: TurboSessionDelegate {
         if sessionTokenCompletion != nil {
             // Request new Token
             var reply = TurboDictionary()
-            //reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
+            reply["responseEvent"] = "refreshSessionToken"
             onEventSuccess(&reply)
         } else {
             self.sessionTokenCompletion = completion
-            if let sessionToken = sessionToken {
-                completion(Session(token: sessionToken))
-            }
         }
     }
 }

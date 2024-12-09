@@ -16,6 +16,7 @@ class Razorpay {
   static const EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT = "linkNewUpiAccount";
   static const EVENT_UPI_TURBO_PREFETCH_AND_LINK_NEW_UPI_ACCOUNT =
       "prefetchAndLinkNewUpiAccountUIEvent";
+  static const EVENT_FETCH_SESSION_TOKEN = "fetchSessionTokenEvent";
   static const EVENT_UPI_TURBO_LINK_NEW_UPI_TPV_ACCOUNT =
       "linkNewUpiAccountTPVWithUIEvent";
 
