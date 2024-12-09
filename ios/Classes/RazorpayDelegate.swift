@@ -348,13 +348,9 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
 // MARK: Session Token Handle
 extension RazorpayDelegate: TurboSessionDelegate {
     func fetchToken(completion: @escaping (Session) -> Void) {
-        if sessionTokenCompletion != nil {
-            // Request new Token
-           
-        } else {
+        if sessionTokenCompletion == nil {
             self.sessionTokenCompletion = completion
         }
-        
         var reply = TurboDictionary()
         reply["responseEvent"] = "refreshSessionToken"
         onEventSuccess(&reply)

@@ -122,9 +122,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       headers: {"Authorization": "Basic $basicToken"},
       body: {'customer_reference': 'ram_uat'},
     );
-    print('Token Response ${response.body}');
+        print('Token Response ${response.body}');
     final responseJson = json.decode(response.body);
     _razorpay.upiTurbo.updateSessionToken(token: responseJson['token']);
+
   }
 
   void _handleLinkNewTPVAccountReponse(dynamic response) {
