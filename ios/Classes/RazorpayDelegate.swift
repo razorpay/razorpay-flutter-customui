@@ -188,10 +188,6 @@ class RazorpayDelegate: NSObject {
             }
         }
     }
-
-    func updateToken(token: String) {
-        self.sessionTokenCompletion?(Session(token: token))
-    }
 }
 
 //MARK: Initial Setup:
@@ -348,9 +344,7 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
 // MARK: Session Token Handle
 extension RazorpayDelegate: TurboSessionDelegate {
     func fetchToken(completion: @escaping (Session) -> Void) {
-        if sessionTokenCompletion == nil {
-            self.sessionTokenCompletion = completion
-        }
+        self.sessionTokenCompletion = completion
         var reply = TurboDictionary()
         reply["responseEvent"] = "refreshSessionToken"
         onEventSuccess(&reply)

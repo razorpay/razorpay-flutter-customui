@@ -9,6 +9,9 @@ typealias TurboArrayDictionary = Array<TurboDictionary>
 
 extension RazorpayDelegate {
     //MARK: Flutter call back methods
+    func updateToken(token: String) {
+        self.sessionTokenCompletion?(Session(token: token))
+    }
     
     func getLinkedUpiAccounts(mobileNumber: String, result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
         self.pendingResult = result
