@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:razorpay_turbo/model/bank_account.dart';
 import 'package:razorpay_turbo/model/upi_account.dart';
@@ -33,6 +32,14 @@ class _PrefetchAndLinkScreenState extends State<PrefetchAndLintNewAccounts> {
   }
 
   void _handleNewPrefetchAccountReponse(dynamic response) {
+    if (response["error"] != null) {
+      Error error = response["error"];
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Error Code : ${error.errorCode} Error Description : ${error.errorDescription}")));
+      return;
+    }
+
     PrefetchAccounts prefetchAccounts = response["data"];
     setState(() {
       pinSetAccounts = prefetchAccounts.accountsWithPinSet ?? [];

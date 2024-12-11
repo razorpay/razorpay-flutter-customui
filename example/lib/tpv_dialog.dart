@@ -150,6 +150,7 @@ class _TpvDialogState extends State<TpvDialog> {
                       .linkNewUpiAccount();
 
                   setState(() {
+                     Navigator.pop(context);
                     isLoading = true;
                   });
                 },

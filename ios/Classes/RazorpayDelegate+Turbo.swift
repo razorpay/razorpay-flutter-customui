@@ -71,7 +71,7 @@ extension RazorpayDelegate {
         self.eventSink = eventSink
         self.action?.registerDevice()
     }
-
+    
     
     func getBankAccounts(bankStr: String, result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink) {
         self.pendingResult = result
@@ -88,7 +88,7 @@ extension RazorpayDelegate {
             self.selectedBankAccount = bankAccount
             self.action?.selectedBankAccount(bankAccount)
         }
-     }
+    }
     
     func  getBalance(upiAccountStr: String , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
         self.pendingResult = result
@@ -111,7 +111,7 @@ extension RazorpayDelegate {
             })
         }
     }
-
+    
     func changeUpiPin(upiAccountStr: String , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink) {
         self.pendingResult = result
         self.eventSink = eventSink
@@ -129,7 +129,7 @@ extension RazorpayDelegate {
             })
         }
     }
-
+    
     func resetUpiPin(resetDict: TurboDictionary , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink){
         self.pendingResult = result
         self.eventSink = eventSink
@@ -137,7 +137,7 @@ extension RazorpayDelegate {
         
         guard let upiAccountStr = resetDict["upiAccount"] as? String else { return }
         guard let cardStr = resetDict["card"] as? String else { return }
-
+        
         if let upiAccount = getUpiAccount(upiAccountStr), let upiCard = getUpicard(cardStr) {
             self.razorpay?.upiTurbo?.resetUpiPin(upiAccount: upiAccount, card: upiCard, handler: { response, error in
                 guard error == nil else {
@@ -151,7 +151,7 @@ extension RazorpayDelegate {
             })
         }
     }
-
+    
     func delink(upiAccountStr: String , result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink) {
         self.pendingResult = result
         self.eventSink = eventSink
@@ -177,9 +177,9 @@ extension RazorpayDelegate {
         var reply = TurboDictionary()
 #if canImport(TurboUpiPluginUI)
         reply["isTurboPluginAvailable"] =  true
-        #else
+#else
         reply["isTurboPluginAvailable"] =  false
-        #endif
+#endif
         sendReply(data: reply)
     }
     
@@ -217,31 +217,7 @@ extension RazorpayDelegate {
         
         var reply = TurboDictionary()
         reply["responseEvent"] = PREFETCH_AND_LINK_NEW_UPI_ACCOUNT_EVENT
-        /*
-        let dict1 = [
-            "accountsWithPinSet": [
-                ["bank_logo_url": "https://cdn.razorpay.com/bank/AXIS.gif", "vpa": ["bank_account": ["state": "linkingInProgress","beneficiary_name": "PRIYANK PRAVINCHANDRA SHAH", "bank": ["ifsc": "AXIS0000003", "id": "607153", "logo": "https://cdn.razorpay.com/bank/AXIS.gif", "code": "607153", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "name": "AXIS"], "masked_account_number": "XXXX474120", "ifsc": "AXIS0000003", "creds": ["atmpin": ["set": false, "length": 6], "upipin": ["set": true, "length": 6], "sms": ["set": false, "length": 6]]], "default": false, "username": "917012969837-1", "handle": "axis", "address": "917012969837-1@axis", "active": false, "validated": false], "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AXIS0000003", "bank_name": "AXIS", "account_number": "XXXX474120", "isUpiAccount": true],
-                
-                ["bank_logo_url": "https://cdn.razorpay.com/bank/AABE.gif", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "vpa": ["bank_account": ["state": "linkingSuccess","beneficiary_name": "ABC", "ifsc": "AABE0877543", "bank": ["name": "Mybene", "logo": "https://cdn.razorpay.com/bank/AABE.gif", "code": "000000", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AABE0877543", "id": "000000"], "creds": ["upipin": ["length": 6, "set": true], "sms": ["length": 6, "set": false], "atmpin": ["length": 6, "set": false]], "masked_account_number": "857775XXXXXXXX9"], "address": "917012969837-4@axis", "username": "917012969837-4", "validated": false, "default": false, "active": false, "handle": "axis"], "account_number": "857775XXXXXXXX9", "ifsc": "AABE0877543", "isUpiAccount": true, "bank_name": "Mybene"],
-                
-                ["account_number": "XXXXXXXXXX000052", "bank_logo_url": "https://cdn.razorpay.com/bank/AABC.gif", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "isUpiAccount": true, "bank_name": "MYPSP", "ifsc": "AABC0000823", "vpa": ["validated": false, "address": "917012969837-3@axis", "bank_account": ["state": "linkingFailed","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]], "default": false, "username": "917012969837-3", "handle": "axis", "active": false]]
-            ],
-            "accountsWithPinNotSet": [
-//                ["type": "SAVINGS","id": "","state": "linkingSuccess","ifsc": "AABC0000823", "beneficiary_name": "ABC", "masked_account_number": "XXXXXXXXXX000052", "creds": ["atmpin": ["length": 6, "set": false], "sms": ["length": 6, "set": false], "upipin": ["length": 4, "set": true]], "bank": ["name": "MYPSP", "ifsc": "AABC0000823", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "id": "504432", "logo": "https://cdn.razorpay.com/bank/AABC.gif", "code": "504432"]
-//                ],
-//                
-//                ["type": "CREDIT","id": "","state": "linkingSuccess","beneficiary_name": "ABC", "ifsc": "AABE0877543", "bank": ["name": "Mybene", "logo": "https://cdn.razorpay.com/bank/AABE.gif", "code": "000000", "bankPlaceholderUrl": "https://betacdn.np.razorpay.in/placeholder/bank_placeholder.png", "ifsc": "AABE0877543", "id": "000000"], "creds": ["upipin": ["length": 6, "set": true], "sms": ["length": 6, "set": false], "atmpin": ["length": 6, "set": false]], "masked_account_number": "857775XXXXXXXX9"]
-            ]
-        ]
         
-//        if let finalDictStr = self.convertDictionaryToJSON(dict1) {
-//            reply["data"] = finalDictStr
-//            print(reply)
-//            self.onEventSuccess(&reply)
-//        }
-//        
-//        return
-        */
         guard let customerMobile = dict["customerMobile"] as? String else { return }
         let color = dict["color"] as? String ?? ""
         
@@ -250,15 +226,14 @@ extension RazorpayDelegate {
             .setColor(color: color)
             .prefetchAndLinkUpiAccountsWithUI(completionHandler: { response, error in
                 guard error == nil else {
-                    let err = error as? TurboError
-                    self.handleAndPublishTurboError(error: err)
-                    self.onEventError(reply: &reply, err?.errorDescription ?? "")
+                    let errorJson = self.convertTurboErrorToJSON(turboError: error as? TurboError) ?? ""
+                    self.onEventError(reply: &reply, errorJson)
                     return
                 }
                 
                 var pinNotSetArr = TurboArrayDictionary()
                 var pinSetArr = TurboArrayDictionary()
-
+                
                 if let upiAllAccount = response as? UpiAllAccounts {
                     if let accountWithPinNotSet = upiAllAccount.accountsWithPinNotSet {
                         self.upiBankAccounts = accountWithPinNotSet
@@ -337,8 +312,8 @@ extension RazorpayDelegate {
             .setTpvBankAccount(tpvBankAccount: tpvBankAccount)
             .linkNewUpiAccountWithUI(color: "#0000FF", completionHandler: { upiAccounts, error in
                 guard error == nil else {
-                    let err = error as? TurboError
-                    self.handleAndPublishTurboError(error: err)
+                    let errorJson = self.convertTurboErrorToJSON(turboError: error as? TurboError) ?? ""
+                    self.onEventError(reply: &reply, errorJson)
                     return
                 }
                 if let vpaAccounts = upiAccounts as? [UpiAccount]  {
@@ -348,16 +323,16 @@ extension RazorpayDelegate {
                 }
             })
     }
-
+    
     //MARK: File methods
     func onEventSuccess(_ reply: inout TurboDictionary) {
         reply["type"] = CODE_EVENT_SUCCESS
         sendReplyByEventSink(reply)
     }
-
-    func onEventError(reply: inout TurboDictionary , _ errorDescription: String) {
+    
+    func onEventError(reply: inout TurboDictionary , _ error: String) {
         reply["type"] = CODE_EVENT_ERROR
-        reply["error"] = errorDescription
+        reply["error"] = error
         sendReplyByEventSink(reply)
     }
     
@@ -379,14 +354,14 @@ extension RazorpayDelegate {
         guard let jsonData = try? JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted) else {
             print("Something is wrong while converting dictionary to JSON data.")
             return nil
-         }
-
-         guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+        }
+        
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
             print("Something is wrong while converting JSON data to JSON string.")
             return nil
-         }
-
-         return jsonString
+        }
+        
+        return jsonString
     }
     
     func convertToDictionary(_ text: String) -> [String: Any]? {
@@ -412,6 +387,22 @@ extension RazorpayDelegate {
         return nil
     }
     
+    private func convertTurboErrorToJSON(turboError: TurboError?) -> String? {
+        let turboErrorDict = [
+            "errorCode": turboError?.errorCode ?? "",
+            "errorDescription": turboError?.errorDescription ?? "",
+            "errorReason": turboError?.errorReason ?? "",
+            "errorSource": turboError?.errorSource ?? "",
+            "errorStep": turboError?.errorStep ?? "",
+        ]
+        
+        if let turboErrorStr = convertDictionaryToJSON(turboErrorDict) {
+            return turboErrorStr
+        }
+        
+        return nil
+    }
+    
     private func getBankJSON(_ allBanks: AllBanks) -> String {
         
         if let banksList = allBanks.banks as? [UpiBank], let popularBanks = allBanks.popularBanks as? [UpiBank] {
@@ -428,7 +419,7 @@ extension RazorpayDelegate {
                 allBanksDict["banks"] = bankDict
                 
                 if let bankStr = convertDictionaryToJSON(allBanksDict) {
-                   return bankStr
+                    return bankStr
                 }
             }
         }
@@ -463,7 +454,7 @@ extension RazorpayDelegate {
         }
         return nil
     }
-
+    
     
     private func getUpicard(_ cardStr: String) -> UpiCard? {
         if let bankAccount = convertToDictionary(cardStr) {
@@ -497,7 +488,7 @@ extension RazorpayDelegate {
                 bankAccountArrayDict.append(dict)
             }
         }
-                
+        
         if let bankAccountStr = convertDictionaryToJSON(bankAccountArrayDict) {
             return bankAccountStr
         }
@@ -540,22 +531,22 @@ extension RazorpayDelegate {
             
         case .upiPinNotSet:
             return "upiPinNotSet"
-
+            
         case .upiPinSet:
             return "upiPinSet"
-
+            
         case .linkingInProgress:
             return "linkingInProgress"
-
+            
         case .linkingSuccess:
             return "linkingSuccess"
-
+            
         case .linkingFailed:
             return "linkingFailed"
-
+            
         @unknown default:
             return "linkingSuccess"
-
+            
         }
     }
     
@@ -584,8 +575,8 @@ extension RazorpayDelegate {
         dict["bank_name"] = account.bankName
         dict["bankPlaceholderUrl"] = account.bankPlaceholderUrl
         dict["ifsc"] = account.ifsc
-     //   dict["pinLength"] = account.pinLength
-
+        //   dict["pinLength"] = account.pinLength
+        
         if let vpa = account.vpa {
             var vpaDict = TurboDictionary()
             vpaDict["address"] = vpa.address
@@ -613,6 +604,7 @@ extension RazorpayDelegate {
     }
     
     private func handleAndPublishTurboError(error: TurboError?) {
+        print(self.pendingResult as Any)
         self.pendingResult(FlutterError.init(code: error?.errorCode ?? "",
                                              message: error?.errorDescription,
                                              details: nil))
@@ -628,7 +620,8 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
         switch action.code {
         case .sendSms:
             guard action.error == nil else {
-                onEventError(reply: &reply, action.error?.errorDescription ?? "")
+                let errorJson = self.convertTurboErrorToJSON(turboError: action.error) ?? ""
+                self.onEventError(reply: &reply, errorJson)
                 return
             }
             action.registerDevice()
@@ -637,7 +630,8 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
             reply["action"] = "SELECT_BANK"
             
             guard action.error == nil else {
-                onEventError(reply: &reply, action.error?.errorDescription ?? "")
+                let errorJson = self.convertTurboErrorToJSON(turboError: action.error) ?? ""
+                self.onEventError(reply: &reply, errorJson)
                 return
             }
             if let banks = action.data as? AllBanks {
@@ -650,9 +644,10 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
             
         case .selectBankAccount:
             reply["action"] = "SELECT_BANK_ACCOUNT"
-
+            
             guard action.error == nil else {
-                onEventError(reply: &reply, action.error?.errorDescription ?? "")
+                let errorJson = self.convertTurboErrorToJSON(turboError: action.error) ?? ""
+                self.onEventError(reply: &reply, errorJson)
                 return
             }
             
@@ -666,7 +661,8 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
         case .setUpiPin:
             reply["action"] = "SETUP_UPI_PIN"
             guard action.error == nil else {
-                onEventError(reply: &reply, action.error?.errorDescription ?? "")
+                let errorJson = self.convertTurboErrorToJSON(turboError: action.error) ?? ""
+                self.onEventError(reply: &reply, errorJson)
                 return
             }
             reply["data"] = "SETUP_UPI_PIN"
@@ -674,7 +670,8 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
         case .linkAccountResponse:
             reply["action"] = "STATUS"
             guard action.error == nil else {
-                onEventError(reply: &reply, action.error?.errorDescription ?? "")
+                let errorJson = self.convertTurboErrorToJSON(turboError: action.error) ?? ""
+                self.onEventError(reply: &reply, errorJson)
                 return
             }
             if let upiAccounts = action.data as? [UpiAccount] {
@@ -687,8 +684,8 @@ extension RazorpayDelegate: UpiTurboLinkAccountDelegate {//UpiTurboLinkAccAction
         case .loaderData:
             reply["action"] = "LOADER_DATA"
             print("onResponse() \(String(describing: action.data))")
-             reply["data"] = ""
-             onEventSuccess(&reply)
+            reply["data"] = ""
+            onEventSuccess(&reply)
         case .consent:
             break
         case .askForPermission:
@@ -706,7 +703,7 @@ extension RazorpayDelegate: UPITurboResultDelegate {
         reply["data"] = getUpiAccountJSON(accList)
         sendReply(data: reply)
     }
-        
+    
     func onErrorFetchingLinkedAcc(_ error: TurboError?) {
         self.handleAndPublishTurboError(error: error)
     }
@@ -726,11 +723,11 @@ extension Array where Element: NSObject {
 
 extension NSObject {
     func toDictionary() -> TurboDictionary {
-      let mirror = Mirror(reflecting: self)
-      let dict = Dictionary(uniqueKeysWithValues: mirror.children.lazy.map({ (label:String?, value:Any) -> (String, Any)? in
-        guard let label = label else { return nil }
-        return (label, value)
-      }).compactMap { $0 })
-      return dict
+        let mirror = Mirror(reflecting: self)
+        let dict = Dictionary(uniqueKeysWithValues: mirror.children.lazy.map({ (label:String?, value:Any) -> (String, Any)? in
+            guard let label = label else { return nil }
+            return (label, value)
+        }).compactMap { $0 })
+        return dict
     }
 }

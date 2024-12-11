@@ -62,7 +62,9 @@ class Tpv {
         "tpvBankAccount": _getTpvBankAccountStr(this.tpvBankAccount)
       };
 
-      await this._channel?.invokeMethod('linkNewUpiAccountTPV' , linkNewUpiAccountTPVInput);
+
+
+      await this._channel?.invokeMethod('linkNewUpiAccountTPVWithUI' , linkNewUpiAccountTPVInput);
   }
 
    _getTpvBankAccountStr(TPVBankAccount? tPVBankAccount) {

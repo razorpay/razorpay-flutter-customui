@@ -116,16 +116,15 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     var url = Uri.parse(
         "https://api-web-turbo-upi.ext.dev.razorpay.in/v1/upi/turbo/customer/session");
     final basicToken =
-        'cnpwX3Rlc3RfMHdGUldJWm5INjV1bnk6dGhpc2lzc3VwZXJzZWNyZXQ';
+        'cnpwX3Rlc3RfMHdGUldJWm5INjV1bnk6dGhpc2lzc3VwZXJzZWNyZXQ=';
     final response = await http.post(
       url,
       headers: {"Authorization": "Basic $basicToken"},
-      body: {'customer_reference': 'ram_uat'},
+      body: {'customer_reference': turboUPIModel?.mobileNumber},
     );
-        print('Token Response ${response.body}');
+    print('Token Response ${response.body}');
     final responseJson = json.decode(response.body);
     _razorpay.upiTurbo.updateSessionToken(token: responseJson['token']);
-
   }
 
   void _handleLinkNewTPVAccountReponse(dynamic response) {
@@ -133,6 +132,14 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     setState(() {
       isLoading = false;
     });
+
+    if (response["error"] != null) {
+      Error error = response["error"];
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Error Code : ${error.errorCode} Error Description : ${error.errorDescription}")));
+      return;
+    }
 
     UpiAccount upiAccount = UpiAccount(
         accountNumber: tpvBankAccount[0].account_number,
