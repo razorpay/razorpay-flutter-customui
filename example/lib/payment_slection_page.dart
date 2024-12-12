@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:razorpay_turbo/model/tpv_bank_account.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 import 'package:razorpay_turbo_example/models/card_info_model.dart';
 import 'package:razorpay_turbo_example/preeftch_link_new_accounts.dart';
@@ -128,7 +127,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   }
 
   void _handleLinkNewTPVAccountReponse(dynamic response) {
-    List<TPVBankAccount> tpvBankAccount = response["data"];
     setState(() {
       isLoading = false;
     });
@@ -141,23 +139,29 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
       return;
     }
 
-    UpiAccount upiAccount = UpiAccount(
-        accountNumber: tpvBankAccount[0].account_number,
-        bankLogoUrl: "",
-        bankName: tpvBankAccount[0].bank_name,
-        bankPlaceholderUrl: "",
-        ifsc: tpvBankAccount[0].ifsc,
-        pinLength: 0,
-        vpa: null,
-        type: "");
+ List<UpiAccount> upiAccounts = response["data"];
 
+print('upi accous $upiAccounts');
+    // UpiAccount upiAccount = UpiAccount(
+    //     accountNumber: tpvBankAccount[0].account_number,
+    //     bankLogoUrl: "",
+    //     bankName: tpvBankAccount[0].bank_name,
+    //     bankPlaceholderUrl: "",
+    //     ifsc: tpvBankAccount[0].ifsc,
+    //     pinLength: 0,
+    //     vpa: null,
+    //     type: "");
+
+ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Accounts linked")));
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (builder) {
           return GetLinkedUPIAccountPage(
               razorpay: _razorpay,
-              upiAccounts: [upiAccount],
+              upiAccounts: upiAccounts,
               keyValue: key,
               customerMobile: turboUPIModel!.mobileNumber.toString());
         },

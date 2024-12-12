@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:razorpay_turbo/razorpay_turbo.dart';
 
 class TurboUPITxnDialog extends StatefulWidget {
-
   final Razorpay razorpay;
   final String upiAccount;
   final String mobileNumber;
   final String sdkKey;
-  TurboUPITxnDialog({required this.razorpay, required this.upiAccount , required this.mobileNumber ,
-    required this.sdkKey});
+  TurboUPITxnDialog(
+      {required this.razorpay,
+      required this.upiAccount,
+      required this.mobileNumber,
+      required this.sdkKey});
 
   @override
   State<TurboUPITxnDialog> createState() => _TurboUPITxnDialogState();
@@ -28,7 +30,7 @@ class _TurboUPITxnDialogState extends State<TurboUPITxnDialog> {
     if ((amount == '') || (amount == 0.0)) {
       return 'Please enter zero';
     }
-    if (email == '' ) {
+    if (email == '') {
       return 'Enter email';
     }
     return '';
@@ -43,8 +45,9 @@ class _TurboUPITxnDialogState extends State<TurboUPITxnDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            SizedBox(height: 20,),
-
+            SizedBox(
+              height: 20,
+            ),
             Flexible(
               child: TextField(
                 keyboardType: TextInputType.number,
@@ -52,11 +55,22 @@ class _TurboUPITxnDialogState extends State<TurboUPITxnDialog> {
                 decoration: InputDecoration(
                   hintText: 'Amount',
                 ),
-                onChanged: (newValue) =>
-                amount = newValue as double,
+                onChanged: (newValue) {
+                  try {
+                    // Parse the input as a double
+                    double parsedValue = double.parse(newValue);
+                    print("Parsed value: $parsedValue");
+
+                    // Update your state or variable here
+                    amount = parsedValue;
+                  } catch (e) {
+                    // Handle invalid input gracefully
+                    print("Invalid input: $newValue");
+                  }
+                  // Update your state or variable here
+                },
               ),
             ),
-
             Flexible(
               child: TextField(
                 keyboardType: TextInputType.emailAddress,
@@ -64,11 +78,9 @@ class _TurboUPITxnDialogState extends State<TurboUPITxnDialog> {
                 decoration: InputDecoration(
                   hintText: 'email',
                 ),
-                onChanged: (newValue) =>
-                email = newValue ,
+                onChanged: (newValue) => email = newValue,
               ),
             ),
-
             Flexible(
               child: TextField(
                 keyboardType: TextInputType.text,
@@ -76,64 +88,55 @@ class _TurboUPITxnDialogState extends State<TurboUPITxnDialog> {
                 decoration: InputDecoration(
                   hintText: 'order id',
                 ),
-                onChanged: (newValue) =>
-                orderId = newValue ,
+                onChanged: (newValue) => orderId = newValue,
               ),
             ),
-
-            ElevatedButton(onPressed: () {
-
-              var error = validateFields();
-              if (error != '') {
-                print(error);
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(error)));
-                return;
-              }
-
-              var payload;
-              if(orderId.isNotEmpty){
-                payload ={
-
-                  "key":widget.sdkKey,
-                  "currency": "INR",
-                  "amount": amount,
-                  "contact": widget.mobileNumber,
-                  "method": "upi",
-                  "email": email,
-                  "upi": {
-                    "flow": "in_app",
-                    "type": "default"
-                  },
-                  "order_id" : orderId
-                };
-              }else {
-                payload ={
-                  "key":widget.sdkKey,
-                  "currency": "INR",
-                  "amount": amount,
-                  "contact": widget.mobileNumber,
-                  "method": "upi",
-                  "email": email,
-                  "upi": {
-                    "flow": "in_app",
-                    "type": "default"
+            ElevatedButton(
+                onPressed: () {
+                  var error = validateFields();
+                  if (error != '') {
+                    print(error);
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(error)));
+                    return;
                   }
-                };
-              }
 
-              Map<String, dynamic> turboPayload = {
-                "upiAccount": widget.upiAccount,
-                "payload": payload,
-              };
+                  var payload;
+                  if (orderId.isNotEmpty) {
+                    payload = {
+                      "key": widget.sdkKey,
+                      "currency": "INR",
+                      "amount": amount,
+                      "contact": widget.mobileNumber,
+                      "method": "upi",
+                      "email": email,
+                      "upi": {"flow": "in_app"},
+                      "order_id": orderId
+                    };
+                  } else {
+                    payload = {
+                      "key": widget.sdkKey,
+                      "currency": "INR",
+                      "amount": amount,
+                      "contact": widget.mobileNumber,
+                      "method": "upi",
+                      "email": email,
+                      "upi": {"flow": "in_app"}
+                    };
+                  }
 
-              widget.razorpay.submit(turboPayload);
-              Navigator.of(context).pop();
-              setState(() {
-                isLoading = true;
-              });
+                  Map<String, dynamic> turboPayload = {
+                    "upiAccount": widget.upiAccount,
+                    "payload": payload,
+                  };
 
-            }, child: Text('Pay')),
+                  widget.razorpay.submit(turboPayload);
+                  Navigator.of(context).pop();
+                  setState(() {
+                    isLoading = true;
+                  });
+                },
+                child: Text('Pay')),
           ],
         ),
       ),

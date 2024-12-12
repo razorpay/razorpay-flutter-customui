@@ -56,7 +56,7 @@ extension RazorpayDelegate {
     func setupUpiPin(cardStr: String,result: @escaping FlutterResult, eventSink: @escaping FlutterEventSink) {
         self.pendingResult = result
         self.eventSink = eventSink
-        if let upiCard = getUpicard(cardStr), let selectedBankAccount = self.selectedBankAccount {
+        if let upiCard = getUpicard(cardStr) {
             self.action?.setUpiPin(upiCard)
         }
     }
@@ -317,9 +317,8 @@ extension RazorpayDelegate {
                     return
                 }
                 if let vpaAccounts = upiAccounts as? [UpiAccount]  {
-                    var reply = Dictionary<String,Any>()
                     reply["data"] = self.getUpiAccountJSON(vpaAccounts)
-                    self.sendReply(data: reply)
+                    self.onEventSuccess(&reply)
                 }
             })
     }
