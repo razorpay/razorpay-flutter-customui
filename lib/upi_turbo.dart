@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'package:eventify/eventify.dart';
@@ -460,8 +459,8 @@ class UpiTurbo {
 
   dynamic _getTPVBankList(dynamic dataSnapshot) {
     Iterable iterable = json.decode(dataSnapshot);
-    return List<TPVBankAccount>.from(
-        iterable.map((model) => _upiBankAccountToTPVBankAccount(model)));
+    return List<UpiAccount>.from(
+        iterable.map((model) => UpiAccount.fromJson(model)));
   }
 
   TPVBankAccount _upiBankAccountToTPVBankAccount(dynamic model) {
