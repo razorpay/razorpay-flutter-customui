@@ -100,8 +100,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                         },
                         child: Text('Purchase'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.green),
                         ),
                       )
                     ],
