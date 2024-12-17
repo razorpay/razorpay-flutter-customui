@@ -312,7 +312,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     void linkNewUpiAccount(String mobileNumber, Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
         this.eventSink = eventSink;
-        razorpay.upiTurbo.linkNewUpiAccount(mobileNumber, new UpiTurboLinkAccountListener() {
+        razorpay.upiTurbo.linkNewUpiAccount(mobileNumber,null ,new UpiTurboLinkAccountListener() {
             @Override
             public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
                 onUpiTurboResponse(upiTurboLinkAction);
@@ -393,7 +393,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object> reply = new HashMap<>();
-        razorpay.upiTurbo.getLinkedUpiAccounts(mobileNumber, new UpiTurboResultListener() {
+        razorpay.upiTurbo.getLinkedUpiAccounts(mobileNumber,null ,new UpiTurboResultListener() {
             @Override
             public void onSuccess(@NonNull List<UpiAccount> upiAccounts) {
                 if (upiAccounts.isEmpty()) {
@@ -681,9 +681,9 @@ public class RazorpayDelegate implements ActivityResultListener {
                             List<Object> pinSetArr = new ArrayList<>();
 
                             if (allAccounts.getAccountsWithPinNotSet() != null) {
-                                for (BankAccount account : allAccounts.getAccountsWithPinNotSet()) {
-                                    pinNotSetArr.add(account);
-                                }
+                                // for (BankAccount account : allAccounts.getAccountsWithPinNotSet()) {
+                                //     pinNotSetArr.add(account);
+                                // }
                             }
 
                             if (allAccounts.getAccountsWithPinSet() != null) {
