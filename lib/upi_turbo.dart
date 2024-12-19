@@ -368,6 +368,7 @@ class UpiTurbo {
             accountNumber: upiAccount.accountNumber,
             bankLogoUrl: upiAccount.bankLogoUrl,
             bankName: upiAccount.bankName,
+            bankId: upiAccount.bankId,
             bankPlaceholderUrl: upiAccount.bankPlaceholderUrl,
             ifsc: upiAccount.ifsc,
             pinLength: upiAccount.pinLength,
