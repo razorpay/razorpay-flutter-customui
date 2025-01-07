@@ -1,6 +1,8 @@
 group 'com.razorpay.flutter_customui'
 version '1.0'
 
+apply plugin: 'kotlin-android'
+
 buildscript {
     repositories {
         mavenCentral()
@@ -33,6 +35,23 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    java {
+        sourceCompatibility JavaVersion.VERSION_1_8
+
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(18))
+        }
+    }
+
     dependencies {
 /*        implementation fileTree(include: ['*.jar'], dir: 'libs')
         implementation fileTree(dir: 'libs', include: ['*.aar'])
