@@ -1,6 +1,8 @@
 group 'com.razorpay.flutter_customui'
 version '1.0'
 
+apply plugin: 'kotlin-android'
+
 buildscript {
     repositories {
         mavenCentral()
@@ -33,6 +35,23 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    java {
+        sourceCompatibility JavaVersion.VERSION_1_8
+
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(18))
+        }
+    }
+
     dependencies {
 /*        implementation fileTree(include: ['*.jar'], dir: 'libs')
         implementation fileTree(dir: 'libs', include: ['*.aar'])
@@ -56,6 +75,8 @@ android {
         implementation 'com.squareup.retrofit2:retrofit:2.9.0'
         implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
         implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
         //TODO: Add Library folder path in implementation's dir
     //    compileOnly fileTree(include: ['*.aar'], dir: '/Users/kausthubh.adhikari/Desktop/SDK-Libraries/androidlibs')
     }
