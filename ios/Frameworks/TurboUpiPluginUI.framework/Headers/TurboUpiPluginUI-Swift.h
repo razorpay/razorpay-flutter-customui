@@ -441,6 +441,17 @@ SWIFT_CLASS("_TtC16TurboUpiPluginUI16RazorpayTurboTPV")
 
 
 
+
+SWIFT_CLASS("_TtC16TurboUpiPluginUI14TPVBankAccount")
+@interface TPVBankAccount : NSObject
+@property (nonatomic, copy) NSString * _Nonnull ifsc;
+@property (nonatomic, copy) NSString * _Nullable bankName;
+@property (nonatomic, copy) NSString * _Nonnull accountNumber;
+@property (nonatomic, copy) NSString * _Nullable bankLogo;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
 typedef SWIFT_ENUM(NSInteger, TPVLinkActionCode, open) {
   TPVLinkActionCodeSendSms = 0,
   TPVLinkActionCodeSetUpiPin = 1,

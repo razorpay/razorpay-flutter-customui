@@ -114,8 +114,6 @@ public class RazorpayUpi {
     get
   }
   @discardableResult
-  public init?(keyId: Swift.String, sessionId: Swift.String, mobileNo: Swift.String, orderId: Swift.String?, customerId: Swift.String? = nil, callback: @escaping RazorpayTurboUPIUI.CallBack<Swift.Bool>)
-  @discardableResult
   public init?(keyId: Swift.String, sessionId: Swift.String, sim: RazorpayTurboUPIUI.SIM, orderId: Swift.String?, customerId: Swift.String? = nil, callback: @escaping RazorpayTurboUPIUI.CallBack<Swift.Bool>)
   @discardableResult
   public init?(keyId: Swift.String, sessionId: Swift.String, orderId: Swift.String?, customerId: Swift.String, callback: @escaping RazorpayTurboUPIUI.CallBack<Swift.Bool>)
@@ -136,7 +134,7 @@ public class RazorpayUpi {
     get
     set
   }
-  public func manageUpiAccounts(_ handler: @escaping RazorpayTurboUPIUI.CallBack<Swift.Bool>)
+  public func manageUpiAccounts(_ handler: @escaping RazorpayTurboUPIUI.CallBack<[RazorpayTurboUPIUI.VPADetails]>)
   public func linkNewAccount(amountInDisplayFormat: Swift.String?, _ handler: @escaping RazorpayTurboUPIUI.CallBack<Any>)
   public func linkNewAccount(payRequest: RazorpayTurboUPIUI.PayRequest?, _ handler: @escaping RazorpayTurboUPIUI.moneyHandler)
   public func prefetchAndLinkUpiAccounts(linkAccountWithUPIPinNotSet: Swift.Bool = false, amountInDisplayFormat: Swift.String?, _ handler: @escaping RazorpayTurboUPIUI.CallBack<Any>)
@@ -165,6 +163,11 @@ public struct VPAAvailability : Swift.Codable {
 }
 extension UIKit.UIImageView {
   @_Concurrency.MainActor @preconcurrency public func loadGif(name: Swift.String)
+}
+public enum TPVCoreFiltration {
+  public static func filterBankForTpvAccount(banks: [RazorpayTurboUPIUI.Bank], tpvBankAccount: RazorpayTurboUPIUI.TPVBankAccount) -> RazorpayTurboUPIUI.Bank?
+  public static func filterBankAccountForTPVAccount(accounts: [RazorpayTurboUPIUI.BankAccount], tpvBankAccount: RazorpayTurboUPIUI.TPVBankAccount) -> [RazorpayTurboUPIUI.BankAccount]
+  public static func isPreferenceTPVAccountInRoamingProfile(_ tpvBankAccount: RazorpayTurboUPIUI.TPVBankAccount?, _ vpaList: [RazorpayTurboUPIUI.VPADetails]?) -> [RazorpayTurboUPIUI.VPADetails]?
 }
 public struct VPADetails : Swift.Codable, Swift.Equatable {
   public static func == (lhs: RazorpayTurboUPIUI.VPADetails, rhs: RazorpayTurboUPIUI.VPADetails) -> Swift.Bool
@@ -357,10 +360,6 @@ public struct CFBInput : Swift.Codable {
   public let fee: Swift.Int, tax: Swift.Int
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
-}
-public enum TPVCoreFiltration {
-  public static func filterBankForTpvAccount(banks: [RazorpayTurboUPIUI.Bank], tpvBankAccount: RazorpayTurboUPIUI.TPVBankAccount) -> RazorpayTurboUPIUI.Bank?
-  public static func filterBankAccountForTPVAccount(accounts: [RazorpayTurboUPIUI.BankAccount], tpvBankAccount: RazorpayTurboUPIUI.TPVBankAccount) -> [RazorpayTurboUPIUI.BankAccount]
 }
 extension UIKit.UIDevice {
   public enum UnsupportedDevices : Swift.String {

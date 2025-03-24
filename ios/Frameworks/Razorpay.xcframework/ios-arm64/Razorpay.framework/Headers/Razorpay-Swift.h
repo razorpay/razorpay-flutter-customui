@@ -352,6 +352,7 @@ SWIFT_CLASS("_TtC8Razorpay16RazorpayCheckout")
 + (RazorpayCheckout * _Nonnull)initWithKey:(NSString * _Nonnull)key andDelegate:(id <RazorpayPaymentCompletionProtocol> _Nonnull)delegate withPaymentWebView:(WKWebView * _Nonnull)merchantWebView SWIFT_METHOD_FAMILY(none) SWIFT_WARN_UNUSED_RESULT;
 + (RazorpayCheckout * _Nonnull)initWithKey:(NSString * _Nonnull)key andDelegate:(id <RazorpayPaymentCompletionProtocol> _Nonnull)delegate withPaymentWebView:(WKWebView * _Nonnull)merchantWebView plugin:(id <UPITurboPlugin> _Nonnull)plugin SWIFT_METHOD_FAMILY(none) SWIFT_WARN_UNUSED_RESULT;
 + (RazorpayCheckout * _Nonnull)initWithKey:(NSString * _Nonnull)key andDelegate:(id <RazorpayPaymentCompletionProtocol> _Nonnull)delegate withPaymentWebView:(WKWebView * _Nonnull)merchantWebView UIPlugin:(id <UPITurboUIPlugin> _Nonnull)UIPlugin SWIFT_METHOD_FAMILY(none) SWIFT_WARN_UNUSED_RESULT;
++ (RazorpayCheckout * _Nonnull)initWithKey:(NSString * _Nonnull)key SWIFT_METHOD_FAMILY(none) SWIFT_WARN_UNUSED_RESULT;
 - (void)changeApiKey:(NSString * _Nonnull)newApiKey;
 - (void)payWithCredWithOptions:(NSDictionary * _Nonnull)options withSuccessCallback:(void (^ _Nonnull)(NSDictionary * _Nonnull))success andFailureCallback:(void (^ _Nonnull)(NSString * _Nonnull))failure;
 - (void)getCardFlows:(NSDictionary * _Nonnull)options withCallback:(void (^ _Nonnull)(BOOL))withCallback;
@@ -359,11 +360,10 @@ SWIFT_CLASS("_TtC8Razorpay16RazorpayCheckout")
 - (void)submitOtpWithOtp:(NSString * _Nonnull)otp;
 - (void)resendOtpWithResponse:(void (^ _Nonnull)(BOOL))response;
 - (void)redirectToBankPage;
-- (void)getPaymentMethodsWithOptions:(NSDictionary * _Nullable)options withSuccessCallback:(void (^ _Nonnull)(NSDictionary * _Nonnull))success andFailureCallback:(void (^ _Nonnull)(NSDictionary * _Nonnull))failure;
+- (void)getPaymentMethodsWithOptions:(NSDictionary * _Nullable)options withSuccessCallback:(void (^ _Nonnull)(NSDictionary * _Nonnull))success andFailureCallback:(void (^ _Nonnull)(NSString * _Nonnull))failure;
 - (void)getSubscriptionAmountWithHavingSubscriptionId:(NSString * _Nonnull)subId withSuccessCallback:(void (^ _Nonnull)(uint64_t))success andFailureCallback:(void (^ _Nonnull)(NSString * _Nonnull))failure;
 - (void)getSubscriptionAmountWithOptions:(NSDictionary * _Nonnull)options withSuccessCallback:(void (^ _Nonnull)(uint64_t))success andFailureCallback:(void (^ _Nonnull)(NSString * _Nonnull))failure;
 - (void)authorize:(NSDictionary * _Nonnull)options;
-- (void)authorize:(NSDictionary * _Nonnull)options paymentPlugin:(id <PluginPaymentDelegate> _Nonnull)paymentPlugin;
 - (void)openCheckoutWithDict:(NSDictionary * _Nonnull)dict;
 - (void)userCancelledPayment;
 - (void)decodeURIFrom:(NSString * _Nonnull)data;
@@ -455,9 +455,8 @@ SWIFT_PROTOCOL("_TtP8Razorpay14UPITurboPlugin_")
 SWIFT_PROTOCOL("_TtP8Razorpay30UPITurboPrefetchWithUIProtocol_")
 @protocol UPITurboPrefetchWithUIProtocol
 - (id <UPITurboPrefetchWithUIProtocol> _Nonnull)setCustomerMobileWithMobile:(NSString * _Nonnull)mobile SWIFT_WARN_UNUSED_RESULT;
-- (id <UPITurboPrefetchWithUIProtocol> _Nonnull)setCustomerIdWithCustomerId:(NSString * _Nonnull)customerId SWIFT_WARN_UNUSED_RESULT;
 - (id <UPITurboPrefetchWithUIProtocol> _Nonnull)setColorWithColor:(NSString * _Nonnull)color SWIFT_WARN_UNUSED_RESULT;
-- (void)prefetchAndLinkUpiAccountsWithUIWithLinkAccountWithUPIPinNotSet:(BOOL)linkAccountWithUPIPinNotSet completionHandler:(void (^ _Nonnull)(id _Nullable, id _Nullable))completionHandler;
+- (void)prefetchAndLinkUpiAccountsWithUIWithCompletionHandler:(void (^ _Nonnull)(id _Nullable, id _Nullable))completionHandler;
 - (void)setUpiPinWithUI:(id _Nonnull)account completionHandler:(void (^ _Nonnull)(id _Nullable, id _Nullable))completionHandler;
 @end
 
@@ -483,15 +482,14 @@ SWIFT_PROTOCOL("_TtP8Razorpay19UPITurboTPVUIPlugin_")
 
 
 SWIFT_PROTOCOL("_TtP8Razorpay16UPITurboUIPlugin_")
-@protocol UPITurboUIPlugin <TokenPlugin, UPITurboLinkedBankAccountsProtocol, UPITurboLinkedUpiAccountsProtocol, UPITurboPrefetchWithUIProtocol>
+@protocol UPITurboUIPlugin <TokenPlugin, UPITurboPrefetchWithUIProtocol>
 @property (nonatomic, readonly, strong) id <UPITurboTPVUIPlugin> _Nullable TPV;
 @property (nonatomic, readonly, strong) id <UPITurboPlugin> _Nullable corePlugin;
 @property (nonatomic, readonly, strong) id <PluginPaymentDelegate> _Nullable paymentPlugin;
 - (void)linkNewUpiAccountWithMobileNumber:(NSString * _Nonnull)mobileNumber color:(NSString * _Nonnull)color completionHandler:(void (^ _Nonnull)(id _Nullable, id _Nullable))completionHandler;
-- (void)linkNewUpiAccountWithCustomerId:(NSString * _Nonnull)customerId color:(NSString * _Nonnull)color completionHandler:(void (^ _Nonnull)(id _Nullable, id _Nullable))completionHandler;
-- (void)manageUpiAccountWithMobileNumber:(NSString * _Nonnull)mobileNumber color:(NSString * _Nonnull)color;
-- (void)manageUpiAccountWithCustomerId:(NSString * _Nonnull)customerId color:(NSString * _Nonnull)color;
+- (void)manageUpiAccountWithMobileNumber:(NSString * _Nonnull)mobileNumber color:(NSString * _Nonnull)color completionHandler:(void (^ _Nonnull)(id _Nullable, id _Nullable))completionHandler;
 - (NSArray<NSDictionary *> * _Nullable)getUpiAccountObjectWithUpiAccounts:(id _Nullable)upiAccounts SWIFT_WARN_UNUSED_RESULT;
+- (void)getLinkedUpiAccountsWithMobileNumber:(NSString * _Nonnull)mobileNumber resultDelegate:(id _Nonnull)resultDelegate;
 @end
 
 #endif
