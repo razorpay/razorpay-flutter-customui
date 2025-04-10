@@ -4,10 +4,6 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>Archive.zip</key>
-		<data>
-		cWfij+nvODddDcQjplky1hrNOfk=
-		</data>
 		<key>Headers/TurboUpiPlugin.h</key>
 		<data>
 		Y5l0PuW6TzrTg6kwjKLmCCqJ+z4=
@@ -18,11 +14,11 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		NvTqhKOHEeKvAq6SQ/ESZJhZc/M=
+		ZOobWvn5rqIDKj+aULy2lxq7XPg=
 		</data>
 		<key>Modules/TurboUpiPluginUI.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo</key>
 		<data>
-		siLp2O4ZR1Y+SrP125TjtvTBH/k=
+		mhWlEa4YAIOXz0lbx0hjH0VZHDk=
 		</data>
 		<key>Modules/TurboUpiPluginUI.swiftmodule/arm64-apple-ios.abi.json</key>
 		<data>
@@ -42,7 +38,7 @@
 		</data>
 		<key>Modules/TurboUpiPluginUI.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<data>
-		4QbS1znBmD1T/9aytl0Yo86FMR8=
+		ExRJaQtLH7mwFArubv+Efx4/T2Q=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -55,13 +51,6 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Archive.zip</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			2JfucQvDCHfcSq/Rw1BMczxhhae6rv+4vW/7tceYU5I=
-			</data>
-		</dict>
 		<key>Headers/TurboUpiPlugin.h</key>
 		<dict>
 			<key>hash2</key>
@@ -80,7 +69,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			aZWSvtQFiTUtQwkJJY3XuEpW9wsOpleT7Ab0Z+eKpDs=
+			w7JGpTPdhIlnnz8UaW0fs8V/ZFMeDsQux3PYy9pDsVs=
 			</data>
 		</dict>
 		<key>Modules/TurboUpiPluginUI.swiftmodule/arm64-apple-ios.abi.json</key>
@@ -115,7 +104,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			FRD5966+T7aI2hxvSUYCebmWXfjZ2rcnRC4EyPEO0U0=
+			esuEDTE3aPOeyDv7UM1epbcpWx3lDuFJWyaNpgXZ75E=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
