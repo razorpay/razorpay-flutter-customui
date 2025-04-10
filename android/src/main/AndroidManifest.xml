@@ -53,6 +53,10 @@
         </intent>
     </queries>
     <application>
-        <activity android:name=".RazorpayPaymentActivity"></activity>
+        <activity 
+            android:name=".RazorpayPaymentActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+        </activity>
     </application>
 </manifest>

@@ -24,8 +24,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-import io.flutter.plugin.common.PluginRegistry.Registrar;
-
 /** RazorpayFlutterCustomuiPlugin */
 public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
@@ -49,10 +47,14 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
+    if (razorpayDelegate == null) {
+      result.error("UNAVAILABLE", "RazorpayDelegate not initialized", null);
+      return;
+    }
 
     switch (call.method) {
       case "initilizeSDK":
-        razorpayDelegate.init(call.arguments.toString(),result);
+        razorpayDelegate.init(call.arguments.toString(), result);
         break;
 
       case "submit":
@@ -108,19 +110,14 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
         break;
 
       default:
-        Log.d("RAZORPAY_SDK","no method");
+        result.notImplemented();
     }
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     channel.setMethodCallHandler(null);
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-  public RazorpayPlugin(Registrar registrar) {
-    this.razorpayDelegate = new RazorpayDelegate(registrar.activity());
-    registrar.addActivityResultListener(razorpayDelegate);
+    channel = null;
   }
 
   @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -144,7 +141,10 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
 
   @Override
   public void onDetachedFromActivity() {
-    pluginBinding.removeActivityResultListener(razorpayDelegate);
-    pluginBinding = null;
+    if (pluginBinding != null) {
+      pluginBinding.removeActivityResultListener(razorpayDelegate);
+      pluginBinding = null;
+    }
+    razorpayDelegate = null;
   }
 }
