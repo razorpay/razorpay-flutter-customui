@@ -50,6 +50,6 @@
 
 - Removed JCenter from build.gradle for android due to Deprecation
 
-## 1.3.4
+## 1.4.0
 
 - Migrated to android v2 embedding.
