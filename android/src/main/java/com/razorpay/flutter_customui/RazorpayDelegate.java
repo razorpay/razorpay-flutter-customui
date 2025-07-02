@@ -31,6 +31,7 @@ import com.razorpay.UpiTurboSetPinResultListener;
 import com.razorpay.ValidateVpaCallback;
 import com.razorpay.upi.AccountBalance;
 import com.razorpay.upi.BankAccount;
+import com.razorpay.upi.TurboSessionDelegate;
 import com.razorpay.upi.UpiAccount;
 import com.razorpay.upi.Bank;
 import com.razorpay.upi.Card;
@@ -52,11 +53,14 @@ import java.util.Map;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import static com.razorpay.flutter_customui.Constants.PAYMENT_DATA;
 
 import com.razorpay.UpiTurboPrefetchLinkAccountsResultListener;
 import com.razorpay.upi.AllAccounts;
+import com.razorpay.upi.model.Session;
 
 public class RazorpayDelegate implements ActivityResultListener {
     private Activity activity;
@@ -91,6 +95,18 @@ public class RazorpayDelegate implements ActivityResultListener {
     Gson gson;
     private Handler uiThreadHandler = new Handler(Looper.getMainLooper());
 
+    // TurboSessionDelegate
+    private Function1<? super Session, Unit> sessionCompletion = null;
+    TurboSessionDelegate turboSessionDelegate = new TurboSessionDelegate() {
+        @Override
+        public void fetchToken(@NonNull Function1<? super Session, Unit> completion) {
+            sessionCompletion = completion;
+            HashMap<Object, Object> reply = new HashMap<>();
+            reply.put("responseEvent", "refreshSessionToken");
+            onEventSuccess(reply);
+        }
+    };
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public RazorpayDelegate(Activity activity) {
         this.activity = activity;
@@ -101,6 +117,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.key = key;
         this.pendingResult = result;
         razorpay = new Razorpay(activity, key);
+        razorpay.upiTurbo.initialize(this.turboSessionDelegate);
     }
 
     void submit(final JSONObject payload, Result result) {
@@ -312,7 +329,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     void linkNewUpiAccount(String mobileNumber, Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
         this.eventSink = eventSink;
-        razorpay.upiTurbo.linkNewUpiAccount(mobileNumber, new UpiTurboLinkAccountListener() {
+        razorpay.upiTurbo.linkNewUpiAccount(mobileNumber,null ,new UpiTurboLinkAccountListener() {
             @Override
             public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
                 onUpiTurboResponse(upiTurboLinkAction);
@@ -393,7 +410,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object> reply = new HashMap<>();
-        razorpay.upiTurbo.getLinkedUpiAccounts(mobileNumber, new UpiTurboResultListener() {
+        razorpay.upiTurbo.getLinkedUpiAccounts(mobileNumber,null ,new UpiTurboResultListener() {
             @Override
             public void onSuccess(@NonNull List<UpiAccount> upiAccounts) {
                 if (upiAccounts.isEmpty()) {
@@ -681,9 +698,9 @@ public class RazorpayDelegate implements ActivityResultListener {
                             List<Object> pinSetArr = new ArrayList<>();
 
                             if (allAccounts.getAccountsWithPinNotSet() != null) {
-                                for (BankAccount account : allAccounts.getAccountsWithPinNotSet()) {
-                                    pinNotSetArr.add(account);
-                                }
+                                // for (BankAccount account : allAccounts.getAccountsWithPinNotSet()) {
+                                //     pinNotSetArr.add(account);
+                                // }
                             }
 
                             if (allAccounts.getAccountsWithPinSet() != null) {
@@ -765,5 +782,11 @@ public class RazorpayDelegate implements ActivityResultListener {
             }
         });
 
+    }
+
+    public void updateToken(String token) {
+        if (sessionCompletion != null) {
+            sessionCompletion.invoke(new Session(token));
+        }
     }
 }

@@ -218,6 +218,10 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
                 razorpayDelegate.setPrefetchUPIPinWithUI(bankAccountStr, result, eventSink);
                 break;
 
+            case "refreshSessionToken":
+                String newToken = call.arguments().toString();
+                razorpayDelegate.updateToken(newToken);
+
             default:
                 Log.d(TAG, "no method");
         }
