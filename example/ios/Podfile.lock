@@ -25,10 +25,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
-  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  razorpay_turbo: 50cd9d043663612ddf09b7cceec42cf8498dca8b
+  geolocator_apple: d981750b9f47dbdb02427e1476d9a04397beb8d9
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  razorpay_turbo: cafdc4c506a70b46a430ea200514c9b3d1b5e136
 
 PODFILE CHECKSUM: 1d345ce94b3f988dab2754939a6943a756616710
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

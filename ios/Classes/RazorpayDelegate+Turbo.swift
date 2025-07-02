@@ -207,7 +207,8 @@ extension RazorpayDelegate {
         self.pendingResult = result
         self.eventSink = eventSink
         self.initilizeSDK(withKey: self.merchantKey, result: result)
-        self.razorpay?.upiTurboUI?.manageUpiAccount(mobileNumber: customerMobile, color: "")
+        self.razorpay?.upiTurboUI?.manageUpiAccount(mobileNumber: customerMobile, color: "", completionHandler: {_,_ in
+        })
     }
     
     //Prefetch

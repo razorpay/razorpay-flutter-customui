@@ -271,7 +271,7 @@ ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       case "LOADER_DATA":
         print("LOADER_DATA called");
         setState(() {
-          isLoading = true;
+        //  isLoading = true;
         });
         break;
       case "STATUS":
@@ -609,7 +609,7 @@ ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     return;
                   }
                   setState(() {
-                    isLoading = true;
+                    //isLoading = true;
                   });
                   getLinkedUpiAccounts();
                 },
@@ -625,7 +625,7 @@ ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     return;
                   }
                   setState(() {
-                    isLoading = true;
+                   // isLoading = true;
                   });
                   showDialog(
                     context: context,
@@ -649,7 +649,7 @@ ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     return;
                   }
                   setState(() {
-                    isLoading = true;
+                    //isLoading = true;
                   });
 
                   _razorpay.upiTurbo.linkNewUpiAccountWithUI(
@@ -697,7 +697,7 @@ ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     return;
                   }
                   setState(() {
-                    isLoading = true;
+                    //isLoading = true;
                   });
 
                   _razorpay.upiTurbo.manageUpiAccounts(
