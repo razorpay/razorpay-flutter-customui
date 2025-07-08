@@ -108,6 +108,10 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
       case "setPaymentId":
         razorpayDelegate.setPaymentID(call.arguments.toString(), result);
         break;
+      
+      case "resync":
+        razorpayDelegate.resync(result);
+        break;
 
       default:
         result.notImplemented();

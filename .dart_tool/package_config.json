@@ -87,19 +87,19 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///Users/vivek.shindhe/fvm/versions/3.29.2/packages/flutter",
+      "rootUri": "file:///Users/vivek.shindhe/development/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///Users/vivek.shindhe/fvm/versions/3.29.2/packages/flutter_test",
+      "rootUri": "file:///Users/vivek.shindhe/development/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///Users/vivek.shindhe/fvm/versions/3.29.2/packages/flutter_web_plugins",
+      "rootUri": "file:///Users/vivek.shindhe/development/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -243,7 +243,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///Users/vivek.shindhe/fvm/versions/3.29.2/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///Users/vivek.shindhe/development/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -368,10 +368,10 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2025-04-10T07:22:09.172685Z",
+  "generated": "2025-07-08T18:36:38.398304Z",
   "generator": "pub",
-  "generatorVersion": "3.7.2",
-  "flutterRoot": "file:///Users/vivek.shindhe/fvm/versions/3.29.2",
-  "flutterVersion": "3.29.2",
+  "generatorVersion": "3.7.0",
+  "flutterRoot": "file:///Users/vivek.shindhe/development/flutter",
+  "flutterVersion": "3.29.0",
   "pubCache": "file:///Users/vivek.shindhe/.pub-cache"
 }

@@ -53,3 +53,7 @@
 ## 1.4.0
 
 - Migrated to android v2 embedding.
+
+## 1.4.1
+
+- Bug-fix : Fixed `reply already submitted` intermittent error on getPaymentMethods function.
