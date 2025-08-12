@@ -118,21 +118,29 @@ public class RazorpayDelegate implements ActivityResultListener  {
 
     void getPaymentMethods(final Result result) {
         pendingResult = result;
+        hasSubmittedResult = false; // reset for this call
+
         if (razorpay == null) {
             init(this.key, result);
         }
-        razorpay.getPaymentMethods(new PaymentMethodsCallback() {
-            @Override
-            public void onPaymentMethodsReceived(String s) {
+    razorpay.getPaymentMethods(new PaymentMethodsCallback() {
+        @Override
+        public void onPaymentMethodsReceived(String s) {
+            if (!hasSubmittedResult) {
+                hasSubmittedResult = true;
                 HashMap<String, Object> hMapData = new Gson().fromJson(s, HashMap.class);
                 pendingResult.success(hMapData);
             }
+        }
 
-            @Override
-            public void onError(String s) {
+        @Override
+        public void onError(String s) {
+            if (!hasSubmittedResult) {
+                hasSubmittedResult = true;
                 pendingResult.error(s, "", null);
             }
-        });
+        }
+    });
     }
 
     void getAppsWhichSupportUpi(Result result) {
