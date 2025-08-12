@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:8.4.0'
     }
 }
 
@@ -22,18 +22,29 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 34
 
     defaultConfig {
         minSdkVersion 16
     }
+
+    flavorDimensions "sdk"
+
+    productFlavors {
+        customCheckout {
+            dimension "sdk"
+        }
+        customCheckoutWithTurbo {
+            dimension "sdk"
+        }
+    }
+
     lintOptions {
         disable 'InvalidPackage'
     }
+
     dependencies {
-/*        implementation fileTree(include: ['*.jar'], dir: 'libs')
-        implementation fileTree(dir: 'libs', include: ['*.aar'])
-        implementation 'com.razorpay:customui:3.9.+'*/
+        customCheckoutImplementation 'com.razorpay:customui:3.9.+'
         implementation 'com.android.support:cardview-v7:26.1.0'
 
         implementation 'androidx.core:core-ktx:1.7.0'
@@ -54,7 +65,7 @@ android {
         implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
         implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
         //TODO: Add Library folder path in implementation's dir
-        //compileOnly fileTree(include: ['*.aar'], dir: '')
+        customCheckoutWithTurboCompileOnly fileTree(include: ['*.aar'], dir: '')
     }
 }
 
