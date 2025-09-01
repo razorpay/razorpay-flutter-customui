@@ -40,18 +40,16 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler,
   private EventChannel.EventSink eventSink;
   private EventChannel eventChannel;
   String upiAccountStr = "";
-  String cardStr ="";
+  String cardStr = "";
   Map<String, Object> _arguments;
   private PluginRegistry
       .RequestPermissionsResultListener permissionResultListener;
-  String customerMobile ="";
-  String orderId ="";
-  String tpvBankAccount ="";
+  String customerMobile = "";
+  String orderId = "";
+  String tpvBankAccount = "";
 
   @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-  public RazorpayPlugin() {
-
-  }
+  public RazorpayPlugin() {}
 
   @Override
   public void
@@ -129,7 +127,7 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler,
       razorpayDelegate.setPaymentID(call.arguments.toString(), result);
       break;
 
-    //Turbo UPI
+    // Turbo UPI
     case "linkNewUpiAccount":
       customerMobile = call.arguments.toString();
       razorpayDelegate.linkNewUpiAccount(customerMobile, result,
@@ -152,22 +150,27 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler,
       break;
     case "getBalance":
       upiAccountStr = call.arguments.toString();
-      razorpayDelegate.getBalance(upiAccountStr, result, this.eventSink);
+      razorpayDelegate.getBalance(razorpayDelegate.getUpiAccount(upiAccountStr),
+                                  result, this.eventSink);
       break;
     case "changeUpiPin":
       upiAccountStr = call.arguments.toString();
-      razorpayDelegate.changeUpiPin(upiAccountStr, result, this.eventSink);
+      razorpayDelegate.changeUpiPin(
+          razorpayDelegate.getUpiAccount(upiAccountStr), result,
+          this.eventSink);
       break;
     case "resetUpiPin":
       _arguments = call.arguments();
       upiAccountStr = (String)_arguments.get("upiAccount");
       cardStr = (String)_arguments.get("card");
-      razorpayDelegate.resetUpiPin(upiAccountStr, cardStr, result,
-                                   this.eventSink);
+      razorpayDelegate.resetUpiPin(
+          razorpayDelegate.getUpiAccount(upiAccountStr),
+          razorpayDelegate.getCard(cardStr), result, this.eventSink);
       break;
     case "delink":
       upiAccountStr = call.arguments.toString();
-      razorpayDelegate.delink(upiAccountStr, result, this.eventSink);
+      razorpayDelegate.delink(razorpayDelegate.getUpiAccount(upiAccountStr),
+                              result, this.eventSink);
       break;
     case "selectedBankAccount":
       String bankAccountStr = call.arguments.toString();
@@ -176,7 +179,8 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler,
       break;
     case "setUpUPIPin":
       cardStr = call.arguments.toString();
-      razorpayDelegate.setupUpiPin(cardStr, result, this.eventSink);
+      razorpayDelegate.setupUpiPin(razorpayDelegate.getCard(cardStr), result,
+                                   this.eventSink);
       break;
     case "isTurboPluginAvailable":
       razorpayDelegate.isTurboPluginAvailable(result, this.eventSink);
