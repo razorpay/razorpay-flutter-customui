@@ -19,8 +19,8 @@ Pod::Spec.new do |s|
   s.dependency 'razorpay-customui-pod'
 
   # Flutter.framework does not contain a i386 slice.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-  s.swift_version = '5.0'
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64', 'SWIFT_VERSION'  => '5.10'}
+  s.swift_versions = ['5.6', '5.7', '5.8', '5.9', '5.10', '6.0']
 
 
 end
