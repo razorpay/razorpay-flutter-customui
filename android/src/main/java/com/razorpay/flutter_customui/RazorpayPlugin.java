@@ -140,30 +140,30 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
         break;
       case "getBalance":
         upiAccountStr = call.arguments.toString();
-        razorpayDelegate.getBalance( razorpayDelegate.getUpiAccount(upiAccountStr), result , this.eventSink);
+        razorpayDelegate.getBalance(upiAccountStr, result , this.eventSink);
         break;
       case "changeUpiPin":
         upiAccountStr = call.arguments.toString();
-        razorpayDelegate.changeUpiPin( razorpayDelegate.getUpiAccount(upiAccountStr), result , this.eventSink);
+        razorpayDelegate.changeUpiPin(upiAccountStr, result , this.eventSink);
         break;
       case "resetUpiPin":
         _arguments = call.arguments();
         upiAccountStr = (String) _arguments.get("upiAccount");
         cardStr =  (String) _arguments.get("card");
-        razorpayDelegate.resetUpiPin( razorpayDelegate.getUpiAccount(upiAccountStr) , razorpayDelegate.getCard(cardStr) ,
+        razorpayDelegate.resetUpiPin(upiAccountStr , cardStr ,
                 result , this.eventSink);
         break;
       case "delink":
         upiAccountStr = call.arguments.toString();
-        razorpayDelegate.delink( razorpayDelegate.getUpiAccount(upiAccountStr), result , this.eventSink);
+        razorpayDelegate.delink(upiAccountStr, result , this.eventSink);
         break;
       case "selectedBankAccount":
         String bankAccountStr = call.arguments.toString();
-        razorpayDelegate.selectedBankAccount(razorpayDelegate.getBankAccount(bankAccountStr) ,result , this.eventSink);
+        razorpayDelegate.selectedBankAccount(bankAccountStr ,result , this.eventSink);
         break;
       case "setUpUPIPin":
          cardStr = call.arguments.toString();
-         razorpayDelegate.setupUpiPin(razorpayDelegate.getCard(cardStr) ,result , this.eventSink);
+         razorpayDelegate.setupUpiPin(cardStr ,result , this.eventSink);
          break;
       case "isTurboPluginAvailable":
          razorpayDelegate.isTurboPluginAvailable(result , this.eventSink);
