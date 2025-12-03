@@ -57,3 +57,7 @@
 ## 1.4.1
 
 - Bug-fix : Fixed `reply already submitted` intermittent error on getPaymentMethods function.
+
+## 1.4.2
+
+- Bug-fix : Fixed `iOS native platform` errors due to internal libraries. 
