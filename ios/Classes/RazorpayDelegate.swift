@@ -70,7 +70,7 @@ class RazorpayDelegate: NSObject {
     
     public func getPaymentMethods(result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
+        RazorpayCheckout.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
             self.pendingResult(successResponse  as NSDictionary)
         }, andFailureCallback: { errorResponse in
             self.pendingResult(errorResponse)
@@ -99,7 +99,7 @@ class RazorpayDelegate: NSObject {
     
     public func getSubscriptionAmount(subscriptionId: String, result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
+        RazorpayCheckout.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
             self?.pendingResult(successResponse)
         }, andFailureCallback: { [weak self] errorResponse in
             self?.pendingResult(errorResponse)
@@ -211,7 +211,7 @@ extension RazorpayDelegate {
             if let dict = notification.userInfo {
                 if let uriScheme = dict["response"] as? String {
                     DispatchQueue.main.async {
-                        self.razorpay?.publishUri(with: uriScheme)
+                       try? self.razorpay?.publishUri(with: uriScheme)
                 }
             }
         }
