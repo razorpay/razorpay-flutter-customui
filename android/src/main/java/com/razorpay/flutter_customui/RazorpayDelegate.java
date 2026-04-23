@@ -552,6 +552,72 @@ public class RazorpayDelegate implements ActivityResultListener  {
         razorpay.upiTurbo.onPermissionsRequestResult();
     }
 
+    // ──────────────────────────────────────────────
+    //  Amazon Pay Link-n-Pay
+    // ──────────────────────────────────────────────
+
+    /**
+     * Initiates Amazon Pay wallet linking flow.
+     *
+     * Calls the native Android SDK:
+     *   razorpay.amazonPayWallet.startAuthorization(activity, customerId, callback)
+     *
+     * The callback has two methods:
+     *   - onLinkingSuccessful(String authCode) — linking succeeded
+     *   - onLinkingFailed(int errorCode, String errorMessage) — linking failed
+     *
+     * On success, we also need to handle onActivityResult from the Amazon SDK.
+     */
+    public void amazonPayStartAuthorization(String customerId, Result result) {
+        this.pendingResult = result;
+        HashMap<Object, Object> reply = new HashMap<>();
+
+        try {
+            razorpay.amazonPayWallet.startAuthorization(activity, customerId,
+                new com.razorpay.AmazonPayAuthCodeCallback() {
+                    @Override
+                    public void onLinkingSuccessful() {
+                        reply.put("type", "success");
+                        reply.put("data", new HashMap<Object, Object>() {{
+                            put("customerId", customerId);
+                            put("status", "linked");
+                        }});
+                        pendingResult.success(reply);
+                    }
+
+                    @Override
+                    public void onLinkingFailed(int errorCode, String errorMessage) {
+                        reply.put("type", "error");
+                        reply.put("data", new HashMap<Object, Object>() {{
+                            put("code", errorCode);
+                            put("message", errorMessage);
+                        }});
+                        pendingResult.success(reply);
+                    }
+                }
+            );
+        } catch (Exception e) {
+            reply.put("type", "error");
+            reply.put("data", new HashMap<Object, Object>() {{
+                put("code", -1);
+                put("message", "Amazon Pay SDK not available: " + e.getMessage());
+            }});
+            pendingResult.success(reply);
+        }
+    }
+
+    /**
+     * Checks if the Amazon Pay SDK classes are available at runtime.
+     */
+    public void isAmazonPayAvailable(Result result) {
+        try {
+            Class.forName("com.razorpay.AmazonPayAuthCodeCallback");
+            result.success(true);
+        } catch (ClassNotFoundException e) {
+            result.success(false);
+        }
+    }
+
     public  boolean isTurboPluginAvailable(Result result, EventChannel.EventSink eventSink) {
         this.pendingResult = result;
         this.eventSink = eventSink;

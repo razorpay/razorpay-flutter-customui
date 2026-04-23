@@ -3,6 +3,7 @@ import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'Tpv.dart';
 import 'upi_turbo.dart';
+import 'amazon_pay.dart';
 
 class Razorpay  {
   // Response codes from platform
@@ -25,12 +26,14 @@ class Razorpay  {
   late EventEmitter _eventEmitter;
   late UpiTurbo upiTurbo;
   late Tpv tpv;
+  late AmazonPay amazonPay;
 
   Razorpay(String key) {
     _channel.invokeMethod('initilizeSDK', key);
     _eventEmitter = new EventEmitter();
     upiTurbo = new UpiTurbo( _channel, _eventEmitter);
     tpv = Tpv(_channel , _eventEmitter);
+    amazonPay = AmazonPay(_channel, _eventEmitter);
   }
 
   // Maintain a map to store callbacks for each data exchange

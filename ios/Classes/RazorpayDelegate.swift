@@ -70,7 +70,7 @@ class RazorpayDelegate: NSObject {
     
     public func getPaymentMethods(result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
+        RazorpayCheckout.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
             self.pendingResult(successResponse  as NSDictionary)
         }, andFailureCallback: { errorResponse in
             self.pendingResult(errorResponse)
@@ -99,7 +99,7 @@ class RazorpayDelegate: NSObject {
     
     public func getSubscriptionAmount(subscriptionId: String, result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
+        RazorpayCheckout.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
             self?.pendingResult(successResponse)
         }, andFailureCallback: { [weak self] errorResponse in
             self?.pendingResult(errorResponse)
@@ -160,13 +160,47 @@ extension RazorpayDelegate {
     }
     
     public func initilizeSDK(withKey key: String, result: @escaping FlutterResult) {
-            
+
         guard self.razorpay == nil else { return }
-        
+
         pendingResult = result
         self.configureWebView()
         if let unwrappedWebView = self.webView {
+            // Standard init
             self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
+
+            // Set the amazonPlugin via setter if available
+            if let rzp = self.razorpay {
+                let setSelector = NSSelectorFromString("setAmazonPlugin:")
+                if rzp.responds(to: setSelector) {
+                    let entityClassNames = [
+                        "RazorpayApayWalletPaylater.WalletPaylaterEntity",
+                        "WalletPaylaterEntity",
+                        "_TtC26RazorpayApayWalletPaylater20WalletPaylaterEntity",
+                        "RazorpayApayWalletPaylater.AmazonWalletPaylater",
+                        "AmazonWalletPaylater",
+                        "_TtC26RazorpayApayWalletPaylater20AmazonWalletPaylater"
+                    ]
+
+                    for className in entityClassNames {
+                        if let cls = NSClassFromString(className) as? NSObject.Type {
+                            let pluginSel = NSSelectorFromString("pluginInstance")
+                            if cls.responds(to: pluginSel) {
+                                if let plugin = cls.perform(pluginSel)?.takeUnretainedValue() {
+                                    rzp.perform(setSelector, with: plugin)
+                                    break
+                                }
+                            }
+                            let initSel = NSSelectorFromString("init")
+                            if cls.responds(to: initSel) {
+                                let plugin = cls.init()
+                                rzp.perform(setSelector, with: plugin)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
             
             DispatchQueue.main.async {
                 let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))
@@ -211,7 +245,7 @@ extension RazorpayDelegate {
             if let dict = notification.userInfo {
                 if let uriScheme = dict["response"] as? String {
                     DispatchQueue.main.async {
-                        self.razorpay?.publishUri(with: uriScheme)
+                        try? self.razorpay?.publishUri(with: uriScheme)
                 }
             }
         }
@@ -248,6 +282,86 @@ extension RazorpayDelegate: WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         self.razorpay?.webView(webView, didFailProvisionalNavigation: navigation, withError: error)
+    }
+}
+
+// MARK: - Amazon Pay Link-n-Pay
+extension RazorpayDelegate {
+
+    public func amazonPayStartAuthorization(customerId: String, result: @escaping FlutterResult) {
+        self.pendingResult = result
+
+        guard let rzp = self.razorpay else {
+            result(["type": "error", "data": ["code": -1, "message": "SDK not initialized"]])
+            return
+        }
+
+        let pluginSelector = NSSelectorFromString("amazonPlugin")
+        guard rzp.responds(to: pluginSelector),
+              let amazonModule = rzp.perform(pluginSelector)?.takeUnretainedValue() as? NSObject else {
+            result(["type": "error", "data": [
+                "code": -2,
+                "message": "amazonPlugin not set. Ensure SDK is initialized with Amazon Pay plugin."
+            ]])
+            return
+        }
+
+        callStartAuthorization(on: amazonModule, customerId: customerId, result: result)
+    }
+
+    private func callStartAuthorization(on module: NSObject, customerId: String, result: @escaping FlutterResult) {
+        let selectors = [
+            "startAuthorizationWithCustomerId:amazonAuthorizationDelegate:",
+            "startAuthorization:delegate:",
+            "startAuthorization:withDelegate:",
+            "startAuthorizationWithCustomerId:delegate:",
+        ]
+        for selName in selectors {
+            let sel = NSSelectorFromString(selName)
+            if module.responds(to: sel) {
+                module.perform(sel, with: customerId, with: self)
+                return
+            }
+        }
+
+        result(["type": "error", "data": [
+            "code": -3,
+            "message": "startAuthorization method not found on amazonPlugin"
+        ]])
+    }
+
+    /// Called by native SDK when Amazon Pay linking succeeds.
+    @objc func onLinkingSuccessful() {
+        let reply: [String: Any] = [
+            "type": "success",
+            "data": ["status": "linked"]
+        ]
+        pendingResult?(reply)
+    }
+
+    /// Called by native SDK when Amazon Pay linking fails.
+    @objc func onLinkingFailed(_ errorCode: Int, description: String) {
+        let reply: [String: Any] = [
+            "type": "error",
+            "data": ["code": errorCode, "message": description]
+        ]
+        pendingResult?(reply)
+    }
+
+    /// Checks if the Amazon Pay SDK is available.
+    public func isAmazonPayAvailable(result: @escaping FlutterResult) {
+        let classNames = [
+            "AMZNAuthorizationManager",
+            "AMZNLoginManager",
+            "AmazonWalletPaylater"
+        ]
+        for name in classNames {
+            if NSClassFromString(name) != nil {
+                result(true)
+                return
+            }
+        }
+        result(false)
     }
 }
 
