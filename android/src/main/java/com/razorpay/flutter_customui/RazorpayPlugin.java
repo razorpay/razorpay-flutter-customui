@@ -19,7 +19,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** RazorpayFlutterCustomuiPlugin */
 
@@ -215,12 +214,7 @@ public class RazorpayPlugin  implements FlutterPlugin, MethodCallHandler, Activi
     this.eventChannel.setStreamHandler(null);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-  public RazorpayPlugin(Registrar registrar) {
-    this.activity = registrar.activity();
-    this.razorpayDelegate = new RazorpayDelegate(registrar.activity());
-    registrar.addActivityResultListener(razorpayDelegate);
-  }
+  // Legacy v1 Flutter plugin registration removed (Registrar API deprecated)
 
   @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   @Override
