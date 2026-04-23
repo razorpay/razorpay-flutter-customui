@@ -329,7 +329,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     void linkNewUpiAccount(String mobileNumber, Result result, EventChannel.EventSink eventSink){
         this.pendingResult = result;
         this.eventSink = eventSink;
-        razorpay.upiTurbo.linkNewUpiAccount(mobileNumber, new UpiTurboLinkAccountListener() {
+        razorpay.upiTurbo.linkNewUpiAccount(mobileNumber, "", new UpiTurboLinkAccountListener() {
             @Override
             public void onResponse(@NonNull UpiTurboLinkAction upiTurboLinkAction) {
                 onUpiTurboResponse(upiTurboLinkAction);
@@ -407,7 +407,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object> reply = new HashMap<>();
-        razorpay.upiTurbo.getLinkedUpiAccounts(mobileNumber, new UpiTurboResultListener() {
+        razorpay.upiTurbo.getLinkedUpiAccounts(mobileNumber, "", new UpiTurboResultListener() {
             @Override
             public void onSuccess(@NonNull List<UpiAccount> upiAccounts) {
                 if(upiAccounts.isEmpty()){
@@ -608,29 +608,53 @@ public class RazorpayDelegate implements ActivityResultListener {
         HashMap<Object, Object> reply = new HashMap<>();
 
         try {
-            razorpay.amazonPayWallet.startAuthorization(activity, customerId,
-                new com.razorpay.AmazonPayAuthCodeCallback() {
-                    @Override
-                    public void onLinkingSuccessful() {
+            // Use reflection to access amazonPayWallet field (may not exist at compile time)
+            java.lang.reflect.Field apayField = razorpay.getClass().getField("amazonPayWallet");
+            Object amazonPayWallet = apayField.get(razorpay);
+
+            if (amazonPayWallet == null) {
+                reply.put("type", "error");
+                reply.put("data", new HashMap<Object, Object>() {{
+                    put("code", -1);
+                    put("message", "amazonPayWallet is null. SDK may not be initialized with Amazon Pay plugin.");
+                }});
+                pendingResult.success(reply);
+                return;
+            }
+
+            // Create callback proxy via reflection
+            Class<?> callbackClass = Class.forName("com.razorpay.AmazonPayAuthCodeCallback");
+            Object callbackProxy = java.lang.reflect.Proxy.newProxyInstance(
+                callbackClass.getClassLoader(),
+                new Class<?>[]{callbackClass},
+                (proxy, method, args) -> {
+                    String methodName = method.getName();
+                    if ("onLinkingSuccessful".equals(methodName)) {
                         reply.put("type", "success");
                         reply.put("data", new HashMap<Object, Object>() {{
                             put("customerId", customerId);
                             put("status", "linked");
                         }});
-                        pendingResult.success(reply);
-                    }
-
-                    @Override
-                    public void onLinkingFailed(int errorCode, String errorMessage) {
+                        new Handler(Looper.getMainLooper()).post(() -> pendingResult.success(reply));
+                    } else if ("onLinkingFailed".equals(methodName)) {
+                        int errorCode = args != null && args.length > 0 ? (int) args[0] : -1;
+                        String errorMsg = args != null && args.length > 1 ? (String) args[1] : "Unknown error";
                         reply.put("type", "error");
                         reply.put("data", new HashMap<Object, Object>() {{
                             put("code", errorCode);
-                            put("message", errorMessage);
+                            put("message", errorMsg);
                         }});
-                        pendingResult.success(reply);
+                        new Handler(Looper.getMainLooper()).post(() -> pendingResult.success(reply));
                     }
+                    return null;
                 }
             );
+
+            // Call startAuthorization(activity, customerId, callback) via reflection
+            java.lang.reflect.Method startAuth = amazonPayWallet.getClass().getMethod(
+                "startAuthorization", android.app.Activity.class, String.class, callbackClass);
+            startAuth.invoke(amazonPayWallet, activity, customerId, callbackProxy);
+
         } catch (Exception e) {
             reply.put("type", "error");
             reply.put("data", new HashMap<Object, Object>() {{
@@ -646,9 +670,10 @@ public class RazorpayDelegate implements ActivityResultListener {
      */
     public void isAmazonPayAvailable(Result result) {
         try {
-            Class.forName("com.razorpay.AmazonPayAuthCodeCallback");
-            result.success(true);
-        } catch (ClassNotFoundException e) {
+            // Check for the amazonPayWallet field on Razorpay
+            java.lang.reflect.Field field = razorpay.getClass().getField("amazonPayWallet");
+            result.success(field != null);
+        } catch (NoSuchFieldException e) {
             result.success(false);
         }
     }
@@ -707,7 +732,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         this.pendingResult = result;
         this.eventSink = eventSink;
         HashMap<Object, Object> reply = new HashMap<>();
-        razorpay.upiTurbo.linkNewUpiAccountWithUI(customerMobile, new UpiTurboLinkAccountResultListener() {
+        razorpay.upiTurbo.linkNewUpiAccountWithUI(customerMobile, "", new UpiTurboLinkAccountResultListener() {
             @Override
             public void onSuccess(@NonNull List<UpiAccount> upiAccounts) {
                 if(upiAccounts.isEmpty()){
@@ -728,7 +753,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     public void manageUpiAccounts(String customerMobile,  Result result, EventChannel.EventSink eventSink){
         this.pendingResult = result;
         this.eventSink = eventSink;
-        razorpay.upiTurbo.manageUpiAccounts(customerMobile, new UpiTurboManageAccountListener() {
+        razorpay.upiTurbo.manageUpiAccounts(customerMobile, "", new UpiTurboManageAccountListener() {
             @Override
             public void onError(@NonNull JSONObject jsonObject) {
                 pendingResult.error("", jsonObject.toString(), jsonObject.toString());

@@ -24,6 +24,8 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import io.flutter.plugin.common.PluginRegistry;
+
 /** RazorpayFlutterCustomuiPlugin */
 public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
@@ -132,8 +134,11 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     channel.setMethodCallHandler(null);
-    channel = null;
+    eventChannel.setStreamHandler(null);
+    this.eventChannel.setStreamHandler(null);
   }
+
+  // Legacy v1 Flutter plugin registration removed (Registrar API deprecated)
 
   @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   @Override
