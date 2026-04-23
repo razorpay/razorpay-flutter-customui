@@ -13,10 +13,11 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.platform = :ios, '10.0'
+  s.platform = :ios, '13.0'
 
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
   s.dependency 'razorpay-customui-pod', '~> 2.0.22'
+  s.dependency 'razorpay-apay-wallet-paylater'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }

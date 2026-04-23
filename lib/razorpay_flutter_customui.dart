@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
+import 'Tpv.dart';
+import 'upi_turbo.dart';
+import 'amazon_pay.dart';
 
 class Razorpay {
   // Response codes from platform
@@ -24,9 +27,37 @@ class Razorpay {
 
   // EventEmitter instance used for communication
   late EventEmitter _eventEmitter;
+  late UpiTurbo upiTurbo;
+  late Tpv tpv;
+  late AmazonPay amazonPay;
 
   Razorpay() {
     _eventEmitter = new EventEmitter();
+    upiTurbo = new UpiTurbo( _channel, _eventEmitter);
+    tpv = Tpv(_channel , _eventEmitter);
+    amazonPay = AmazonPay(_channel, _eventEmitter);
+  }
+
+  // Maintain a map to store callbacks for each data exchange
+  final Map<String, Function(dynamic)> _callbackMap = {};
+
+  // Register a callback for the specified identifier
+  void registerCallback(String identifier, Function(dynamic) callback) {
+    _callbackMap[identifier] = callback;
+  }
+
+  // Unregister the callback for the specified identifier
+  void unregisterCallback(String identifier) {
+    _callbackMap.remove(identifier);
+  }
+
+  // Called when data is received from the Android side
+  void onDataReceived(Map<String, dynamic> data) {
+    final identifier = data['identifier'];
+    final callback = _callbackMap[identifier];
+    if (callback != null) {
+      callback(data['data']);
+    }
   }
 
   Future<Map<dynamic, dynamic>> getPaymentMethods() async {

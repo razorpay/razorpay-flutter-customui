@@ -113,6 +113,17 @@ public class RazorpayPlugin implements FlutterPlugin, MethodCallHandler, Activit
         razorpayDelegate.resync(result);
         break;
 
+      // Amazon Pay Link-n-Pay
+      case "amazonPayStartAuthorization":
+        _arguments = call.arguments();
+        String amazonPayCustomerId = (String) _arguments.get("customerId");
+        razorpayDelegate.amazonPayStartAuthorization(amazonPayCustomerId, result);
+        break;
+
+      case "isAmazonPayAvailable":
+        razorpayDelegate.isAmazonPayAvailable(result);
+        break;
+
       default:
         result.notImplemented();
     }
