@@ -16,16 +16,12 @@ rootProject.allprojects {
     repositories {
         mavenCentral()
         google()
-        flatDir {
-            dirs project(':razorpay_flutter_customui').file('libs')
-        }
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'com.razorpay.flutter_customui'
     compileSdkVersion 31
 
     defaultConfig {
