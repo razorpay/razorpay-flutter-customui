@@ -9,11 +9,40 @@ class RazorpayDelegate: NSObject {
     var navController: UINavigationController?
     var webView: WKWebView?
     var parentVC = UIViewController()
-    
+
+    /// Scene-aware key window. `UIApplication.shared.keyWindow` is nil on iOS 13+ for many apps.
+    private static func keyWindow() -> UIWindow? {
+        if #available(iOS 13.0, *) {
+            for scene in UIApplication.shared.connectedScenes {
+                guard let windowScene = scene as? UIWindowScene else { continue }
+                if let w = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                    return w
+                }
+            }
+            if let windowScene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene }).first {
+                return windowScene.windows.first
+            }
+        }
+        return UIApplication.shared.keyWindow
+    }
+
+    private static func topViewControllerForPresentation() -> UIViewController? {
+        guard var vc = keyWindow()?.rootViewController else { return nil }
+        while let presented = vc.presentedViewController {
+            vc = presented
+        }
+        return vc
+    }
+
     public func submit(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
+        guard self.razorpay == nil else {
+            result(["error": "Payment already in progress"] as NSDictionary)
+            return
+        }
         pendingResult = result
         let key = options["key"] as? String ?? ""
-        
+
         self.initilizeSDK(withKey: key, result: result)
 
         var tempOptions = options
@@ -22,34 +51,46 @@ class RazorpayDelegate: NSObject {
         }
         tempOptions["FRAMEWORK"] = "flutter"
         tempOptions.removeValue(forKey: "key")
-        self.razorpay?.authorize(tempOptions)
-        
-        let rootVC = UIApplication.shared.keyWindow?.rootViewController
-        if let navCtrl = self.navController {
-            navCtrl.modalPresentationStyle = .fullScreen
-            rootVC?.present(navCtrl, animated: true, completion: nil)
+
+        // `initilizeSDK` creates `navController` inside `DispatchQueue.main.async`, so
+        // authorize+present must run *after* that work (and use a real window, not
+        // deprecated `keyWindow` which is often nil).
+        DispatchQueue.main.async { [self] in
+            self.razorpay?.authorize(tempOptions)
+            if let navCtrl = self.navController {
+                navCtrl.modalPresentationStyle = .fullScreen
+                Self.topViewControllerForPresentation()?.present(navCtrl, animated: true, completion: nil)
+            }
         }
     }
-    
+
     public func payWithCred(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
+        guard self.razorpay == nil else {
+            result(["error": "Payment already in progress"] as NSDictionary)
+            return
+        }
         self.pendingResult = result
         let key = options["key"] as? String ?? ""
         self.initilizeSDK(withKey: key, result: result)
-        
-        let rootVC = UIApplication.shared.keyWindow?.rootViewController
-        if let navCtrl = self.navController {
-            navCtrl.modalPresentationStyle = .fullScreen
-            rootVC?.present(navCtrl, animated: true, completion: nil)
-        }
+
         var tempOptions = options
         tempOptions["app_present"] = 1
         tempOptions.removeValue(forKey: "key")
-        
-        self.razorpay?.payWithCred(withOptions: tempOptions, withSuccessCallback: { onSuccess in
-            self.pendingResult(onSuccess)
-        }, andFailureCallback: { onFailure in
-            self.pendingResult(onFailure)
-        })
+
+        DispatchQueue.main.async { [self] in
+            if let navCtrl = self.navController {
+                navCtrl.modalPresentationStyle = .fullScreen
+                Self.topViewControllerForPresentation()?.present(navCtrl, animated: true, completion: nil)
+            }
+            self.razorpay?.payWithCred(
+                withOptions: tempOptions,
+                withSuccessCallback: { onSuccess in
+                    self.pendingResult(onSuccess)
+                },
+                andFailureCallback: { onFailure in
+                    self.pendingResult(onFailure)
+                })
+        }
     }
     
     public func changeApiKey(key: String, result: @escaping FlutterResult) {
@@ -137,9 +178,10 @@ class RazorpayDelegate: NSObject {
         if (self.webView != nil) {
             webView?.stopLoading()
         }
-        
+
+        webView = nil
         razorpay = nil
-        
+
         if (self.navController != nil) {
             DispatchQueue.main.async {
                 self.navController?.dismiss(animated: true, completion: nil)
