@@ -569,8 +569,20 @@ public class RazorpayDelegate implements ActivityResultListener  {
      * On success, we also need to handle onActivityResult from the Amazon SDK.
      */
     public void amazonPayStartAuthorization(String customerId, Result result) {
-        this.pendingResult = result;
+        // Use local reference — don't overwrite shared pendingResult to avoid "Reply already submitted" crash
+        final Result amazonPayResult = result;
         HashMap<Object, Object> reply = new HashMap<>();
+
+        // Log all fields on the razorpay object for debugging
+        try {
+            java.lang.reflect.Field[] fields = razorpay.getClass().getFields();
+            for (java.lang.reflect.Field f : fields) {
+                Object val = null;
+                try { val = f.get(razorpay); } catch (Exception ignored) {}
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "[AmazonPay] Error listing fields: " + e.getMessage());
+        }
 
         try {
             // Use reflection to access amazonPayWallet field (may not exist at compile time)
@@ -578,12 +590,13 @@ public class RazorpayDelegate implements ActivityResultListener  {
             Object amazonPayWallet = apayField.get(razorpay);
 
             if (amazonPayWallet == null) {
+                Log.e(TAG, "[AmazonPay] amazonPayWallet is null!");
                 reply.put("type", "error");
                 reply.put("data", new HashMap<Object, Object>() {{
                     put("code", -1);
                     put("message", "amazonPayWallet is null. SDK may not be initialized with Amazon Pay plugin.");
                 }});
-                pendingResult.success(reply);
+                amazonPayResult.success(reply);
                 return;
             }
 
@@ -600,33 +613,62 @@ public class RazorpayDelegate implements ActivityResultListener  {
                             put("customerId", customerId);
                             put("status", "linked");
                         }});
-                        new Handler(Looper.getMainLooper()).post(() -> pendingResult.success(reply));
-                    } else if ("onLinkingFailed".equals(methodName)) {
+                        new Handler(Looper.getMainLooper()).post(() -> amazonPayResult.success(reply));
+                    } else if ("onLinkingError".equals(methodName)) {
+                        // AmazonPayAuthCodeCallback.onLinkingError(code: Int, message: String)
                         int errorCode = args != null && args.length > 0 ? (int) args[0] : -1;
                         String errorMsg = args != null && args.length > 1 ? (String) args[1] : "Unknown error";
+                        Log.e(TAG, "[AmazonPay] onLinkingError: code=" + errorCode + " msg=" + errorMsg);
                         reply.put("type", "error");
                         reply.put("data", new HashMap<Object, Object>() {{
                             put("code", errorCode);
                             put("message", errorMsg);
                         }});
-                        new Handler(Looper.getMainLooper()).post(() -> pendingResult.success(reply));
+                        new Handler(Looper.getMainLooper()).post(() -> amazonPayResult.success(reply));
                     }
                     return null;
                 }
             );
 
             // Call startAuthorization(activity, customerId, callback) via reflection
+            // Note: Kotlin `Any` compiles to java.lang.Object, so the method signature is
+            // startAuthorization(Activity, String, Object), NOT startAuthorization(Activity, String, AmazonPayAuthCodeCallback)
             java.lang.reflect.Method startAuth = amazonPayWallet.getClass().getMethod(
-                "startAuthorization", android.app.Activity.class, String.class, callbackClass);
+                "startAuthorization", android.app.Activity.class, String.class, Object.class);
             startAuth.invoke(amazonPayWallet, activity, customerId, callbackProxy);
 
-        } catch (Exception e) {
+        } catch (NoSuchFieldException e) {
+            Log.e(TAG, "[AmazonPay] FIELD NOT FOUND: 'amazonPayWallet' does not exist on " + razorpay.getClass().getName(), e);
             reply.put("type", "error");
             reply.put("data", new HashMap<Object, Object>() {{
                 put("code", -1);
-                put("message", "Amazon Pay SDK not available: " + e.getMessage());
+                put("message", "amazonPayWallet field not found: " + e.getMessage());
             }});
-            pendingResult.success(reply);
+            amazonPayResult.success(reply);
+        } catch (ClassNotFoundException e) {
+            Log.e(TAG, "[AmazonPay] CLASS NOT FOUND: AmazonPayAuthCodeCallback", e);
+            reply.put("type", "error");
+            reply.put("data", new HashMap<Object, Object>() {{
+                put("code", -1);
+                put("message", "AmazonPayAuthCodeCallback class not found: " + e.getMessage());
+            }});
+            amazonPayResult.success(reply);
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, "[AmazonPay] METHOD NOT FOUND: startAuthorization", e);
+            reply.put("type", "error");
+            reply.put("data", new HashMap<Object, Object>() {{
+                put("code", -1);
+                put("message", "startAuthorization method not found: " + e.getMessage());
+            }});
+            amazonPayResult.success(reply);
+        } catch (Exception e) {
+            Log.e(TAG, "[AmazonPay] UNEXPECTED ERROR: " + e.getClass().getName() + ": " + e.getMessage(), e);
+            reply.put("type", "error");
+            reply.put("data", new HashMap<Object, Object>() {{
+                put("code", -1);
+                put("message", "Amazon Pay error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            }});
+            amazonPayResult.success(reply);
         }
     }
 
@@ -635,10 +677,15 @@ public class RazorpayDelegate implements ActivityResultListener  {
      */
     public void isAmazonPayAvailable(Result result) {
         try {
-            // Check for the amazonPayWallet field on Razorpay
             java.lang.reflect.Field field = razorpay.getClass().getField("amazonPayWallet");
-            result.success(field != null);
+            Object value = field.get(razorpay);
+            // Check the field VALUE is non-null, not just that the field exists
+            boolean available = value != null;
+            result.success(available);
         } catch (NoSuchFieldException e) {
+            result.success(false);
+        } catch (Exception e) {
+            Log.e(TAG, "[AmazonPay] isAmazonPayAvailable error: " + e.getMessage(), e);
             result.success(false);
         }
     }
