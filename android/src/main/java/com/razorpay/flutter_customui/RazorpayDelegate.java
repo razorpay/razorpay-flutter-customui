@@ -40,6 +40,13 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
+import android.os.Handler;
+import android.os.Looper;
+
+// compileOnly import — works at compile time, null-safe at runtime if merchant
+// has not added the amazonpay-wallet-paylater runtime dependency.
+import com.razorpay.AmazonPayAuthCodeCallback;
+
 import static com.razorpay.flutter_customui.Constants.PAYMENT_DATA;
 
 public class RazorpayDelegate implements ActivityResultListener {
@@ -283,6 +290,10 @@ public class RazorpayDelegate implements ActivityResultListener {
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == RazorpayPaymentActivity.RZP_REQUEST_CODE && resultCode == RazorpayPaymentActivity.RZP_RESULT_CODE){
             onLocalActivityResult(requestCode, resultCode, data);
+        } else if (razorpay != null) {
+            // Forward non-payment activity results (e.g. Amazon Pay login activity)
+            // to the Razorpay SDK so it can dispatch to its registered plugins.
+            razorpay.onActivityResult(requestCode, resultCode, data);
         }
         return true;
     }
@@ -321,4 +332,83 @@ public class RazorpayDelegate implements ActivityResultListener {
 
     public void onNewIntent(Intent intent) {}
 
+    // ── Amazon Pay Link-n-Pay ─────────────────────────────────────────────────
+
+    /**
+     * Initiates Amazon Pay account linking.
+     *
+     * Uses a local Result reference (NOT this.pendingResult) to avoid
+     * overwriting any in-flight payment or utility call on the shared result.
+     */
+    public void amazonPayStartAuthorization(String customerId, Result result) {
+        final Result localResult = result;
+        HashMap<Object, Object> reply = new HashMap<>();
+
+        if (razorpay == null) {
+            reply.put("type", "error");
+            HashMap<Object, Object> data = new HashMap<>();
+            data.put("code", -1);
+            data.put("message", "SDK not initialized. Call initilizeSDK first.");
+            reply.put("data", data);
+            localResult.success(reply);
+            return;
+        }
+
+        try {
+            if (razorpay.amazonPayWallet == null) {
+                reply.put("type", "error");
+                HashMap<Object, Object> data = new HashMap<>();
+                data.put("code", -1);
+                data.put("message", "Amazon Pay plugin not available. Add 'com.razorpay:amazonpay-wallet-paylater' to your app/build.gradle.");
+                reply.put("data", data);
+                localResult.success(reply);
+                return;
+            }
+
+            razorpay.amazonPayWallet.startAuthorization(activity, customerId,
+                new AmazonPayAuthCodeCallback() {
+                    @Override
+                    public void onLinkingSuccessful(String authCode) {
+                        HashMap<Object, Object> successReply = new HashMap<>();
+                        successReply.put("type", "success");
+                        HashMap<Object, Object> data = new HashMap<>();
+                        data.put("customerId", customerId);
+                        data.put("authCode", authCode);
+                        data.put("status", "linked");
+                        successReply.put("data", data);
+                        new Handler(Looper.getMainLooper()).post(() -> localResult.success(successReply));
+                    }
+
+                    @Override
+                    public void onLinkingError(int errorCode, String errorMessage) {
+                        HashMap<Object, Object> errorReply = new HashMap<>();
+                        errorReply.put("type", "error");
+                        HashMap<Object, Object> data = new HashMap<>();
+                        data.put("code", errorCode);
+                        data.put("message", errorMessage);
+                        errorReply.put("data", data);
+                        new Handler(Looper.getMainLooper()).post(() -> localResult.success(errorReply));
+                    }
+                });
+        } catch (Exception e) {
+            reply.put("type", "error");
+            HashMap<Object, Object> data = new HashMap<>();
+            data.put("code", -1);
+            data.put("message", "Amazon Pay error: " + e.getMessage());
+            reply.put("data", data);
+            localResult.success(reply);
+        }
+    }
+
+    /**
+     * Returns true if the Amazon Pay plugin is available (non-null) at runtime.
+     */
+    public void isAmazonPayAvailable(Result result) {
+        try {
+            boolean available = razorpay != null && razorpay.amazonPayWallet != null;
+            result.success(available);
+        } catch (Exception e) {
+            result.success(false);
+        }
+    }
 }

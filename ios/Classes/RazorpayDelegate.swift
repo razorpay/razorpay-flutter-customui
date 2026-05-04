@@ -10,6 +10,10 @@ class RazorpayDelegate: NSObject {
     var webView: WKWebView?
     var parentVC = UIViewController()
 
+    // Separate result for Amazon Pay linking — avoids race conditions with
+    // the shared pendingResult which can be overwritten by concurrent utility calls.
+    var amazonPayResult: FlutterResult?
+
     /// Scene-aware key window. `UIApplication.shared.keyWindow` is nil on iOS 13+ for many apps.
     private static func keyWindow() -> UIWindow? {
         if #available(iOS 13.0, *) {
@@ -209,7 +213,28 @@ extension RazorpayDelegate {
         self.configureWebView()
         if let unwrappedWebView = self.webView {
             self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
-            
+
+            // Attach Amazon Pay plugin if the pod is present.
+            // NOTE: Replace "EXACT_CLASS_NAME_HERE" with the documented class name
+            // from the razorpay-apay-wallet-paylater SDK team before shipping.
+            if let rzp = self.razorpay {
+                let setSelector = NSSelectorFromString("setAmazonPlugin:")
+                if rzp.responds(to: setSelector) {
+                    let candidateNames = [
+                        "RazorpayApayWalletPaylater.WalletPaylaterEntity",
+                        "WalletPaylaterEntity",
+                        "RazorpayApayWalletPaylater.AmazonWalletPaylater",
+                        "AmazonWalletPaylater",
+                    ]
+                    for name in candidateNames {
+                        if let cls = NSClassFromString(name) as? NSObject.Type {
+                            rzp.perform(setSelector, with: cls.init())
+                            break
+                        }
+                    }
+                }
+            }
+
             DispatchQueue.main.async {
                 let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))
                 
@@ -303,5 +328,77 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
     func onPaymentError(_ code: Int32, description str: String, andData response: [AnyHashable : Any]) {
         pendingResult(response as NSDictionary)
         self.close()
+    }
+}
+
+// MARK: - Amazon Pay Link-n-Pay
+extension RazorpayDelegate {
+
+    public func amazonPayStartAuthorization(customerId: String, result: @escaping FlutterResult) {
+        // Store in dedicated property — NOT pendingResult — to avoid race conditions
+        // with concurrent utility calls (getPaymentMethods, isValidVpa, etc.)
+        guard let rzp = self.razorpay else {
+            result(["type": "error", "data": ["code": -1, "message": "SDK not initialized. Call initilizeSDK first."]])
+            return
+        }
+
+        let pluginSelector = NSSelectorFromString("amazonPlugin")
+        guard rzp.responds(to: pluginSelector),
+              let amazonModule = rzp.perform(pluginSelector)?.takeUnretainedValue() as? NSObject else {
+            result(["type": "error", "data": [
+                "code": -2,
+                "message": "Amazon Pay plugin not available. Add razorpay-apay-wallet-paylater pod."
+            ]])
+            return
+        }
+
+        self.amazonPayResult = result
+
+        // NOTE: Verify exact selector with the SDK team.
+        // Candidates: "startAuthorizationWithCustomerId:delegate:" or "startAuthorization:delegate:"
+        let sel = NSSelectorFromString("startAuthorizationWithCustomerId:delegate:")
+        if amazonModule.responds(to: sel) {
+            amazonModule.perform(sel, with: customerId, with: self)
+        } else {
+            result(["type": "error", "data": [
+                "code": -3,
+                "message": "startAuthorization selector not found on Amazon Pay plugin. Verify with SDK team."
+            ]])
+            self.amazonPayResult = nil
+        }
+    }
+
+    /// Called by Amazon Pay SDK on linking success — selector name must match SDK delegate protocol.
+    @objc func onLinkingSuccessful() {
+        let reply: [String: Any] = [
+            "type": "success",
+            "data": ["status": "linked"]
+        ]
+        amazonPayResult?(reply)
+        amazonPayResult = nil
+    }
+
+    /// Called by Amazon Pay SDK on linking failure — selector name must match SDK delegate protocol.
+    @objc func onLinkingFailed(_ errorCode: Int, description: String) {
+        let reply: [String: Any] = [
+            "type": "error",
+            "data": ["code": errorCode, "message": description]
+        ]
+        amazonPayResult?(reply)
+        amazonPayResult = nil
+    }
+
+    public func isAmazonPayAvailable(result: @escaping FlutterResult) {
+        guard let rzp = self.razorpay else {
+            result(false)
+            return
+        }
+        let pluginSelector = NSSelectorFromString("amazonPlugin")
+        if rzp.responds(to: pluginSelector),
+           let plugin = rzp.perform(pluginSelector)?.takeUnretainedValue() {
+            result(plugin is NSObject)
+        } else {
+            result(false)
+        }
     }
 }

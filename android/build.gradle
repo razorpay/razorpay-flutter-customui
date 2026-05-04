@@ -37,6 +37,12 @@ android {
         implementation 'com.razorpay:customui:3.9.+'
         implementation 'com.google.code.gson:gson:2.8.7'
         implementation "androidx.core:core:1.9.0"
+
+        // Amazon Pay — compileOnly so the plugin compiles against the API but does NOT
+        // bundle the AAR. Merchants who want Amazon Pay must add the runtime dependency
+        // in their own app/build.gradle. If they don't, razorpay.amazonPayWallet is null
+        // and isAvailable() returns false. Zero impact for non-Amazon merchants.
+        compileOnly 'com.razorpay:amazonpay-wallet-paylater:1.0.0'
     }
 }
 
