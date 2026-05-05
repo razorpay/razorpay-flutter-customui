@@ -64,6 +64,15 @@ class AmazonPay {
           onLinkingFailed(error);
           _eventEmitter.emit(EVENT_LINKING_ERROR, null, error);
         }
+      } else {
+        // Native returned null or an unexpected type — always fire onLinkingFailed
+        // so the merchant is never left waiting with no feedback.
+        final error = <dynamic, dynamic>{
+          'code': -1,
+          'message': 'Unexpected response from native layer: $result',
+        };
+        onLinkingFailed(error);
+        _eventEmitter.emit(EVENT_LINKING_ERROR, null, error);
       }
     } on PlatformException catch (e) {
       final error = <dynamic, dynamic>{

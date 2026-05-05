@@ -115,7 +115,7 @@ class RazorpayDelegate: NSObject {
     
     public func getPaymentMethods(result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
+        RazorpayCheckout.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
             self.pendingResult(successResponse  as NSDictionary)
         }, andFailureCallback: { errorResponse in
             self.pendingResult(errorResponse)
@@ -144,7 +144,7 @@ class RazorpayDelegate: NSObject {
     
     public func getSubscriptionAmount(subscriptionId: String, result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
+        RazorpayCheckout.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
             self?.pendingResult(successResponse)
         }, andFailureCallback: { [weak self] errorResponse in
             self?.pendingResult(errorResponse)
@@ -278,7 +278,7 @@ extension RazorpayDelegate {
             if let dict = notification.userInfo {
                 if let uriScheme = dict["response"] as? String {
                     DispatchQueue.main.async {
-                        self.razorpay?.publishUri(with: uriScheme)
+                        try? self.razorpay?.publishUri(with: uriScheme)
                 }
             }
         }
@@ -354,31 +354,31 @@ extension RazorpayDelegate {
 
         self.amazonPayResult = result
 
-        // NOTE: Verify exact selector with the SDK team.
-        // Candidates: "startAuthorizationWithCustomerId:delegate:" or "startAuthorization:delegate:"
-        let sel = NSSelectorFromString("startAuthorizationWithCustomerId:delegate:")
+        let sel = NSSelectorFromString("startAuthorizationWithCustomerId:amazonAuthorizationDelegate:")
         if amazonModule.responds(to: sel) {
             amazonModule.perform(sel, with: customerId, with: self)
         } else {
             result(["type": "error", "data": [
                 "code": -3,
-                "message": "startAuthorization selector not found on Amazon Pay plugin. Verify with SDK team."
+                "message": "startAuthorizationWithCustomerId:amazonAuthorizationDelegate: not found"
             ]])
             self.amazonPayResult = nil
         }
     }
 
-    /// Called by Amazon Pay SDK on linking success — selector name must match SDK delegate protocol.
-    @objc func onLinkingSuccessful() {
+    /// Called by Amazon Pay SDK on linking success.
+    /// Selector: onSuccess: (AmazonAuthorizationDelegate protocol)
+    @objc func onSuccess(_ response: NSObject) {
         let reply: [String: Any] = [
             "type": "success",
-            "data": ["status": "linked"]
+            "data": ["status": "linked", "response": response.description]
         ]
         amazonPayResult?(reply)
         amazonPayResult = nil
     }
 
-    /// Called by Amazon Pay SDK on linking failure — selector name must match SDK delegate protocol.
+    /// Called by Amazon Pay SDK on linking failure.
+    /// Selector: onLinkingFailed:description: (AmazonAuthorizationDelegate protocol)
     @objc func onLinkingFailed(_ errorCode: Int, description: String) {
         let reply: [String: Any] = [
             "type": "error",

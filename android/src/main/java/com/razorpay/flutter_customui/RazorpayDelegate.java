@@ -290,9 +290,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == RazorpayPaymentActivity.RZP_REQUEST_CODE && resultCode == RazorpayPaymentActivity.RZP_RESULT_CODE){
             onLocalActivityResult(requestCode, resultCode, data);
-        } else if (razorpay != null) {
-            // Forward non-payment activity results (e.g. Amazon Pay login activity)
-            // to the Razorpay SDK so it can dispatch to its registered plugins.
+        } else if (razorpay != null && razorpay.amazonPayWallet != null) {
             razorpay.onActivityResult(requestCode, resultCode, data);
         }
         return true;
@@ -368,12 +366,11 @@ public class RazorpayDelegate implements ActivityResultListener {
             razorpay.amazonPayWallet.startAuthorization(activity, customerId,
                 new AmazonPayAuthCodeCallback() {
                     @Override
-                    public void onLinkingSuccessful(String authCode) {
+                    public void onLinkingSuccessful() {
                         HashMap<Object, Object> successReply = new HashMap<>();
                         successReply.put("type", "success");
                         HashMap<Object, Object> data = new HashMap<>();
                         data.put("customerId", customerId);
-                        data.put("authCode", authCode);
                         data.put("status", "linked");
                         successReply.put("data", data);
                         new Handler(Looper.getMainLooper()).post(() -> localResult.success(successReply));
@@ -390,11 +387,11 @@ public class RazorpayDelegate implements ActivityResultListener {
                         new Handler(Looper.getMainLooper()).post(() -> localResult.success(errorReply));
                     }
                 });
-        } catch (Exception e) {
+        } catch (Throwable t) {
             reply.put("type", "error");
             HashMap<Object, Object> data = new HashMap<>();
             data.put("code", -1);
-            data.put("message", "Amazon Pay error: " + e.getMessage());
+            data.put("message", "Amazon Pay error: " + t.getMessage());
             reply.put("data", data);
             localResult.success(reply);
         }
@@ -407,7 +404,7 @@ public class RazorpayDelegate implements ActivityResultListener {
         try {
             boolean available = razorpay != null && razorpay.amazonPayWallet != null;
             result.success(available);
-        } catch (Exception e) {
+        } catch (Throwable t) {
             result.success(false);
         }
     }
