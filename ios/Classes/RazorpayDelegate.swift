@@ -214,17 +214,17 @@ extension RazorpayDelegate {
         if let unwrappedWebView = self.webView {
             self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
 
-            // Attach Amazon Pay plugin via razorpay.amazonPay = AmazonWalletPaylater.pluginInstance()
-            // - Property name is `amazonPay` (confirmed from razorpay-ios source)
-            // - AmazonWalletPaylater has a private init — must use pluginInstance() factory
-            if let rzp = self.razorpay,
-               let cls = NSClassFromString("AmazonWalletPaylater") as? NSObject.Type {
-                let pluginInstanceSel = NSSelectorFromString("pluginInstance")
-                let setAmazonPaySel = NSSelectorFromString("setAmazonPay:")
-                if cls.responds(to: pluginInstanceSel),
-                   rzp.responds(to: setAmazonPaySel),
-                   let plugin = cls.perform(pluginInstanceSel)?.takeUnretainedValue() {
-                    rzp.perform(setAmazonPaySel, with: plugin)
+            // Attach Amazon Pay plugin via the wrapper's `amazonPlugin` property.
+            // self.razorpay is Razorpay.RazorpayCheckout (the wrapper), which exposes
+            // `amazonPlugin` — not `amazonPay` (that's on the inner RazorpayCustom layer).
+            // WalletPaylaterEntity is instantiated directly because AmazonWalletPaylater
+            // .pluginInstance() is a non-@objc static method and can't be called via perform().
+            if let rzp = self.razorpay {
+                let entityClassName = "_TtC26RazorpayApayWalletPaylater20WalletPaylaterEntity"
+                let setAmazonPluginSel = NSSelectorFromString("setAmazonPlugin:")
+                if let entityCls = NSClassFromString(entityClassName) as? NSObject.Type,
+                   rzp.responds(to: setAmazonPluginSel) {
+                    rzp.perform(setAmazonPluginSel, with: entityCls.init())
                 }
             }
 
@@ -335,7 +335,7 @@ extension RazorpayDelegate {
             return
         }
 
-        let pluginSelector = NSSelectorFromString("amazonPay")
+        let pluginSelector = NSSelectorFromString("amazonPlugin")
         guard rzp.responds(to: pluginSelector),
               let amazonModule = rzp.perform(pluginSelector)?.takeUnretainedValue() as? NSObject else {
             result(["type": "error", "data": [
@@ -387,7 +387,7 @@ extension RazorpayDelegate {
             result(false)
             return
         }
-        let pluginSelector = NSSelectorFromString("amazonPay")
+        let pluginSelector = NSSelectorFromString("amazonPlugin")
         if rzp.responds(to: pluginSelector),
            let plugin = rzp.perform(pluginSelector)?.takeUnretainedValue() {
             result(plugin is NSObject)
