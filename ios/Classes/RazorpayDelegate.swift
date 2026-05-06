@@ -215,12 +215,12 @@ extension RazorpayDelegate {
             self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
 
             // Attach Amazon Pay plugin via the wrapper's `amazonPlugin` property.
-            // self.razorpay is Razorpay.RazorpayCheckout (the wrapper), which exposes
-            // `amazonPlugin` — not `amazonPay` (that's on the inner RazorpayCustom layer).
-            // WalletPaylaterEntity is instantiated directly because AmazonWalletPaylater
-            // .pluginInstance() is a non-@objc static method and can't be called via perform().
+            // `amazonPlugin` is on Razorpay.RazorpayCheckout (the wrapper layer imported here);
+            // `amazonPay` is on the inner RazorpayCustom layer and is not accessible here.
+            // WalletPaylaterEntity is instantiated directly — AmazonWalletPaylater.pluginInstance()
+            // is non-@objc and cannot be called via perform().
             if let rzp = self.razorpay {
-                let entityClassName = "_TtC26RazorpayApayWalletPaylater20WalletPaylaterEntity"
+                let entityClassName = "RazorpayApayWalletPaylater.WalletPaylaterEntity"
                 let setAmazonPluginSel = NSSelectorFromString("setAmazonPlugin:")
                 if let entityCls = NSClassFromString(entityClassName) as? NSObject.Type,
                    rzp.responds(to: setAmazonPluginSel) {
@@ -271,7 +271,12 @@ extension RazorpayDelegate {
             if let dict = notification.userInfo {
                 if let uriScheme = dict["response"] as? String {
                     DispatchQueue.main.async {
-                        try? self.razorpay?.publishUri(with: uriScheme)
+                        do {
+                            try self.razorpay?.publishUri(with: uriScheme)
+                        } catch {
+                            // Non-fatal: log so failures are visible during debugging.
+                            NSLog("[RazorpayFlutter] publishUri failed for UPI intent callback: %@", error.localizedDescription)
+                        }
                 }
             }
         }
@@ -359,19 +364,19 @@ extension RazorpayDelegate {
         }
     }
 
-    /// Called by Amazon Pay SDK on linking success.
-    /// Selector: onSuccess: (AmazonAuthorizationDelegate protocol)
-    @objc func onSuccess(_ response: NSObject) {
+    /// AmazonAuthorizationDelegate — called on linking success.
+    /// Matches: func onLinkingSuccessful() in RazorpayPublicProtocols.swift
+    @objc func onLinkingSuccessful() {
         let reply: [String: Any] = [
             "type": "success",
-            "data": ["status": "linked", "response": response.description]
+            "data": ["status": "linked"]
         ]
         amazonPayResult?(reply)
         amazonPayResult = nil
     }
 
-    /// Called by Amazon Pay SDK on linking failure.
-    /// Selector: onLinkingFailed:description: (AmazonAuthorizationDelegate protocol)
+    /// AmazonAuthorizationDelegate — called on linking failure.
+    /// Matches: func onLinkingFailed(_ code: String, description: String) in RazorpayPublicProtocols.swift
     /// Note: `code` is String per the native protocol declaration in RazorpayPublicProtocols.swift
     @objc func onLinkingFailed(_ code: String, description: String) {
         let reply: [String: Any] = [
