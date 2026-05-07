@@ -224,7 +224,16 @@ extension RazorpayDelegate {
                 let setAmazonPluginSel = NSSelectorFromString("setAmazonPlugin:")
                 if let entityCls = NSClassFromString(entityClassName) as? NSObject.Type,
                    rzp.responds(to: setAmazonPluginSel) {
-                    rzp.perform(setAmazonPluginSel, with: entityCls.init())
+                    let entity = entityCls.init()
+                    // Must call initiate(key_id:) before setting the plugin —
+                    // this mirrors what RazorpayCheckout.initWithKey(...AmazonpayPlugin:) does
+                    // internally. Without it, key_id is nil and Razorpay's backend returns
+                    // "Required fields in state missing" after Amazon authorization.
+                    let initiateSel = NSSelectorFromString("initiateWithKey_id:")
+                    if entity.responds(to: initiateSel) {
+                        entity.perform(initiateSel, with: key)
+                    }
+                    rzp.perform(setAmazonPluginSel, with: entity)
                 }
             }
 
@@ -366,23 +375,25 @@ extension RazorpayDelegate {
 
     /// AmazonAuthorizationDelegate — called on linking success.
     /// Matches: func onLinkingSuccessful() in RazorpayPublicProtocols.swift
-    @objc func onLinkingSuccessful() {
+    /// `dynamic` ensures the selector is always registered in the ObjC runtime.
+    @objc dynamic func onLinkingSuccessful() {
         let reply: [String: Any] = [
             "type": "success",
             "data": ["status": "linked"]
         ]
+        self.razorpay=nil;
         amazonPayResult?(reply)
         amazonPayResult = nil
     }
 
     /// AmazonAuthorizationDelegate — called on linking failure.
     /// Matches: func onLinkingFailed(_ code: String, description: String) in RazorpayPublicProtocols.swift
-    /// Note: `code` is String per the native protocol declaration in RazorpayPublicProtocols.swift
-    @objc func onLinkingFailed(_ code: String, description: String) {
+    @objc dynamic func onLinkingFailed(_ code: String, description: String) {
         let reply: [String: Any] = [
             "type": "error",
             "data": ["code": code, "message": description]
         ]
+        self.razorpay=nil;
         amazonPayResult?(reply)
         amazonPayResult = nil
     }

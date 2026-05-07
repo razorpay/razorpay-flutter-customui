@@ -367,6 +367,7 @@ public class RazorpayDelegate implements ActivityResultListener {
                 new AmazonPayAuthCodeCallback() {
                     @Override
                     public void onLinkingSuccessful() {
+                        pendingResult = null;
                         HashMap<Object, Object> successReply = new HashMap<>();
                         successReply.put("type", "success");
                         HashMap<Object, Object> data = new HashMap<>();
@@ -378,6 +379,7 @@ public class RazorpayDelegate implements ActivityResultListener {
 
                     @Override
                     public void onLinkingError(int errorCode, String errorMessage) {
+                        pendingResult = null;
                         HashMap<Object, Object> errorReply = new HashMap<>();
                         errorReply.put("type", "error");
                         HashMap<Object, Object> data = new HashMap<>();
