@@ -40,10 +40,10 @@ class RazorpayDelegate: NSObject {
     }
 
     public func submit(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
-        guard self.razorpay == nil else {
-            result(["error": "Payment already in progress"] as NSDictionary)
-            return
-        }
+        // guard self.razorpay == nil else {
+        //     result(["error": "Payment already in progress"] as NSDictionary)
+        //     return
+        // }
         pendingResult = result
         let key = options["key"] as? String ?? ""
 
@@ -69,10 +69,10 @@ class RazorpayDelegate: NSObject {
     }
 
     public func payWithCred(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
-        guard self.razorpay == nil else {
-            result(["error": "Payment already in progress"] as NSDictionary)
-            return
-        }
+        // guard self.razorpay == nil else {
+        //     result(["error": "Payment already in progress"] as NSDictionary)
+        //     return
+        // }
         self.pendingResult = result
         let key = options["key"] as? String ?? ""
         self.initilizeSDK(withKey: key, result: result)
@@ -381,7 +381,6 @@ extension RazorpayDelegate {
             "type": "success",
             "data": ["status": "linked"]
         ]
-        self.razorpay=nil;
         amazonPayResult?(reply)
         amazonPayResult = nil
     }
@@ -393,7 +392,6 @@ extension RazorpayDelegate {
             "type": "error",
             "data": ["code": code, "message": description]
         ]
-        self.razorpay=nil;
         amazonPayResult?(reply)
         amazonPayResult = nil
     }
