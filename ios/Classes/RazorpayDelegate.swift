@@ -6,6 +6,7 @@ class RazorpayDelegate: NSObject {
 
     var pendingResult: FlutterResult!
     private var razorpay: RazorpayCheckout?
+    private var isPaymentInProgress = false
     var navController: UINavigationController?
     var webView: WKWebView?
     var parentVC = UIViewController()
@@ -40,10 +41,11 @@ class RazorpayDelegate: NSObject {
     }
 
     public func submit(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
-        // guard self.razorpay == nil else {
-        //     result(["error": "Payment already in progress"] as NSDictionary)
-        //     return
-        // }
+        guard !isPaymentInProgress else {
+            result(["error": "Payment already in progress"] as NSDictionary)
+            return
+        }
+        isPaymentInProgress = true
         pendingResult = result
         let key = options["key"] as? String ?? ""
 
@@ -69,10 +71,11 @@ class RazorpayDelegate: NSObject {
     }
 
     public func payWithCred(options: Dictionary<String, Any>, result: @escaping FlutterResult) {
-        // guard self.razorpay == nil else {
-        //     result(["error": "Payment already in progress"] as NSDictionary)
-        //     return
-        // }
+        guard !isPaymentInProgress else {
+            result(["error": "Payment already in progress"] as NSDictionary)
+            return
+        }
+        isPaymentInProgress = true
         self.pendingResult = result
         let key = options["key"] as? String ?? ""
         self.initilizeSDK(withKey: key, result: result)
@@ -90,9 +93,11 @@ class RazorpayDelegate: NSObject {
                 withOptions: tempOptions,
                 withSuccessCallback: { onSuccess in
                     self.pendingResult(onSuccess)
+                    self.isPaymentInProgress = false
                 },
                 andFailureCallback: { onFailure in
                     self.pendingResult(onFailure)
+                    self.isPaymentInProgress = false
                 })
         }
     }
@@ -178,6 +183,7 @@ class RazorpayDelegate: NSObject {
     }
     
     private func close() {
+        isPaymentInProgress = false
         razorpay?.close()
         if (self.webView != nil) {
             webView?.stopLoading()
