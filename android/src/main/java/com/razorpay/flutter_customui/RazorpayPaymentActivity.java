@@ -34,6 +34,14 @@ public class RazorpayPaymentActivity extends Activity implements PaymentResultWi
         super.onCreate(savedInstanceState);
 
         Bundle extras = this.getIntent().getExtras();
+        if (extras == null) {
+            // Activity recreated after Android Process Death with no Intent extras.
+            // We cannot restore payment state, so finish gracefully.
+            Log.w(TAG, "onCreate: Intent extras are null (likely Android Process Death). Finishing activity.");
+            returnErrorCallback(RZP_UNKNOWN_ERROR_CODE, "Payment session lost due to app process death. Please retry.", new PaymentData());
+            finish();
+            return;
+        }
         String optionsString = extras.getString(Constants.OPTIONS);
         try{
             payload = new JSONObject(optionsString);
