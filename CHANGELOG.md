@@ -1,3 +1,8 @@
+## 1.4.3
+
+- Added Amazon Pay link-and-pay support.
+- Fixed iOS resubmit crash and deprecated presentation issue.
+
 ## 1.0.0
 
 - TODO: Describe initial release.
