@@ -11,6 +11,10 @@ class RazorpayDelegate: NSObject {
     var webView: WKWebView?
     var parentVC = UIViewController()
 
+    // Separate result for Amazon Pay linking — avoids race conditions with
+    // the shared pendingResult which can be overwritten by concurrent utility calls.
+    var amazonPayResult: FlutterResult?
+
     /// Scene-aware key window. `UIApplication.shared.keyWindow` is nil on iOS 13+ for many apps.
     private static func keyWindow() -> UIWindow? {
         if #available(iOS 13.0, *) {
@@ -116,7 +120,7 @@ class RazorpayDelegate: NSObject {
     
     public func getPaymentMethods(result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
+        RazorpayCheckout.getPaymentMethods(withOptions: nil, withSuccessCallback: { successResponse in
             self.pendingResult(successResponse  as NSDictionary)
         }, andFailureCallback: { errorResponse in
             self.pendingResult(errorResponse)
@@ -145,7 +149,7 @@ class RazorpayDelegate: NSObject {
     
     public func getSubscriptionAmount(subscriptionId: String, result: @escaping FlutterResult) {
         self.pendingResult = result
-        self.razorpay?.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
+        RazorpayCheckout.getSubscriptionAmount(havingSubscriptionId: subscriptionId, withSuccessCallback: { [weak self] successResponse in
             self?.pendingResult(successResponse)
         }, andFailureCallback: { [weak self] errorResponse in
             self?.pendingResult(errorResponse)
@@ -215,7 +219,30 @@ extension RazorpayDelegate {
         self.configureWebView()
         if let unwrappedWebView = self.webView {
             self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
-            
+
+            // Attach Amazon Pay plugin via the wrapper's `amazonPlugin` property.
+            // `amazonPlugin` is on Razorpay.RazorpayCheckout (the wrapper layer imported here);
+            // `amazonPay` is on the inner RazorpayCustom layer and is not accessible here.
+            // WalletPaylaterEntity is instantiated directly — AmazonWalletPaylater.pluginInstance()
+            // is non-@objc and cannot be called via perform().
+            if let rzp = self.razorpay {
+                let entityClassName = "RazorpayApayWalletPaylater.WalletPaylaterEntity"
+                let setAmazonPluginSel = NSSelectorFromString("setAmazonPlugin:")
+                if let entityCls = NSClassFromString(entityClassName) as? NSObject.Type,
+                   rzp.responds(to: setAmazonPluginSel) {
+                    let entity = entityCls.init()
+                    // Must call initiate(key_id:) before setting the plugin —
+                    // this mirrors what RazorpayCheckout.initWithKey(...AmazonpayPlugin:) does
+                    // internally. Without it, key_id is nil and Razorpay's backend returns
+                    // "Required fields in state missing" after Amazon authorization.
+                    let initiateSel = NSSelectorFromString("initiateWithKey_id:")
+                    if entity.responds(to: initiateSel) {
+                        entity.perform(initiateSel, with: key)
+                    }
+                    rzp.perform(setAmazonPluginSel, with: entity)
+                }
+            }
+
             DispatchQueue.main.async {
                 let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))
                 
@@ -259,7 +286,12 @@ extension RazorpayDelegate {
             if let dict = notification.userInfo {
                 if let uriScheme = dict["response"] as? String {
                     DispatchQueue.main.async {
-                        self.razorpay?.publishUri(with: uriScheme)
+                        do {
+                            try self.razorpay?.publishUri(with: uriScheme)
+                        } catch {
+                            // Non-fatal: log so failures are visible during debugging.
+                            NSLog("[RazorpayFlutter] publishUri failed for UPI intent callback: %@", error.localizedDescription)
+                        }
                 }
             }
         }
@@ -309,5 +341,78 @@ extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
     func onPaymentError(_ code: Int32, description str: String, andData response: [AnyHashable : Any]) {
         pendingResult(response as NSDictionary)
         self.close()
+    }
+}
+
+// MARK: - Amazon Pay Link-n-Pay
+extension RazorpayDelegate {
+
+    public func amazonPayStartAuthorization(customerId: String, result: @escaping FlutterResult) {
+        // Store in dedicated property — NOT pendingResult — to avoid race conditions
+        // with concurrent utility calls (getPaymentMethods, isValidVpa, etc.)
+        guard let rzp = self.razorpay else {
+            result(["type": "error", "data": ["code": -1, "message": "SDK not initialized. Call initilizeSDK first."]])
+            return
+        }
+
+        let pluginSelector = NSSelectorFromString("amazonPlugin")
+        guard rzp.responds(to: pluginSelector),
+              let amazonModule = rzp.perform(pluginSelector)?.takeUnretainedValue() as? NSObject else {
+            result(["type": "error", "data": [
+                "code": -2,
+                "message": "Amazon Pay plugin not available. Add razorpay-apay-wallet-paylater pod."
+            ]])
+            return
+        }
+
+        self.amazonPayResult = result
+
+        let sel = NSSelectorFromString("startAuthorizationWithCustomerId:amazonAuthorizationDelegate:")
+        if amazonModule.responds(to: sel) {
+            amazonModule.perform(sel, with: customerId, with: self)
+        } else {
+            result(["type": "error", "data": [
+                "code": -3,
+                "message": "startAuthorizationWithCustomerId:amazonAuthorizationDelegate: not found"
+            ]])
+            self.amazonPayResult = nil
+        }
+    }
+
+    /// AmazonAuthorizationDelegate — called on linking success.
+    /// Matches: func onLinkingSuccessful() in RazorpayPublicProtocols.swift
+    /// `dynamic` ensures the selector is always registered in the ObjC runtime.
+    @objc dynamic func onLinkingSuccessful() {
+        let reply: [String: Any] = [
+            "type": "success",
+            "data": ["status": "linked"]
+        ]
+        amazonPayResult?(reply)
+        amazonPayResult = nil
+    }
+
+    /// AmazonAuthorizationDelegate — called on linking failure.
+    /// Matches: func onLinkingFailed(_ code: String, description: String) in RazorpayPublicProtocols.swift
+    @objc dynamic func onLinkingFailed(_ code: String, description: String) {
+        let reply: [String: Any] = [
+            "type": "error",
+            "data": ["code": code, "message": description]
+        ]
+        amazonPayResult?(reply)
+        amazonPayResult = nil
+    }
+
+    public func isAmazonPayAvailable(result: @escaping FlutterResult) {
+        guard let rzp = self.razorpay else {
+            result(false)
+            return
+        }
+        let pluginSelector = NSSelectorFromString("amazonPlugin")
+        if rzp.responds(to: pluginSelector),
+           let plugin = rzp.perform(pluginSelector)?.takeUnretainedValue() {
+            result(plugin is NSObject)
+        } else {
+            result(false)
+        }
     }
 }
