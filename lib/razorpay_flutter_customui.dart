@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
-import 'Tpv.dart';
-import 'upi_turbo.dart';
 
-class Razorpay  {
+class Razorpay {
   // Response codes from platform
   static const _CODE_PAYMENT_SUCCESS = 0;
   static const _CODE_PAYMENT_ERROR = 1;
@@ -12,7 +10,6 @@ class Razorpay  {
   // Event names
   static const EVENT_PAYMENT_SUCCESS = 'payment.success';
   static const EVENT_PAYMENT_ERROR = 'payment.error';
-  static const EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT = "linkNewUpiAccount";
 
   // Payment error codes
   static const NETWORK_ERROR = 0;
@@ -21,38 +18,15 @@ class Razorpay  {
   static const TLS_ERROR = 3;
   static const INCOMPATIBLE_PLUGIN = 4;
   static const UNKNOWN_ERROR = 100;
-  static const MethodChannel _channel = const MethodChannel('razorpay_flutter_customui');
+
+  static const MethodChannel _channel =
+      const MethodChannel('razorpay_flutter_customui');
+
+  // EventEmitter instance used for communication
   late EventEmitter _eventEmitter;
-  late UpiTurbo upiTurbo;
-  late Tpv tpv;
 
-  Razorpay(String key) {
-    _channel.invokeMethod('initilizeSDK', key);
+  Razorpay() {
     _eventEmitter = new EventEmitter();
-    upiTurbo = new UpiTurbo( _channel, _eventEmitter);
-    tpv = Tpv(_channel , _eventEmitter);
-  }
-
-  // Maintain a map to store callbacks for each data exchange
-  final Map<String, Function(dynamic)> _callbackMap = {};
-
-  // Register a callback for the specified identifier
-  void registerCallback(String identifier, Function(dynamic) callback) {
-    _callbackMap[identifier] = callback;
-  }
-
-  // Unregister the callback for the specified identifier
-  void unregisterCallback(String identifier) {
-    _callbackMap.remove(identifier);
-  }
-
-  // Called when data is received from the Android side
-  void onDataReceived(Map<String, dynamic> data) {
-    final identifier = data['identifier'];
-    final callback = _callbackMap[identifier];
-    if (callback != null) {
-      callback(data['data']);
-    }
   }
 
   Future<Map<dynamic, dynamic>> getPaymentMethods() async {
@@ -114,6 +88,10 @@ class Razorpay  {
     return isValidVpa;
   }
 
+
+  initilizeSDK(String key) {
+    _channel.invokeMethod('initilizeSDK', key);
+  }
 
   submit(Map<String, dynamic> options) async {
     Map<String, dynamic> validationResult = _validateOptions(options);
@@ -191,14 +169,6 @@ class Razorpay  {
 
   /// Validate payment options
   static Map<String, dynamic> _validateOptions(Map<String, dynamic> options) {
-    if (options['upiAccount']!=null){
-      if ( options['payload']!=null) {
-        if (options['payload']['key'] != null) {
-          return {'success': true};
-        }
-      }
-    }
-
     var key = options['key'];
     if (key == null) {
       return {
@@ -238,8 +208,3 @@ class PaymentFailureResponse {
     return new PaymentFailureResponse(code, message);
   }
 }
-
-
-
-
-
