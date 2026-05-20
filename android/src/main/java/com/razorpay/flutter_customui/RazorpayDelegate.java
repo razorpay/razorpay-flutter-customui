@@ -40,6 +40,13 @@ import java.util.Map;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
+import android.os.Handler;
+import android.os.Looper;
+
+// compileOnly import — works at compile time, null-safe at runtime if merchant
+// has not added the amazonpay-wallet-paylater runtime dependency.
+import com.razorpay.AmazonPayAuthCodeCallback;
+
 import static com.razorpay.flutter_customui.Constants.PAYMENT_DATA;
 
 public class RazorpayDelegate implements ActivityResultListener {
@@ -110,13 +117,19 @@ public class RazorpayDelegate implements ActivityResultListener {
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
             @Override
             public void onPaymentMethodsReceived(String s) {
-                HashMap<String, Object> hMapData = new Gson().fromJson(s, HashMap.class);
-                pendingResult.success(hMapData);
+                if (pendingResult != null) {
+                    HashMap<String, Object> hMapData = new Gson().fromJson(s, HashMap.class);
+                    pendingResult.success(hMapData);
+                    pendingResult = null;
+                }
             }
 
             @Override
             public void onError(String s) {
-                pendingResult.error(s, "", null);
+                if (pendingResult != null) {
+                    pendingResult.error(s, "", null);
+                    pendingResult = null;
+                }
             }
         });
     }
@@ -126,11 +139,14 @@ public class RazorpayDelegate implements ActivityResultListener {
         Razorpay.getAppsWhichSupportUpi(activity, new RzpUpiSupportedAppsCallback() {
             @Override
             public void onReceiveUpiSupportedApps(List<ApplicationDetails> list) {
-                HashMap<Object, Object> hMap = new HashMap<>();
-                for (int i=0;i<list.size();i++) {
-                    hMap.put(list.get(i).getPackageName(),list.get(i).getAppName());
+                if (pendingResult != null) {
+                    HashMap<Object, Object> hMap = new HashMap<>();
+                    for (int i=0;i<list.size();i++) {
+                        hMap.put(list.get(i).getPackageName(),list.get(i).getAppName());
+                    }
+                    pendingResult.success(hMap);
+                    pendingResult = null;
                 }
-                pendingResult.success(hMap);
             }
         });
     }
@@ -140,24 +156,36 @@ public class RazorpayDelegate implements ActivityResultListener {
         razorpay.getSubscriptionAmount(value, new SubscriptionAmountCallback() {
             @Override
             public void onSubscriptionAmountReceived(long l) {
-                pendingResult.success(l);
+                if (pendingResult != null) {
+                    pendingResult.success(l);
+                    pendingResult = null;
+                }
             }
 
             @Override
             public void onError(String s) {
-                pendingResult.error(s, "", null);
+                if (pendingResult != null) {
+                    pendingResult.error(s, "", null);
+                    pendingResult = null;
+                }
             }
         });
     }
 
     void getWalletLogoUrl(String value, Result result) {
         this.pendingResult = result;
-        pendingResult.success(razorpay.getWalletLogoUrl(value));
+        if (pendingResult != null) {
+            pendingResult.success(razorpay.getWalletLogoUrl(value));
+            pendingResult = null;
+        }
     }
 
     void isValidCardNumber(String value, Result result) {
         this.pendingResult = result;
-        pendingResult.success(razorpay.isValidCardNumber(value));
+        if (pendingResult != null) {
+            pendingResult.success(razorpay.isValidCardNumber(value));
+            pendingResult = null;
+        }
     }
 
     void isValidVpa(String value, Result result) {
@@ -165,13 +193,19 @@ public class RazorpayDelegate implements ActivityResultListener {
         razorpay.isValidVpa(value, new ValidateVpaCallback() {
             @Override
             public void onResponse(JSONObject jsonObject) {
-                HashMap<String, Object> hMapData = new Gson().fromJson(jsonObject.toString(), HashMap.class);
-                pendingResult.success(hMapData);
+                if (pendingResult != null) {
+                    HashMap<String, Object> hMapData = new Gson().fromJson(jsonObject.toString(), HashMap.class);
+                    pendingResult.success(hMapData);
+                    pendingResult = null;
+                }
             }
 
             @Override
             public void onFailure() {
-                pendingResult.error("error", "", null);
+                if (pendingResult != null) {
+                    pendingResult.error("error", "", null);
+                    pendingResult = null;
+                }
             }
         });
     }
@@ -179,6 +213,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     private void sendReply(HashMap<Object, Object> data) {
         if (pendingResult != null) {
             pendingResult.success(data);
+            pendingResult = null; // Clear the result after sending to prevent double replies
             pendingReply = null;
         } else {
             pendingReply = data;
@@ -186,55 +221,30 @@ public class RazorpayDelegate implements ActivityResultListener {
     }
 
     public void resync(Result result) {
-        result.success(pendingReply);
-        pendingReply = null;
+        if (pendingReply != null) {
+            result.success(pendingReply);
+            pendingReply = null;
+        } else {
+            result.success(null);
+        }
     }
 
     public void setPaymentID(String value, Result result) {
         this.pendingResult = result;
         razorpay.setPaymentID(value);
-    }
-
-
-
-    /*@Override
-    public void onPaymentError(int code, String message, PaymentData paymentData) {
-        Map<String, Object> reply = new HashMap<>();
-        reply.put("type", CODE_PAYMENT_ERROR);
-
-        Map<String, Object> data = new HashMap<>();
-        //data.put("code", translateRzpPaymentError(code));
-        data.put("message", message);
-
-        reply.put("data", data);
-
-        sendReply(reply);
-    }
-
-    @Override
-    public void onPaymentSuccess(String paymentId, PaymentData paymentData) {
-        Map<String, Object> reply = new HashMap<>();
-        reply.put("type", CODE_PAYMENT_SUCCESS);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("razorpay_payment_id", paymentData.getPaymentId());
-        data.put("razorpay_order_id", paymentData.getOrderId());
-        data.put("razorpay_signature", paymentData.getSignature());
-
-        if (paymentData.getData().has("razorpay_subscription_id")) {
-            try {
-                data.put("razorpay_subscription_id", paymentData.getData().optString("razorpay_subscription_id"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        // Send success response after setting payment ID
+        if (pendingResult != null) {
+            pendingResult.success(null);
+            pendingResult = null;
         }
-
-
-        reply.put("data", data);
-        sendReply(reply);
-    }*/
+    }
 
     public void onPaymentSuccess(String razorpayPaymentId, JSONObject paymentData) {
+        if (pendingResult == null) {
+            // Reply already sent or no pending result
+            return;
+        }
+        
         try {
             HashMap<Object, Object> reply = new HashMap<>();
             reply.put("type", CODE_PAYMENT_SUCCESS);
@@ -253,12 +263,17 @@ public class RazorpayDelegate implements ActivityResultListener {
             reply.put("data",data);
             sendReply(reply);
         } catch (JSONException e) {
-
+            // Handle JSON exception
         }
     }
 
 
     public void onPaymentError(int code, String description, JSONObject paymentDataJson) {
+        if (pendingResult == null) {
+            // Reply already sent or no pending result
+            return;
+        }
+        
         HashMap<Object, Object> reply = new HashMap<>();
         reply.put("type", CODE_PAYMENT_ERROR);
 
@@ -275,6 +290,8 @@ public class RazorpayDelegate implements ActivityResultListener {
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == RazorpayPaymentActivity.RZP_REQUEST_CODE && resultCode == RazorpayPaymentActivity.RZP_RESULT_CODE){
             onLocalActivityResult(requestCode, resultCode, data);
+        } else if (razorpay != null && razorpay.amazonPayWallet != null) {
+            razorpay.onActivityResult(requestCode, resultCode, data);
         }
         return true;
     }
@@ -313,4 +330,84 @@ public class RazorpayDelegate implements ActivityResultListener {
 
     public void onNewIntent(Intent intent) {}
 
+    // ── Amazon Pay Link-n-Pay ─────────────────────────────────────────────────
+
+    /**
+     * Initiates Amazon Pay account linking.
+     *
+     * Uses a local Result reference (NOT this.pendingResult) to avoid
+     * overwriting any in-flight payment or utility call on the shared result.
+     */
+    public void amazonPayStartAuthorization(String customerId, Result result) {
+        final Result localResult = result;
+        HashMap<Object, Object> reply = new HashMap<>();
+
+        if (razorpay == null) {
+            reply.put("type", "error");
+            HashMap<Object, Object> data = new HashMap<>();
+            data.put("code", -1);
+            data.put("message", "SDK not initialized. Call initilizeSDK first.");
+            reply.put("data", data);
+            localResult.success(reply);
+            return;
+        }
+
+        try {
+            if (razorpay.amazonPayWallet == null) {
+                reply.put("type", "error");
+                HashMap<Object, Object> data = new HashMap<>();
+                data.put("code", -1);
+                data.put("message", "Amazon Pay plugin not available. Add 'com.razorpay:amazonpay-wallet-paylater' to your app/build.gradle.");
+                reply.put("data", data);
+                localResult.success(reply);
+                return;
+            }
+
+            razorpay.amazonPayWallet.startAuthorization(activity, customerId,
+                new AmazonPayAuthCodeCallback() {
+                    @Override
+                    public void onLinkingSuccessful() {
+                        pendingResult = null;
+                        HashMap<Object, Object> successReply = new HashMap<>();
+                        successReply.put("type", "success");
+                        HashMap<Object, Object> data = new HashMap<>();
+                        data.put("customerId", customerId);
+                        data.put("status", "linked");
+                        successReply.put("data", data);
+                        new Handler(Looper.getMainLooper()).post(() -> localResult.success(successReply));
+                    }
+
+                    @Override
+                    public void onLinkingError(int errorCode, String errorMessage) {
+                        pendingResult = null;
+                        HashMap<Object, Object> errorReply = new HashMap<>();
+                        errorReply.put("type", "error");
+                        HashMap<Object, Object> data = new HashMap<>();
+                        data.put("code", errorCode);
+                        data.put("message", errorMessage);
+                        errorReply.put("data", data);
+                        new Handler(Looper.getMainLooper()).post(() -> localResult.success(errorReply));
+                    }
+                });
+        } catch (Throwable t) {
+            reply.put("type", "error");
+            HashMap<Object, Object> data = new HashMap<>();
+            data.put("code", -1);
+            data.put("message", "Amazon Pay error: " + t.getMessage());
+            reply.put("data", data);
+            localResult.success(reply);
+        }
+    }
+
+    /**
+     * Returns true if the Amazon Pay plugin is available (non-null) at runtime.
+     */
+    public void isAmazonPayAvailable(Result result) {
+        try {
+            boolean available = razorpay != null && razorpay.amazonPayWallet != null;
+            result.success(available);
+        } catch (Throwable t) {
+            result.success(false);
+        }
+    }
 }

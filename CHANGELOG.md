@@ -1,3 +1,8 @@
+## 1.4.3
+
+- Added Amazon Pay link-and-pay support.
+- Fixed iOS resubmit crash and deprecated presentation issue.
+
 ## 1.0.0
 
 - TODO: Describe initial release.
@@ -50,3 +55,14 @@
 
 - Removed JCenter from build.gradle for android due to Deprecation
 
+## 1.4.0
+
+- Migrated to android v2 embedding.
+
+## 1.4.1
+
+- Bug-fix : Fixed `reply already submitted` intermittent error on getPaymentMethods function.
+
+## 1.4.2
+
+- Bug-fix : Fixed `iOS native platform` errors due to internal libraries. 
