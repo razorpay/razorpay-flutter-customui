@@ -70,20 +70,11 @@ class _BankListScreenState extends State<BankListScreen> {
             child: ListView.builder(
               itemCount: banks.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    widget.razorpay.upiTurbo.getBankAccounts(bank: banks[index]);
-                  },
-                  child: ListTile(
-                    title: Text(banks[index].name!),
-                    leading:
-                    FadeInImage.assetNetwork(
-                      placeholder: "images/bank_placeholder.png",
-                      image: banks[index].logo!,
-                    ),
+                return ListTile(
+                  title: Text(banks[index].name!),
+                  leading: FadeInImage.assetNetwork(
+                    placeholder: "images/bank_placeholder.png",
+                    image: banks[index].logo!,
                   ),
                 );
               },

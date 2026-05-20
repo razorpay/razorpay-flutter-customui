@@ -72,67 +72,16 @@ class GetLinkedUPIAccountPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                razorpay.upiTurbo.getBalance(
-                                    upiAccount: upiAccounts[index],
-                                    onSuccess: (AccountBalance accountBalance){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text(" Balance : Rs ${accountBalance.balance}")));
-                                    },
-                                    onFailure: (Error error){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Error : ${error.errorDescription}")));
-                                    } );
-                              },
-                              child: Text('Get Balance')),
-                          ElevatedButton(
-                              onPressed: () {
-                                razorpay.upiTurbo.changeUpiPin(upiAccount: upiAccounts[index],
-                                    onSuccess: (UpiAccount upiAccount){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Upi Pin Changed")));
-                                    },
-                                    onFailure: (Error error){
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("Error : ${error.errorDescription}")));
-                                    });
-                              },
-                              child: Text('Change UPI Pin Done')),
+                          ElevatedButton(onPressed: null, child: Text('Get Balance')),
+                          ElevatedButton(onPressed: null, child: Text('Change UPI Pin')),
                         ],
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
+                      SizedBox(height: 15),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CardDialog(
-                                      upiAccount : upiAccounts[index],
-                                      razorpay: razorpay,
-                                    );
-                                  },
-                                );
-                              },
-                              child: Text('Reset PIN')),
-                          ElevatedButton(
-                              onPressed: () {
-                                razorpay.upiTurbo.delink(upiAccount: upiAccounts[index],
-                                    onSuccess: (Empty empty){
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("DeLink Done")));
-                                },
-                                onFailure: (Error error){
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Error : ${error.errorDescription}")));
-                                });
-                              },
-                              child: Text('DeLink')),
+                          ElevatedButton(onPressed: null, child: Text('Reset PIN')),
+                          ElevatedButton(onPressed: null, child: Text('DeLink')),
                         ],
                       )
                     ],

@@ -127,23 +127,13 @@ class _TpvDialogState extends State<TpvDialog> {
             )
                 : SizedBox(height: 5,),
 
-            ElevatedButton(onPressed: () {
-              var tpvBankAccount = null;
-              if(accountNumber!.isNotEmpty && bankName!.isNotEmpty && ifsc!.isNotEmpty){
-                tpvBankAccount = TPVBankAccount(account_number: accountNumber, bank_name:bankName , ifsc: ifsc );
-              }
-              widget.razorpay.tpv
-                    .setOrderId(orderId)
-                    .setCustomerId(customerId)
-                    .setCustomerMobile(widget.customerMobile!)
-                    .setTpvBankAccount(tpvBankAccount)
-                    .linkNewUpiAccount();
-
-              setState(() {
-                isLoading = true;
-              });
-
-            }, child: Text('LinkNewUpiAccount TPV')),
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("TPV not available in v1.4.3")));
+              },
+              child: Text('LinkNewUpiAccount TPV'),
+            ),
           ],
         ),
       ),

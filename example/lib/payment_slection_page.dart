@@ -199,7 +199,6 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         setState(() {
           isLoading = false;
         });
-        _razorpay.upiTurbo.askForPermission();
         break;
       case "LOADER_DATA":
         print("LOADER_DATA called");
@@ -508,8 +507,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                           .showSnackBar(SnackBar(content: Text(error)));
                       return;
                     }
-                      _razorpay.upiTurbo.linkNewUpiAccount(
-                          customerMobile: turboUPIModel?.mobileNumber);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("UPI Turbo not available in v1.4.3")));
                   },
                   child: Text('LinkNewUpiAccount')),
           SizedBox(height: 6.0),
@@ -566,21 +565,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                   isLoading = true;
                 });
 
-                _razorpay.upiTurbo.linkNewUpiAccountWithUI(
-                    customerMobile: turboUPIModel?.mobileNumber, color: "#000000",
-                    onSuccess: (List<UpiAccount> upiAccounts) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (builder) {
-                            return GetLinkedUPIAccountPage(
-                                razorpay: _razorpay, upiAccounts: upiAccounts , keyValue :key, customerMobile: mobileNo,);
-                          },
-                        ),
-                      );
-                    },
-                    onFailure: (Error error) { ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Error : ${error.errorDescription}")));});
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("UPI Turbo not available in v1.4.3")));
 
               },
               child: Text('LinkNewUpiAccount_UI')),
@@ -598,9 +584,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                   isLoading = true;
                 });
 
-                _razorpay.upiTurbo.manageUpiAccounts(
-                    customerMobile: turboUPIModel?.mobileNumber,
-                    onFailure: (Error error) {  });
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("UPI Turbo not available in v1.4.3")));
 
               },
               child: Text('ManageUpiAccounts_UI')),
@@ -933,29 +918,10 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
 
 
   void getLinkedUpiAccounts() {
-    print("getLinkedUpiAccounts()");
-    _razorpay.upiTurbo.getLinkedUpiAccounts(
-        customerMobile: turboUPIModel?.mobileNumber,
-        onSuccess: (List<UpiAccount> upiAccounts){
-          print("onSuccess() upiAccounts");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (builder) {
-                return GetLinkedUPIAccountPage(
-                    razorpay: _razorpay,
-                    upiAccounts: upiAccounts ,
-                    keyValue : key,
-                    customerMobile : turboUPIModel!.mobileNumber.toString()
-                );
-              },
-            ),
-          );
-        },
-        onFailure: (Error error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Error : ${error.errorDescription}")));
-        });
+    print("getLinkedUpiAccounts() - UPI Turbo not available in v1.4.3");
+    setState(() { isLoading = false; });
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("UPI Turbo not available in v1.4.3")));
   }
 }
 

@@ -32,19 +32,13 @@ class BankAccountDialog extends StatelessWidget {
                     itemCount: bankAccounts.length,
                     itemBuilder: (context, index) {
 
-                      return GestureDetector(
-                        onTap: () {
-                          razorpay.upiTurbo.selectedBankAccount(bankAccount: bankAccounts[index]);
-                        },
-                        child: ListTile(
+                      return ListTile(
                           title: Text(bankAccounts[index].maskedAccountNumber!),
                           subtitle: Text(bankAccounts[index].bank!.name!),
-                          leading:
-                          FadeInImage.assetNetwork(
+                          leading: FadeInImage.assetNetwork(
                               placeholder: "images/bank_placeholder.png",
-                              image:bankAccounts[index].bank!.logo!,
+                              image: bankAccounts[index].bank!.logo!,
                           ),
-                        ),
                       );
                     })),
           ],

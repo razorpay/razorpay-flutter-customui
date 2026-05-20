@@ -101,20 +101,8 @@ class CardDialog extends StatelessWidget {
               var card =  RazorPayCard.Card( lastSixDigits: lastSixDigits ,
                   expiryYear: expiryYear , expiryMonth: expiryMonth );
 
-              if(upiAccount == null){
-                razorpay.upiTurbo.setupUpiPin(card :card);
-                return;
-              }
-
-              razorpay.upiTurbo.resetUpiPin(upiAccount : upiAccount!, card :card ,
-                  onSuccess: (UpiAccount upiAccount){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Rest UPI Pin done")));
-                  },
-                  onFailure: (Error error){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Error : ${error.errorDescription}")));
-                  });
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("UPI Turbo PIN features not available in v1.4.3")));
             }, child: Text('Rest UPI Pin')),
 
           ],
