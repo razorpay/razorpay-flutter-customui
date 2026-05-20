@@ -3,7 +3,7 @@ import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'amazon_pay.dart';
 
-class Razorpay {
+class Razorpay  {
   // Response codes from platform
   static const _CODE_PAYMENT_SUCCESS = 0;
   static const _CODE_PAYMENT_ERROR = 1;
@@ -11,6 +11,7 @@ class Razorpay {
   // Event names
   static const EVENT_PAYMENT_SUCCESS = 'payment.success';
   static const EVENT_PAYMENT_ERROR = 'payment.error';
+  static const EVENT_UPI_TURBO_LINK_NEW_UPI_ACCOUNT = "linkNewUpiAccount";
 
   // Payment error codes
   static const NETWORK_ERROR = 0;
@@ -19,15 +20,12 @@ class Razorpay {
   static const TLS_ERROR = 3;
   static const INCOMPATIBLE_PLUGIN = 4;
   static const UNKNOWN_ERROR = 100;
-
-  static const MethodChannel _channel =
-      const MethodChannel('razorpay_flutter_customui');
-
-  // EventEmitter instance used for communication
+  static const MethodChannel _channel = const MethodChannel('razorpay_flutter_customui');
   late EventEmitter _eventEmitter;
   late AmazonPay amazonPay;
 
-  Razorpay() {
+  Razorpay(String key) {
+    _channel.invokeMethod('initilizeSDK', key);
     _eventEmitter = new EventEmitter();
     amazonPay = AmazonPay(_channel, _eventEmitter);
   }
@@ -91,10 +89,6 @@ class Razorpay {
     return isValidVpa;
   }
 
-
-  initilizeSDK(String key) {
-    _channel.invokeMethod('initilizeSDK', key);
-  }
 
   submit(Map<String, dynamic> options) async {
     Map<String, dynamic> validationResult = _validateOptions(options);
@@ -172,6 +166,14 @@ class Razorpay {
 
   /// Validate payment options
   static Map<String, dynamic> _validateOptions(Map<String, dynamic> options) {
+    if (options['upiAccount']!=null){
+      if ( options['payload']!=null) {
+        if (options['payload']['key'] != null) {
+          return {'success': true};
+        }
+      }
+    }
+
     var key = options['key'];
     if (key == null) {
       return {
@@ -211,3 +213,8 @@ class PaymentFailureResponse {
     return new PaymentFailureResponse(code, message);
   }
 }
+
+
+
+
+

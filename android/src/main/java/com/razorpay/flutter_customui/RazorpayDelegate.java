@@ -1,42 +1,44 @@
 package com.razorpay.flutter_customui;
 
+
+
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.webkit.WebView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.razorpay.ApplicationDetails;
-import com.razorpay.PaymentData;
-//import com.razorpay.PaymentMethodsCallback;
-
 import com.razorpay.PaymentMethodsCallback;
-import com.razorpay.PaymentResultWithDataListener;
 import com.razorpay.Razorpay;
-import com.razorpay.RazorpayWebViewClient;
 import com.razorpay.RzpUpiSupportedAppsCallback;
-
 import com.razorpay.SubscriptionAmountCallback;
+import com.razorpay.UpiTurboLinkAccountListener;
+import com.razorpay.UpiTurboLinkAccountResultListener;
+import com.razorpay.UpiTurboLinkAction;
+import com.razorpay.UpiTurboManageAccountListener;
+import com.razorpay.UpiTurboResultListener;
 import com.razorpay.ValidateVpaCallback;
-import com.razorpay.ValidationListener;
-
-
+import com.razorpay.upi.AccountBalance;
+import com.razorpay.upi.Bank;
+import com.razorpay.upi.Card;
+import com.razorpay.upi.Empty;
+import com.razorpay.upi.Error;
+import com.razorpay.upi.Sim;
+import com.razorpay.upi.TPVBankAccount;
+import com.razorpay.upi.UpiAccount;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener;
 
@@ -49,8 +51,7 @@ import com.razorpay.AmazonPayAuthCodeCallback;
 
 import static com.razorpay.flutter_customui.Constants.PAYMENT_DATA;
 
-public class RazorpayDelegate implements ActivityResultListener {
-
+public class RazorpayDelegate implements ActivityResultListener  {
     private Activity activity;
     private Result pendingResult;
     private Map<Object, Object> pendingReply;
@@ -67,19 +68,33 @@ public class RazorpayDelegate implements ActivityResultListener {
     private static final int TLS_ERROR = 6;
     private static final int UNKNOWN_ERROR = 100;
 
+    final String TAG = "com.razorpay.flutter_customui.RazorpayDelegate";
+
+    // Turbo UPI
+
+    private UpiTurboLinkAction linkAction;
+    private EventChannel.EventSink eventSink;
+
+    private static final int CODE_EVENT_SUCCESS = 200;
+    private static final int CODE_EVENT_ERROR = 201;
+
+    private static final String LINK_NEW_UPI_ACCOUNT_EVENT = "linkNewUpiAccountEvent";
+    Gson gson ;
+    private Handler uiThreadHandler = new Handler(Looper.getMainLooper());
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public RazorpayDelegate(Activity activity) {
         this.activity = activity;
+        this.gson = new Gson();
     }
 
     void init(String key, Result result) {
         this.key = key;
         this.pendingResult = result;
-        razorpay = new Razorpay(activity,key);
+        razorpay = new Razorpay(activity, key);
     }
 
-    void submit(final JSONObject payload, Result result) {
+    void submit(final JSONObject payload, Result result ) {
         this.pendingResult = result;
         Intent intent = new Intent(activity, RazorpayPaymentActivity.class);
         intent.putExtra(Constants.OPTIONS, payload.toString());
@@ -98,7 +113,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     }
 
     String getBankLogoUrl(String value) {
-       return razorpay.getBankLogoUrl(value);
+        return razorpay.getBankLogoUrl(value);
     }
 
     String getCardNetwork(String value) {
@@ -112,7 +127,7 @@ public class RazorpayDelegate implements ActivityResultListener {
     void getPaymentMethods(final Result result) {
         pendingResult = result;
         if (razorpay == null) {
-            init(this.key,result);
+            init(this.key, result);
         }
         razorpay.getPaymentMethods(new PaymentMethodsCallback() {
             @Override
@@ -260,7 +275,7 @@ public class RazorpayDelegate implements ActivityResultListener {
             if (paymentData.has("razorpay_signature")) {
                 data.put("razorpay_signature", paymentData.optString("razorpay_signature"));
             }
-            reply.put("data",data);
+            reply.put("data", data);
             sendReply(reply);
         } catch (JSONException e) {
             // Handle JSON exception
@@ -288,7 +303,7 @@ public class RazorpayDelegate implements ActivityResultListener {
 
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == RazorpayPaymentActivity.RZP_REQUEST_CODE && resultCode == RazorpayPaymentActivity.RZP_RESULT_CODE){
+        if (requestCode == RazorpayPaymentActivity.RZP_REQUEST_CODE && resultCode == RazorpayPaymentActivity.RZP_RESULT_CODE) {
             onLocalActivityResult(requestCode, resultCode, data);
         } else if (razorpay != null && razorpay.amazonPayWallet != null) {
             razorpay.onActivityResult(requestCode, resultCode, data);
@@ -296,14 +311,14 @@ public class RazorpayDelegate implements ActivityResultListener {
         return true;
     }
 
-    void onLocalActivityResult(int requestCode, int resultCode, Intent data){
+    void onLocalActivityResult(int requestCode, int resultCode, Intent data) {
         String paymentDataString = data.getStringExtra(PAYMENT_DATA);
         JSONObject paymentData = new JSONObject();
-        try{
+        try {
             paymentData = new JSONObject(paymentDataString);
-        } catch(Exception e){
+        } catch (Exception e) {
         }
-        if(data.getBooleanExtra(Constants.IS_SUCCESS, false)){
+        if (data.getBooleanExtra(Constants.IS_SUCCESS, false)) {
             String payment_id = data.getStringExtra(Constants.PAYMENT_ID);
             onPaymentSuccess(payment_id, paymentData);
         } else {
@@ -328,7 +343,6 @@ public class RazorpayDelegate implements ActivityResultListener {
         }
     }
 
-    public void onNewIntent(Intent intent) {}
 
     // ── Amazon Pay Link-n-Pay ─────────────────────────────────────────────────
 

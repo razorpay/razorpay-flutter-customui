@@ -344,6 +344,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "web",
+      "rootUri": "file:///Users/shibu.prasad/.pub-cache/hosted/pub.dev/web-0.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "web_socket_channel",
       "rootUri": "file:///Users/vivek.shindhe/.pub-cache/hosted/pub.dev/web_socket_channel-3.0.2",
       "packageUri": "lib/",
