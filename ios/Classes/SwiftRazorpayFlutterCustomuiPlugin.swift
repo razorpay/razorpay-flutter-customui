@@ -68,6 +68,13 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             if let vpa = call.arguments as? String {
                 razorpayDelegate.isValidVpa(value: vpa, result: result)
             }
+        case "amazonPayStartAuthorization":
+            if let args = call.arguments as? Dictionary<String, Any>,
+               let customerId = args["customerId"] as? String {
+                razorpayDelegate.amazonPayStartAuthorization(customerId: customerId, result: result)
+            }
+        case "isAmazonPayAvailable":
+            razorpayDelegate.isAmazonPayAvailable(result: result)
         default:
             print("no method")
         }

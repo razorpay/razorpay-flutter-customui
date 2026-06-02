@@ -30,7 +30,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.razorpay.flutter_customui_example"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -43,18 +43,6 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-
-    buildFeatures {
-        buildConfig = false
-        dataBinding true
-        viewBinding true
-    }
-}
-
-dependencies {
-    //TODO: Add Library folder path in implementation's dir
-    //implementation fileTree(include: ['*.aar'], dir: '')
-    //implementation 'com.razorpay:customui:3.9.+'
 }
 
 flutter {

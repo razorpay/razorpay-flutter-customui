@@ -10,6 +10,4 @@ public class Constants{
 	public static final String KEY_ID = "key";
 	public static final String OPTIONS = "OPTIONS";
 	public static final String BACK_ALERT_MESSAGE = "Do you want to cancel ongoing payment";
-
-	public static final String UPI_ACCOUNT = "upiAccount";
 }
