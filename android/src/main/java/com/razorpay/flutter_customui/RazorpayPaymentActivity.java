@@ -210,12 +210,21 @@ public class RazorpayPaymentActivity
     ) {
         super.onActivityResult(requestCode, resultCode, data);
         if (razorpay != null) {
-            if(paymentAlreadySubmitted && data == null){
-                razorpay.onActivityResult(requestCode, resultCode, data, true);
-            }else{
+            if (paymentAlreadySubmitted && data == null) {
+                try {
+                    java.lang.reflect.Method m = razorpay.getClass().getMethod(
+                        "onActivityResult", int.class, int.class, Intent.class, boolean.class
+                    );
+                    m.invoke(razorpay, requestCode, resultCode, data, true);
+                } catch (NoSuchMethodException e) {
+                    razorpay.onActivityResult(requestCode, resultCode, data);
+                } catch (Exception e) {
+                    Log.e(TAG, "Reflection call to onActivityResult failed", e);
+                    razorpay.onActivityResult(requestCode, resultCode, data);
+                }
+            } else {
                 razorpay.onActivityResult(requestCode, resultCode, data);
             }
-
         }
     }
 
