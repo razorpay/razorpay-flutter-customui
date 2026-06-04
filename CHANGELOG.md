@@ -1,3 +1,7 @@
+## 1.4.4
+
+- Bug-fix: Fixed activity recreation crash issue in Android due to process death.
+
 ## 1.4.3
 
 - Added Amazon Pay link-and-pay support.
