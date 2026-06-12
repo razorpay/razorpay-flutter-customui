@@ -84,6 +84,18 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
         );
       },
     );
+    attachBankLogosAsync();
+  }
+
+  attachBankLogosAsync() async {
+    if (netBankingList?.isNotEmpty != true)
+      return;
+    for (var netBank in netBankingList!) {
+      if (netBank.bankKey?.isNotEmpty == true) {
+        String? logoUrl = await _razorpay.getBankLogoUrl(netBank.bankKey!);
+        netBank.logoUrl = logoUrl;
+      }
+    }
   }
 
   configurePaymentWallets() {
@@ -297,7 +309,25 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     return ListView.builder(
       itemCount: netBankingList?.length,
       itemBuilder: (context, item) {
+        Widget? leadingWidget;
+        if (netBankingList?[item].logoUrl?.isNotEmpty == true) {
+          leadingWidget = Image.network(
+            netBankingList![item].logoUrl!,
+            height: 32.0,
+            width: 32.0,
+            errorBuilder: (context, obj, stkTrc) => SizedBox(
+              height: 32.0,
+              width: 32.0,
+              child: Center(
+                child: Text(
+                  "Error", style: TextStyle(color: Colors.redAccent),
+                ),
+              ),
+            ),
+          );
+        }
         return ListTile(
+          leading: leadingWidget,
           title: Text(netBankingList?[item].bankName ?? ''),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
@@ -579,6 +609,9 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       /* final cardNetwork =
                           await _razorpay.getCardsNetwork("4111111111111111");
                       print(cardNetwork); */
+
+                      /*final bankLogo = await _razorpay.getBankLogoUrl('HDFC');
+                      print('Bank Logo URL : $bankLogo');*/
 
                       /* final walletLogo 
                           await _razorpay.getWalletLogoUrl('paytm');
