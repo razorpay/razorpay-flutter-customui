@@ -243,6 +243,26 @@ extension RazorpayDelegate {
                 }
             }
 
+            // Attach Apple Pay plugin, mirroring the Amazon Pay reflective pattern.
+            // The RazorpayApplePay module ships ApplePayEntity (the ApplePayPlugin
+            // conformer). initiate(key_id:) must run before the plugin is set, matching
+            // what RazorpayCheckout.initWithKey(...ApplePay:) does internally.
+            // TODO(verify): confirm the class name + selectors against the linked
+            // RazorpayApplePay 2.2.0 symbols before device QA.
+            if let rzp = self.razorpay {
+                let applePayEntityClassName = "RazorpayApplePay.ApplePayEntity"
+                let setApplePaySel = NSSelectorFromString("setApplePay:")
+                if let entityCls = NSClassFromString(applePayEntityClassName) as? NSObject.Type,
+                   rzp.responds(to: setApplePaySel) {
+                    let entity = entityCls.init()
+                    let initiateSel = NSSelectorFromString("initiateWithKey_id:")
+                    if entity.responds(to: initiateSel) {
+                        entity.perform(initiateSel, with: key)
+                    }
+                    rzp.perform(setApplePaySel, with: entity)
+                }
+            }
+
             DispatchQueue.main.async {
                 let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.handleCancelTap(sender:)))
                 
@@ -408,6 +428,26 @@ extension RazorpayDelegate {
             return
         }
         let pluginSelector = NSSelectorFromString("amazonPlugin")
+        if rzp.responds(to: pluginSelector),
+           let plugin = rzp.perform(pluginSelector)?.takeUnretainedValue() {
+            result(plugin is NSObject)
+        } else {
+            result(false)
+        }
+    }
+
+    // MARK: - Apple Pay
+
+    /// Device capability for Apple Pay. Mirrors `isAmazonPayAvailable`: reports
+    /// whether the Apple Pay plugin is attached on the checkout instance.
+    /// TODO(verify): confirm the `applePay` accessor selector against the
+    /// RazorpayApplePay module once the SPM/pod dependency is wired.
+    public func isApplePayAvailable(result: @escaping FlutterResult) {
+        guard let rzp = self.razorpay else {
+            result(false)
+            return
+        }
+        let pluginSelector = NSSelectorFromString("applePay")
         if rzp.responds(to: pluginSelector),
            let plugin = rzp.perform(pluginSelector)?.takeUnretainedValue() {
             result(plugin is NSObject)
