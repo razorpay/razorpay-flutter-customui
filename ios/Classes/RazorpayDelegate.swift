@@ -1,4 +1,5 @@
 import Flutter
+import PassKit
 import Razorpay
 import WebKit
 
@@ -438,21 +439,11 @@ extension RazorpayDelegate {
 
     // MARK: - Apple Pay
 
-    /// Device capability for Apple Pay. Mirrors `isAmazonPayAvailable`: reports
-    /// whether the Apple Pay plugin is attached on the checkout instance.
-    /// TODO(verify): confirm the `applePay` accessor selector against the
-    /// RazorpayApplePay module once the SPM/pod dependency is wired.
+    /// Device capability for Apple Pay via PassKit (device + Wallet). Matches the
+    /// React Native wrapper and the native ApplePay.isApplePaySupported() gate.
+    /// This is a real eligibility check (not merely "is the plugin attached"),
+    /// so the merchant only shows the Apple Pay button when a payment can be made.
     public func isApplePayAvailable(result: @escaping FlutterResult) {
-        guard let rzp = self.razorpay else {
-            result(false)
-            return
-        }
-        let pluginSelector = NSSelectorFromString("applePay")
-        if rzp.responds(to: pluginSelector),
-           let plugin = rzp.perform(pluginSelector)?.takeUnretainedValue() {
-            result(plugin is NSObject)
-        } else {
-            result(false)
-        }
+        result(PKPaymentAuthorizationController.canMakePayments())
     }
 }
