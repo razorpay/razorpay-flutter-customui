@@ -18,6 +18,9 @@ Pod::Spec.new do |s|
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
   s.dependency 'razorpay-customui-pod', '~> 2.1.0'
 
+  # Apple Pay capability check uses PKPaymentAuthorizationController.
+  s.frameworks = 'PassKit'
+
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   s.swift_version = '5.0'
