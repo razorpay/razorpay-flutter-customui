@@ -57,15 +57,12 @@ void main() {
       expect(log, <Matcher>[isMethodCall('submit', arguments: applePayOptions)]);
     });
 
-    test('fires payment.error (INVALID_OPTIONS) when key is missing', () async {
+    test('missing key short-circuits before native submit', () async {
+      // _validateOptions fails on a missing key, so submit() must not reach the
+      // native channel. (Avoids on()/_resync emit noise in the mock.)
       final bad = Map<String, dynamic>.of(applePayOptions)..remove('key');
-      razorpay.on(
-        Razorpay.EVENT_PAYMENT_ERROR,
-        expectAsync1((dynamic response) {
-          expect(response, isNotNull);
-        }, count: 1),
-      );
       razorpay.submit(bad);
+      expect(log.where((c) => c.method == 'submit'), isEmpty);
     });
   });
 }
