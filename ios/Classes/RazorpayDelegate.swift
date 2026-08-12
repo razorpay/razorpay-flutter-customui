@@ -244,23 +244,27 @@ extension RazorpayDelegate {
                 }
             }
 
-            // Attach Apple Pay plugin, mirroring the Amazon Pay reflective pattern.
-            // The RazorpayApplePay module ships ApplePayEntity (the ApplePayPlugin
-            // conformer). initiate(key_id:) must run before the plugin is set, matching
-            // what RazorpayCheckout.initWithKey(...ApplePay:) does internally.
-            // TODO(verify): confirm the class name + selectors against the linked
-            // RazorpayApplePay 2.2.0 symbols before device QA.
-            if let rzp = self.razorpay {
-                let applePayEntityClassName = "RazorpayApplePay.ApplePayEntity"
+            // Attach the Apple Pay plugin using the API-Council-approved factory
+            // ApplePay.pluginInstance() (module RazorpayApplePay) rather than
+            // instantiating an entity directly. initiate(key_id:) must run before the
+            // plugin is set, matching RazorpayCheckout.initWithKey(...ApplePay:) internally.
+            // TODO(verify): confirm ApplePay.pluginInstance() is reachable via the ObjC
+            // runtime (perform) and the setApplePay: / initiateWithKey_id: selectors
+            // against the linked RazorpayApplePay 2.2.0 module. (Amazon Pay had to
+            // instantiate its entity directly because its factory was not @objc — confirm
+            // whether ApplePay.pluginInstance() is exposed to the ObjC runtime.)
+            if let rzp = self.razorpay,
+               let applePayCls = NSClassFromString("RazorpayApplePay.ApplePay") as AnyObject? {
+                let pluginInstanceSel = NSSelectorFromString("pluginInstance")
                 let setApplePaySel = NSSelectorFromString("setApplePay:")
-                if let entityCls = NSClassFromString(applePayEntityClassName) as? NSObject.Type,
-                   rzp.responds(to: setApplePaySel) {
-                    let entity = entityCls.init()
+                if applePayCls.responds(to: pluginInstanceSel),
+                   rzp.responds(to: setApplePaySel),
+                   let plugin = applePayCls.perform(pluginInstanceSel)?.takeUnretainedValue() as? NSObject {
                     let initiateSel = NSSelectorFromString("initiateWithKey_id:")
-                    if entity.responds(to: initiateSel) {
-                        entity.perform(initiateSel, with: key)
+                    if plugin.responds(to: initiateSel) {
+                        plugin.perform(initiateSel, with: key)
                     }
-                    rzp.perform(setApplePaySel, with: entity)
+                    rzp.perform(setApplePaySel, with: plugin)
                 }
             }
 
