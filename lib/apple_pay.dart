@@ -9,8 +9,8 @@ import 'package:flutter/services.dart';
 ///   final razorpay = Razorpay();
 ///   razorpay.initilizeSDK('rzp_xxx');
 ///
-///   // 1. Check availability (gate the Apple Pay button)
-///   bool available = await razorpay.applePay.isAvailable();
+///   // 1. Check eligibility (gate the Apple Pay button)
+///   bool available = await razorpay.applePay.canMakePayment();
 ///
 ///   // 2. Pay — existing submit(), Apple Pay selected by options
 ///   razorpay.submit({
@@ -32,10 +32,11 @@ class ApplePay {
 
   ApplePay(this._channel, this._eventEmitter);
 
-  /// Returns true if this device can present Apple Pay (Wallet + an eligible
-  /// card). Always false on the simulator. Use it to show/hide the Apple Pay
-  /// button.
-  Future<bool> isAvailable() async {
+  /// Whether Apple Pay can be used (device + Wallet). Named `canMakePayment`
+  /// per the API Council decision (aligned with the Web SDK and the native
+  /// SDK's `razorpay.applePay.canMakePayment`). Always false on the simulator.
+  /// Use it to show/hide the Apple Pay button.
+  Future<bool> canMakePayment() async {
     try {
       final result = await _channel.invokeMethod('isApplePayAvailable');
       return result == true;

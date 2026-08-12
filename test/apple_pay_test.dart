@@ -43,9 +43,9 @@ void main() {
     razorpay.clear();
   });
 
-  group('ApplePay.isAvailable', () {
+  group('ApplePay.canMakePayment', () {
     test('invokes isApplePayAvailable and returns the bool', () async {
-      final available = await razorpay.applePay.isAvailable();
+      final available = await razorpay.applePay.canMakePayment();
       expect(log, <Matcher>[isMethodCall('isApplePayAvailable', arguments: null)]);
       expect(available, isTrue);
     });
