@@ -244,22 +244,30 @@ extension RazorpayDelegate {
                 }
             }
 
-            // Attach the Apple Pay plugin using the API-Council-approved factory
-            // ApplePay.pluginInstance() (module RazorpayApplePay) rather than
-            // instantiating an entity directly. initiate(key_id:) must run before the
-            // plugin is set, matching RazorpayCheckout.initWithKey(...ApplePay:) internally.
-            // TODO(verify): confirm ApplePay.pluginInstance() is reachable via the ObjC
-            // runtime (perform) and the setApplePay: / initiateWithKey_id: selectors
-            // against the linked RazorpayApplePay 2.2.0 module. (Amazon Pay had to
-            // instantiate its entity directly because its factory was not @objc — confirm
-            // whether ApplePay.pluginInstance() is exposed to the ObjC runtime.)
-            if let rzp = self.razorpay,
-               let applePayCls = NSClassFromString("RazorpayApplePay.ApplePay") as AnyObject? {
-                let pluginInstanceSel = NSSelectorFromString("pluginInstance")
+            // Attach the Apple Pay plugin (same runtime mechanism as Amazon Pay above).
+            // The merchant-facing factory is the API-Council-approved
+            // ApplePay.pluginInstance() (module RazorpayApplePay). We do NOT call it here
+            // reflectively: like Amazon's pluginInstance(), a Swift static is not exposed
+            // to the Obj-C runtime, and this module does not import RazorpayApplePay. So
+            // internally we instantiate the plugin's concrete conformer and call
+            // initiate(key_id:) before setApplePay:, mirroring the Amazon slice.
+            //
+            // DECISION FOR THE SDK TEAM (see PR thread):
+            //  (a) native/preferred: import RazorpayApplePay in this plugin and use the
+            //      typed init RazorpayCheckout.initWithKey(..., ApplePay: ApplePay.pluginInstance())
+            //      — compiler-checked, uses the council factory literally, no reflection.
+            //      Requires the Flutter distribution to vend RazorpayApplePay (2.2.0 is
+            //      SPM-only today, so this needs the packaging call first).
+            //  (b) reflection (below): works with the existing CocoaPods dependency, no
+            //      hard module import; needs the concrete conformer + selectors confirmed.
+            // TODO(verify): concrete conformer class name + setApplePay:/initiateWithKey_id:
+            //   against RazorpayApplePay 2.2.0.
+            if let rzp = self.razorpay {
+                let pluginClassName = "RazorpayApplePay.ApplePayEntity" // TODO(verify) conformer
                 let setApplePaySel = NSSelectorFromString("setApplePay:")
-                if applePayCls.responds(to: pluginInstanceSel),
-                   rzp.responds(to: setApplePaySel),
-                   let plugin = applePayCls.perform(pluginInstanceSel)?.takeUnretainedValue() as? NSObject {
+                if let pluginCls = NSClassFromString(pluginClassName) as? NSObject.Type,
+                   rzp.responds(to: setApplePaySel) {
+                    let plugin = pluginCls.init()
                     let initiateSel = NSSelectorFromString("initiateWithKey_id:")
                     if plugin.responds(to: initiateSel) {
                         plugin.perform(initiateSel, with: key)
