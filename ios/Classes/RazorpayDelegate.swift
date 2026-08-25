@@ -127,6 +127,15 @@ class RazorpayDelegate: NSObject {
         })
     }
     
+    public func getRecommendedInstruments(options: [String: Any], result: @escaping FlutterResult) {
+        self.pendingResult = result
+        RazorpayCheckout.getRecommendedInstruments(withOptions: options, withSuccessCallback: { successResponse in
+            self.pendingResult(successResponse as NSDictionary)
+        }, andFailureCallback: { errorResponse in
+            self.pendingResult(errorResponse)
+        })
+    }
+
     public func getAppsWhichSupportUpi(result: @escaping FlutterResult) {
         self.pendingResult = result
         RazorpayCheckout.getAppsWhichSupportUpi(handler: { [weak self] supportedApps in

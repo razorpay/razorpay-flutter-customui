@@ -26,6 +26,7 @@ import com.razorpay.PaymentData;
 import com.razorpay.PaymentMethodsCallback;
 import com.razorpay.PaymentResultWithDataListener;
 import com.razorpay.Razorpay;
+import com.razorpay.RecommendedInstrumentsCallback;
 import com.razorpay.RazorpayWebViewClient;
 import com.razorpay.RzpUpiSupportedAppsCallback;
 import com.razorpay.SubscriptionAmountCallback;
@@ -112,6 +113,44 @@ public class RazorpayDelegate implements ActivityResultListener {
                     if (pendingResult != null) {
                         HashMap<String, Object> hMapData = new Gson().fromJson(
                             s,
+                            HashMap.class
+                        );
+                        pendingResult.success(hMapData);
+                        pendingResult = null;
+                    }
+                }
+
+                @Override
+                public void onError(String s) {
+                    if (pendingResult != null) {
+                        pendingResult.error(s, "", null);
+                        pendingResult = null;
+                    }
+                }
+            }
+        );
+    }
+
+    void getRecommendedInstruments(Map<String, Object> options, final Result result) {
+        this.pendingResult = result;
+        if (razorpay == null) {
+            init(this.key, result);
+        }
+        JSONObject optionsJson;
+        try {
+            optionsJson = new JSONObject(options);
+        } catch (Exception e) {
+            result.error("INVALID_OPTIONS", e.getMessage(), null);
+            return;
+        }
+        razorpay.getRecommendedInstruments(
+            optionsJson,
+            new RecommendedInstrumentsCallback() {
+                @Override
+                public void onRecommendedInstrumentsReceived(JSONObject recommendedInstruments) {
+                    if (pendingResult != null) {
+                        HashMap<String, Object> hMapData = new Gson().fromJson(
+                            recommendedInstruments.toString(),
                             HashMap.class
                         );
                         pendingResult.success(hMapData);

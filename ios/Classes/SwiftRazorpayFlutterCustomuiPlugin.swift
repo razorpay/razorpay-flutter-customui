@@ -37,7 +37,11 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             }
         case "getPaymentMethods":
             razorpayDelegate.getPaymentMethods(result: result)
-            
+
+        case "getRecommendedInstruments":
+            let options = call.arguments as? [String: Any] ?? [:]
+            razorpayDelegate.getRecommendedInstruments(options: options, result: result)
+
         case "getAppsWhichSupportUpi":
             razorpayDelegate.getAppsWhichSupportUpi(result: result)
             
