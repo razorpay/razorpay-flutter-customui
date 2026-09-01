@@ -27,6 +27,14 @@ class Razorpay {
   late EventEmitter _eventEmitter;
   late AmazonPay amazonPay;
 
+  /// Tracks event registrations that should receive the inner `data` map
+  /// (unwrapped from the native `{type, data}` envelope) instead of the
+  /// raw envelope. This lets merchants share a single handler between
+  /// razorpay_flutter_customui and razorpay_flutter (with `rawMap: true`).
+  /// Default (`.on()` without `unwrapData: true`) is unchanged from prior
+  /// behavior to avoid breaking existing integrations.
+  final Set<String> _unwrappedDataEvents = <String>{};
+
   Razorpay() {
     _eventEmitter = new EventEmitter();
     amazonPay = AmazonPay(_channel, _eventEmitter);
@@ -148,16 +156,35 @@ class Razorpay {
     if (response['razorpay_payment_id'] != null ||
         response['type'] == _CODE_PAYMENT_SUCCESS) {
       eventName = EVENT_PAYMENT_SUCCESS;
-      payload = response;
     } else {
       eventName = EVENT_PAYMENT_ERROR;
+    }
+
+    if (_unwrappedDataEvents.contains(eventName)) {
+      final data = response['data'];
+      payload = data is Map<dynamic, dynamic> ? data : <dynamic, dynamic>{};
+    } else {
       payload = response;
     }
+
     _eventEmitter.emit(eventName, null, payload);
   }
 
-  /// Registers event listeners for payment events
-  void on(String event, Function handler) {
+  /// Registers event listeners for payment events.
+  ///
+  /// By default the handler receives the raw native `{type, data}` envelope
+  /// (unchanged from prior behavior). Set [unwrapData] to `true` to receive
+  /// just the inner `data` map instead — e.g. `{razorpay_payment_id: ...}`
+  /// directly, matching the shape `razorpay_flutter` emits when registered
+  /// with `rawMap: true`. Useful when sharing a single handler between
+  /// `razorpay_flutter_customui` and `razorpay_flutter`.
+  void on(String event, Function handler, {bool unwrapData = false}) {
+    if (unwrapData) {
+      _unwrappedDataEvents.add(event);
+    } else {
+      _unwrappedDataEvents.remove(event);
+    }
+
     EventCallback cb = (event, cont) {
       handler(event.eventData);
     };
@@ -174,6 +201,7 @@ class Razorpay {
   }
 
   void clear() {
+    _unwrappedDataEvents.clear();
     _eventEmitter.clear();
   }
 
