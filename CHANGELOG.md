@@ -1,3 +1,8 @@
+## 1.5.0
+
+- Added `getRecommendedInstruments` API for fetching ranked payment instrument suggestions.
+- Added opt-in `unwrapData` parameter to `Razorpay.on(event, handler, {unwrapData})`. When `true`, handlers receive just the inner `data` map instead of the full `{type, data}` envelope, letting merchants share a single handler with `razorpay_flutter`'s `rawMap` opt-in. Default behavior is unchanged.
+
 ## 1.4.3
 
 - Added Amazon Pay link-and-pay support.
