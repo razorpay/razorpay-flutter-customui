@@ -27,8 +27,12 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '12.0'
   s.ios.deployment_target = '12.0'
 
+  # Pinned by digest: an :http source with no checksum makes `pod install` trust
+  # whatever is at that URL at the time it runs. The digest is of the 2.2.0 release
+  # asset as published; CocoaPods refuses the download if it ever stops matching.
   s.source = {
-    :http => 'https://github.com/razorpay/razorpay-customui-pod/releases/download/2.2.0/RazorpayApplePay.xcframework.zip'
+    :http => 'https://github.com/razorpay/razorpay-customui-pod/releases/download/2.2.0/RazorpayApplePay.xcframework.zip',
+    :sha256 => 'c9e47f4e3edaee208f910ea4626b733da0767102768f8b0d806824ee84f62568'
   }
   s.vendored_frameworks = 'RazorpayApplePay.xcframework'
 

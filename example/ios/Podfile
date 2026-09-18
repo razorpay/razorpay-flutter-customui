@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '13.0'
+platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -32,6 +32,12 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Apple Pay is an optional plugin: it is not on the CocoaPods trunk, so it is not a
+  # dependency of razorpay_flutter_customui and merchants opt in with this one line.
+  # Remove it and the app still builds - Apple Pay just reports itself unavailable.
+  pod 'RazorpayApplePay',
+      :podspec => '.symlinks/plugins/razorpay_flutter_customui/ios/RazorpayApplePay.podspec'
 end
 
 post_install do |installer|
