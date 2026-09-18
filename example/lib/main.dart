@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter_customui_example/payment_slection_page.dart';
+import 'package:razorpay_flutter_customui_example/apple_pay_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,6 +33,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Apple Pay lives on its own screen: it is iOS-only and is gated on an
+      // eligibility check, so it does not belong in the generic method list.
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const ApplePayPage()),
+        ),
+        label: const Text('Apple Pay'),
+        icon: const Icon(Icons.apple),
+      ),
       backgroundColor: Colors.blue.shade300,
       body: Container(
         child: Stack(
