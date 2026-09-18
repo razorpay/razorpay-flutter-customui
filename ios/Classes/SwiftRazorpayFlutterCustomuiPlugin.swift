@@ -79,6 +79,8 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
             }
         case "isAmazonPayAvailable":
             razorpayDelegate.isAmazonPayAvailable(result: result)
+        case "canMakePayment":
+            razorpayDelegate.canMakePayment(result: result)
         default:
             print("no method")
         }

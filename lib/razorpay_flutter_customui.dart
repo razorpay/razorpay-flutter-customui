@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/services.dart';
 import 'amazon_pay.dart';
+import 'apple_pay.dart';
 
 class Razorpay {
   // Response codes from platform
@@ -26,6 +27,7 @@ class Razorpay {
   // EventEmitter instance used for communication
   late EventEmitter _eventEmitter;
   late AmazonPay amazonPay;
+  late ApplePay applePay;
 
   /// Tracks event registrations that should receive the inner `data` map
   /// (unwrapped from the native `{type, data}` envelope) instead of the
@@ -38,6 +40,7 @@ class Razorpay {
   Razorpay() {
     _eventEmitter = new EventEmitter();
     amazonPay = AmazonPay(_channel, _eventEmitter);
+    applePay = ApplePay(_channel, _eventEmitter);
   }
 
   Future<Map<dynamic, dynamic>> getPaymentMethods() async {

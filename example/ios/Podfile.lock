@@ -1,16 +1,22 @@
 PODS:
   - Flutter (1.0.0)
-  - razorpay-customui-pod (2.0.22)
+  - razorpay-core-pod (1.0.9)
+  - razorpay-customui-pod (2.2.3):
+    - razorpay-core-pod (~> 1.0.9)
   - razorpay_flutter_customui (1.3.2):
     - Flutter
-    - razorpay-customui-pod (~> 2.0.22)
+    - razorpay-customui-pod (~> 2.2.3)
+  - RazorpayApplePay (2.2.0):
+    - razorpay-customui-pod (~> 2.2.1)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - razorpay_flutter_customui (from `.symlinks/plugins/razorpay_flutter_customui/ios`)
+  - RazorpayApplePay (from `.symlinks/plugins/razorpay_flutter_customui/ios/RazorpayApplePay.podspec`)
 
 SPEC REPOS:
   trunk:
+    - razorpay-core-pod
     - razorpay-customui-pod
 
 EXTERNAL SOURCES:
@@ -18,12 +24,16 @@ EXTERNAL SOURCES:
     :path: Flutter
   razorpay_flutter_customui:
     :path: ".symlinks/plugins/razorpay_flutter_customui/ios"
+  RazorpayApplePay:
+    :podspec: ".symlinks/plugins/razorpay_flutter_customui/ios/RazorpayApplePay.podspec"
 
 SPEC CHECKSUMS:
-  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  razorpay-customui-pod: 71a68ec6b3bc165a4c5f0dc60ccb383427301445
-  razorpay_flutter_customui: d663791c05ad8a323c415c68f8b2c2ff90a9baf1
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
+  razorpay-core-pod: 7ecea8ed3c47751e6a958f6c88126ea068f8c8fc
+  razorpay-customui-pod: c03e98a4e348e5246cb0acb2f66423f0744cce5e
+  razorpay_flutter_customui: afb4a3132e5b65796bad8254d05a9fd04c18725f
+  RazorpayApplePay: 0b9266c02bfb8df43e0e0189b0b8dedea8d5734c
 
-PODFILE CHECKSUM: 1d345ce94b3f988dab2754939a6943a756616710
+PODFILE CHECKSUM: 8481cf622dcc0174cc27555c66c609202c38be3b
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0

@@ -6,6 +6,9 @@ class RazorpayDelegate: NSObject {
 
     var pendingResult: FlutterResult!
     private var razorpay: RazorpayCheckout?
+    /// Retained for the lifetime of the checkout: eligibility is asked of this
+    /// instance long after `initilizeSDK` returns.
+    private var applePayEntity: ApplePayPlugin?
     private var isPaymentInProgress = false
     var navController: UINavigationController?
     var webView: WKWebView?
@@ -227,7 +230,31 @@ extension RazorpayDelegate {
         pendingResult = result
         self.configureWebView()
         if let unwrappedWebView = self.webView {
-            self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
+            // Apple Pay is an optional pod (ios/RazorpayApplePay.podspec). When the
+            // merchant has opted in, build the checkout through the ApplePay overload:
+            // that initialiser is what installs the Apple Pay analytics sink. Attaching
+            // afterwards via the `applePay` property would skip it and every eligibility
+            // event would be dropped silently.
+            let applePayPlugin = RazorpayDelegate.makeApplePayPlugin() as? ApplePayPlugin
+            if let applePayPlugin = applePayPlugin {
+                self.razorpay = RazorpayCheckout.initWithKey(key,
+                                                            andDelegate: self,
+                                                            withPaymentWebView: unwrappedWebView,
+                                                            ApplePay: applePayPlugin)
+            } else {
+                self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
+            }
+
+            // ApplePayEntity.merchantKey is set ONLY inside initiate(key_id:) — the
+            // initialiser above does not call it. Without this, canMakePayment takes its
+            // no_merchant_key branch and reports false forever on a device that can
+            // plainly pay, while the payment itself still works (that path reads the key
+            // from the payment model instead). Order matters: initialiser first so the
+            // tracker exists, then initiate, or the eligibility analytics are lost.
+            if let plugin = applePayPlugin {
+                plugin.initiate(key_id: key)
+                self.applePayEntity = plugin
+            }
 
             // Attach Amazon Pay plugin via the wrapper's `amazonPlugin` property.
             // `amazonPlugin` is on Razorpay.RazorpayCheckout (the wrapper layer imported here);
@@ -422,6 +449,41 @@ extension RazorpayDelegate {
             result(plugin is NSObject)
         } else {
             result(false)
+        }
+    }
+
+    // MARK: - Apple Pay
+
+    /// Instantiates the optional Apple Pay plugin, or nil when the merchant has not
+    /// added the pod. Returning nil is a supported state: Apple Pay simply reports
+    /// itself unavailable and the rest of the SDK is unaffected.
+    private static func makeApplePayPlugin() -> NSObject? {
+        guard let cls = NSClassFromString("RazorpayApplePay.ApplePayEntity") as? NSObject.Type else {
+            NSLog("[razorpay_flutter_customui] RazorpayApplePay is not installed; Apple Pay "
+                + "will report unavailable. Add the opt-in pod to your Podfile — see the "
+                + "Apple Pay section of the plugin README.")
+            return nil
+        }
+        return cls.init()
+    }
+
+    /// Apple Pay eligibility, gating the merchant's button.
+    ///
+    /// This delegates to the plugin rather than calling PassKit directly, and the
+    /// difference is not cosmetic: `PKPaymentAuthorizationController.canMakePayments()`
+    /// is a bare device probe that returns true even with an empty Wallet, and knows
+    /// nothing about whether this merchant is live on Apple Pay or which card networks
+    /// they accept. The plugin fetches the merchant's preferences and checks the wallet
+    /// against those networks, which is what the native and React Native SDKs both do.
+    ///
+    /// Resolves false when the pod is absent or the plugin was never initiated.
+    public func canMakePayment(result: @escaping FlutterResult) {
+        guard let entity = applePayEntity else {
+            result(false)
+            return
+        }
+        entity.canMakePayment { canPay in
+            DispatchQueue.main.async { result(canPay) }
         }
     }
 }
