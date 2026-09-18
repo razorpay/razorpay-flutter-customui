@@ -16,9 +16,19 @@ Pod::Spec.new do |s|
   s.platform = :ios, '10.0'
 
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
-  s.dependency 'razorpay-customui-pod', '~> 2.1.0'
+  # Apple Pay needs the 2.2.x checkout host: the
+  # initWithKey:andDelegate:withPaymentWebView:ApplePay: entry point and the
+  # Apple Pay analytics sink only exist there.
+  s.dependency 'razorpay-customui-pod', '~> 2.2.3'
 
-  # Apple Pay capability check uses PKPaymentAuthorizationController.
+  # PassKit is a system framework and always available. The Apple Pay sheet itself
+  # lives in the RazorpayApplePay plugin, which declares PassKit too; this stays
+  # here so a consuming app links it regardless of plugin load order.
+  #
+  # RazorpayApplePay is intentionally NOT a dependency here — it is not on the
+  # CocoaPods trunk, so declaring it would break `pod install` for every merchant
+  # using this plugin. Merchants opt in via ios/RazorpayApplePay.podspec; see the
+  # Apple Pay section of README.md.
   s.frameworks = 'PassKit'
 
   # Flutter.framework does not contain a i386 slice.

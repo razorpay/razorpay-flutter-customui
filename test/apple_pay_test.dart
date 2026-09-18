@@ -31,7 +31,7 @@ void main() {
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall call) async {
       log.add(call);
-      if (call.method == 'isApplePayAvailable') return true;
+      if (call.method == 'canMakePayment') return true;
       return <String, dynamic>{};
     });
     razorpay = Razorpay();
@@ -44,9 +44,9 @@ void main() {
   });
 
   group('ApplePay.canMakePayment', () {
-    test('invokes isApplePayAvailable and returns the bool', () async {
+    test('invokes canMakePayment and returns the bool', () async {
       final available = await razorpay.applePay.canMakePayment();
-      expect(log, <Matcher>[isMethodCall('isApplePayAvailable', arguments: null)]);
+      expect(log, <Matcher>[isMethodCall('canMakePayment', arguments: null)]);
       expect(available, isTrue);
     });
   });

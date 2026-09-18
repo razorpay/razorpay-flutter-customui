@@ -32,13 +32,22 @@ class ApplePay {
 
   ApplePay(this._channel, this._eventEmitter);
 
-  /// Whether Apple Pay can be used (device + Wallet). Named `canMakePayment`
-  /// per the API Council decision (aligned with the Web SDK and the native
-  /// SDK's `razorpay.applePay.canMakePayment`). Always false on the simulator.
-  /// Use it to show/hide the Apple Pay button.
+  /// Whether this customer can pay with Apple Pay right now. Use it to show or
+  /// hide the Apple Pay button.
+  ///
+  /// Named `canMakePayment` per the API Council decision, matching the Web SDK and
+  /// the native SDK's `razorpay.applePay.canMakePayment`.
+  ///
+  /// This is **merchant-aware**, not a device probe: it resolves true only when this
+  /// merchant is live on Apple Pay *and* the wallet holds a card on a network that
+  /// merchant accepts. A device that supports Apple Pay but has an empty wallet, or a
+  /// merchant not enabled for it, resolves false.
+  ///
+  /// Returns false on Android, on the simulator, and when the optional
+  /// `RazorpayApplePay` pod has not been added — so the button simply never shows.
   Future<bool> canMakePayment() async {
     try {
-      final result = await _channel.invokeMethod('isApplePayAvailable');
+      final result = await _channel.invokeMethod('canMakePayment');
       return result == true;
     } catch (_) {
       return false;
