@@ -264,3 +264,77 @@ The event names have also been exposed as Strings by the `Razorpay` class.
 | ---------- | ------ | ------------------ |
 | code       | int    | The error code.    |
 | message    | String | The error message. |
+
+## Apple Pay (iOS only)
+
+Apple Pay runs through the existing `submit()` call with `method: 'card'` and an
+`app.apple_pay` block. No new payment-method name is introduced, and results arrive
+on the same `EVENT_PAYMENT_SUCCESS` / `EVENT_PAYMENT_ERROR` listeners you already
+use for cards — if you take card payments today, you write no new result handling.
+
+### 1. Add the Apple Pay plugin pod
+
+`RazorpayApplePay` is **not** published to the CocoaPods trunk, so it cannot be a
+dependency of this plugin — declaring it would break `pod install` for every
+merchant, including those who never use Apple Pay. It ships as a podspec you opt
+into. Add one line to your app's `ios/Podfile`:
+
+```ruby
+pod 'RazorpayApplePay',
+    :podspec => '.symlinks/plugins/razorpay_flutter_customui/ios/RazorpayApplePay.podspec'
+```
+
+Then `cd ios && pod install`. Leave the line out and everything still builds —
+Apple Pay simply reports itself unavailable.
+
+### 2. Add the Apple Pay capability
+
+In Xcode, open your `.xcworkspace` (not the `.xcodeproj` — CocoaPods is in use),
+select your target > **Signing & Capabilities** > **+ Capability** > **Apple Pay**,
+and tick the merchant identifier issued for your account. This writes
+`com.apple.developer.in-app-payments` into your entitlements. The merchant
+identifier there **must** match the one you pass at runtime, byte for byte.
+
+See `example/ios/Runner/Runner.entitlements` for the shape of that file.
+
+### 3. Gate the button on eligibility
+
+```dart
+if (await razorpay.applePay.canMakePayment()) {
+  // show your Apple Pay button
+}
+```
+
+This is **merchant-aware**, not a device probe: it resolves true only when your
+merchant account is live on Apple Pay *and* the wallet holds a card on a network
+you accept. It returns false on Android, on the Simulator, and when the optional
+pod is absent.
+
+> Apple's Human Interface Guidelines require the system `PKPaymentButton` for
+> Apple Pay, and App Review rejects apps that imitate it. Flutter has no built-in
+> `PKPaymentButton`, so bridge one with a platform view. The button in
+> `example/lib/apple_pay_page.dart` is a plain test button — do not copy it.
+
+### 4. Take the payment
+
+```dart
+razorpay.submit({
+  'key': 'rzp_live_xxxxxxxx',
+  'order_id': 'order_xxxxxxxx',
+  'amount': '50000',
+  'currency': 'INR',
+  'method': 'card',
+  'app': {
+    'name': 'apple_pay',
+    'apple_pay': {'merchant_identifier': 'merchant.com.yourcompany.app'},
+  },
+});
+```
+
+Do not pass `country_code` or `label`. The SDK derives both — `country_code`
+defaults to `IN`, and the name on the sheet comes from the brand name already on
+file for your account. Passing `label` risks showing the customer a name that
+differs from the rest of your checkout.
+
+Guard your button against double taps: PassKit will not present a second sheet
+while one is pending, and a double tap fails both attempts.

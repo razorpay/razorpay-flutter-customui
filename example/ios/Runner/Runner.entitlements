@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Must match the merchant_identifier passed in the submit() options under
+	  app.apple_pay, byte for byte, and the merchant ID has to exist in the Apple
+	  Developer account whose team signs this app. Mirrors the native sample at
+	  razorpay-ios/SampleApp/SampleAppApplePay.entitlements.
+	-->
+	<key>com.apple.developer.in-app-payments</key>
+	<array>
+		<string>merchant.com.razorpay.applepay.ios.sandbox</string>
+	</array>
+</dict>
+</plist>
