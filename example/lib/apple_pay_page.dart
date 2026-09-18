@@ -69,13 +69,15 @@ class _ApplePayPageState extends State<ApplePayPage> {
     }
   }
 
+  // Razorpay.on() forwards `event.eventData` straight through, so handlers receive
+  // the payload Map itself - there is no wrapper object with a `.data` getter.
   void _onSuccess(dynamic response) {
-    _append('SUCCESS ${response.data}');
+    _append('SUCCESS $response');
     setState(() => _isPaying = false);
   }
 
   void _onError(dynamic response) {
-    _append('ERROR ${response.data}');
+    _append('ERROR $response');
     setState(() => _isPaying = false);
   }
 
