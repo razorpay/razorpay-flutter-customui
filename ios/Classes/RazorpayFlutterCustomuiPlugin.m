@@ -10,6 +10,11 @@
 
 @implementation RazorpayFlutterCustomuiPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+  // registrarForPlugin: can return nil (e.g. the plugin key was already registered). The Swift
+  // implementation dereferences the registrar immediately, so skip instead of crashing at launch.
+  if (registrar == nil) {
+    return;
+  }
   [SwiftRazorpayFlutterCustomuiPlugin registerWithRegistrar:registrar];
 }
 @end

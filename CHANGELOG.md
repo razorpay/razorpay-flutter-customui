@@ -1,3 +1,14 @@
+## Unreleased
+
+- Fixed iOS Amazon Pay wallet / PayLater payments not returning to checkout after OTP or insufficient-balance top-up:
+  - Forward `WKNavigationDelegate.decidePolicyFor` to the SDK so `amazon.in` navigations are handed to the Amazon Pay SDK instead of loading in the webview.
+  - Initialise the SDK with the Amazon Pay plugin (when the `razorpay-apay-wallet-paylater` pod is present) so it is available to the payment flow, not only to linking.
+  - Handle `amzn-<bundle id>://` redirects via `application(_:open:options:)`, and `scene(_:openURLContexts:)` for apps on the UIScene lifecycle, and pass them to the Amazon Pay SDK.
+- iOS payment error responses now include `code` and `description` when the SDK reports them only as arguments (previously such errors reached Dart as an empty map). Existing keys are unchanged.
+- Guarded iOS plugin registration against a nil registrar to avoid a crash at launch.
+- iOS: requires `razorpay-core-pod` 1.0.8 or later.
+- Apps that override `application(_:open:options:)` must call `super` so plugins receive URL callbacks (needed for the Amazon Pay redirect).
+
 ## 1.5.0
 
 - Added `getRecommendedInstruments` API for fetching ranked payment instrument suggestions.

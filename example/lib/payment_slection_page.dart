@@ -14,7 +14,8 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
   String selectedPaymentType = 'CARD';
   PaymentMethods selectedMethod = PaymentMethods.card;
   CardInfoModel? cardInfoModel;
-  String key = "rzp_test_1DP5mmOlF5G5ag";
+  // Override at run time with --dart-define=PURCHASE_KEY=rzp_xxx (e.g. a key with UPI enabled).
+  String key = const String.fromEnvironment('PURCHASE_KEY', defaultValue: "rzp_test_1DP5mmOlF5G5ag");
   String? availableUpiApps;
   bool showUpiApps = false;
 
@@ -311,6 +312,22 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
     );
   }
 
+  /// Returns the identifier of the first installed UPI app reported by the SDK, or null.
+  /// iOS returns a list of `{appPackageName, appName, ...}`; Android returns `{packageName: appName}`.
+  Future<String?> _firstInstalledUpiApp() async {
+    final apps = await _razorpay.getAppsWhichSupportUpi();
+    if (apps is List) {
+      for (final app in apps) {
+        if (app is Map && app['appPackageName'] is String) {
+          return app['appPackageName'] as String;
+        }
+      }
+    } else if (apps is Map && apps.isNotEmpty) {
+      return apps.keys.first.toString();
+    }
+    return null;
+  }
+
   Widget buildUPIForm() {
     upiNumber = '';
     return Container(
@@ -344,8 +361,18 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     FocusScope.of(context).unfocus();
+                    // Use a UPI app that is actually installed instead of a hardcoded one,
+                    // otherwise the SDK fails with "UPI App is/are not Available".
+                    final upiApp = await _firstInstalledUpiApp();
+                    if (!mounted) return;
+                    if (upiApp == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('No UPI app installed')),
+                      );
+                      return;
+                    }
                     var options = {
                       'key': key,
                       'amount': 100,
@@ -354,7 +381,7 @@ class _PaymentSelectionPageState extends State<PaymentSelectionPage> {
                       'contact': '9663976539',
                       'method': 'upi',
                       '_[flow]': 'intent',
-                      'upi_app_package_name': 'paytm',
+                      'upi_app_package_name': upiApp,
                     };
                     _razorpay.submit(options);
                   },

@@ -227,29 +227,19 @@ extension RazorpayDelegate {
         pendingResult = result
         self.configureWebView()
         if let unwrappedWebView = self.webView {
-            self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
-
-            // Attach Amazon Pay plugin via the wrapper's `amazonPlugin` property.
-            // `amazonPlugin` is on Razorpay.RazorpayCheckout (the wrapper layer imported here);
-            // `amazonPay` is on the inner RazorpayCustom layer and is not accessible here.
-            // WalletPaylaterEntity is instantiated directly — AmazonWalletPaylater.pluginInstance()
-            // is non-@objc and cannot be called via perform().
-            if let rzp = self.razorpay {
-                let entityClassName = "RazorpayApayWalletPaylater.WalletPaylaterEntity"
-                let setAmazonPluginSel = NSSelectorFromString("setAmazonPlugin:")
-                if let entityCls = NSClassFromString(entityClassName) as? NSObject.Type,
-                   rzp.responds(to: setAmazonPluginSel) {
-                    let entity = entityCls.init()
-                    // Must call initiate(key_id:) before setting the plugin —
-                    // this mirrors what RazorpayCheckout.initWithKey(...AmazonpayPlugin:) does
-                    // internally. Without it, key_id is nil and Razorpay's backend returns
-                    // "Required fields in state missing" after Amazon authorization.
-                    let initiateSel = NSSelectorFromString("initiateWithKey_id:")
-                    if entity.responds(to: initiateSel) {
-                        entity.perform(initiateSel, with: key)
-                    }
-                    rzp.perform(setAmazonPluginSel, with: entity)
-                }
+            // If the app links the razorpay-apay-wallet-paylater pod, init through the Amazon-aware
+            // initializer. It sets the plugin on BOTH SDK layers: the wrapper's `amazonPlugin`
+            // (used for linking) and the inner RazorpayCustom `amazonPay` (used by decidePolicyFor
+            // to hand amazon.in navigations to the Amazon SDK). Setting only the wrapper's
+            // `amazonPlugin` after a plain init leaves the inner one nil, so the Amazon page loads
+            // inside the webview and the user is never returned to checkout.
+            if let amazonPlugin = Self.makeAmazonPlugin() {
+                // initiate(key_id:) must run before authorization, otherwise Razorpay's
+                // backend returns "Required fields in state missing" after linking.
+                amazonPlugin.initiate(key_id: key)
+                self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView, amazonPlugin: amazonPlugin)
+            } else {
+                self.razorpay = RazorpayCheckout.initWithKey(key, andDelegate: self, withPaymentWebView: unwrappedWebView)
             }
 
             DispatchQueue.main.async {
@@ -322,33 +312,53 @@ extension RazorpayDelegate {
 }
 
 extension RazorpayDelegate: WKNavigationDelegate {
-    
+
+    // Required for Amazon Pay wallet / PayLater on iOS: the SDK intercepts amazon.in navigations
+    // here and hands them to the Amazon Pay SDK. All other navigations are allowed as before.
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        guard let razorpay = self.razorpay else {
+            decisionHandler(.allow)
+            return
+        }
+        razorpay.webView(webView, decidePolicyFor: navigationAction, handler: decisionHandler)
+    }
+
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         self.razorpay?.webView(webView, didCommit: navigation)
     }
-    
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         self.razorpay?.webView(webView, didFinish: navigation)
     }
-    
+
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         self.razorpay?.webView(webView, didFail: navigation, withError: error)
     }
-    
+
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         self.razorpay?.webView(webView, didFailProvisionalNavigation: navigation, withError: error)
     }
 }
 
 extension RazorpayDelegate: RazorpayPaymentCompletionProtocol {
-    
+
     func onPaymentSuccess(_ payment_id: String, andData response: [AnyHashable : Any]) {
         pendingResult(response as NSDictionary)
         self.close()
     }
-    
+
     func onPaymentError(_ code: Int32, description str: String, andData response: [AnyHashable : Any]) {
-        pendingResult(response as NSDictionary)
+        // The SDK often reports the reason only via `code`/`description` with an empty `response`
+        // (e.g. "UPI App is/are not Available"). Add them when absent so Dart receives the reason;
+        // existing keys are left untouched.
+        var errorResponse = response
+        if errorResponse["code"] == nil {
+            errorResponse["code"] = Int(code)
+        }
+        if errorResponse["description"] == nil {
+            errorResponse["description"] = str
+        }
+        pendingResult(errorResponse as NSDictionary)
         self.close()
     }
 }
@@ -423,5 +433,35 @@ extension RazorpayDelegate {
         } else {
             result(false)
         }
+    }
+
+    /// Returns the Amazon Pay plugin when the razorpay-apay-wallet-paylater pod is linked, else nil.
+    /// AmazonWalletPaylater.pluginInstance() is non-@objc, so the entity is created by class name.
+    static func makeAmazonPlugin() -> AmazonWalletPaylaterProtocol? {
+        guard let entityCls = NSClassFromString("RazorpayApayWalletPaylater.WalletPaylaterEntity") as? NSObject.Type else {
+            return nil
+        }
+        return entityCls.init() as? AmazonWalletPaylaterProtocol
+    }
+
+    /// Hands an `amzn-<bundle id>://` redirect to the Amazon Pay SDK, which dismisses its
+    /// browser and fires the charge callback that loads the gateway redirect in the webview.
+    /// Returns false for non-Amazon URLs or when the Amazon pod is not linked.
+    static func handleAmazonPayRedirect(_ url: URL, sourceApplication: String?) -> Bool {
+        guard url.scheme?.hasPrefix("amzn-") == true,
+              let amazonPayCls = NSClassFromString("AmazonPay") as? NSObject.Type else {
+            return false
+        }
+        let sharedSel = NSSelectorFromString("sharedInstance")
+        let handleSel = NSSelectorFromString("handleRedirectURL:sourceApplication:")
+        guard amazonPayCls.responds(to: sharedSel),
+              let amazonPay = amazonPayCls.perform(sharedSel)?.takeUnretainedValue() as? NSObject,
+              amazonPay.responds(to: handleSel) else {
+            return false
+        }
+        // handleRedirectURL returns BOOL, so call through a typed IMP rather than perform(_:with:with:).
+        typealias HandleRedirect = @convention(c) (AnyObject, Selector, NSURL, NSString) -> Bool
+        let handle = unsafeBitCast(amazonPay.method(for: handleSel), to: HandleRedirect.self)
+        return handle(amazonPay, handleSel, url as NSURL, (sourceApplication ?? "") as NSString)
     }
 }

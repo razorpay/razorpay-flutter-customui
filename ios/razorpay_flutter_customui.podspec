@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'razorpay_flutter_customui'
-  s.version          = '1.4.0'
+  s.version          = '1.5.0'
   s.summary          = 'Flutter plugin for Razorpay Custom SDK.'
   s.description      =  'Flutter plugin for Razorpay Custom SDK.'
   s.homepage         = 'http://example.com'
@@ -17,6 +17,9 @@ Pod::Spec.new do |s|
 
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
   s.dependency 'razorpay-customui-pod', '~> 2.1.0'
+  # 1.0.8+ ships RazorpayCheckout.initWithKey(_:andDelegate:withPaymentWebView:amazonPlugin:),
+  # which the Amazon Pay wallet / PayLater flow relies on.
+  s.dependency 'razorpay-core-pod', '>= 1.0.8'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
