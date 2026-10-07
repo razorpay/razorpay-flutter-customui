@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:razorpay_flutter_customui_example/amazon_pay_page.dart';
 import 'package:razorpay_flutter_customui_example/payment_slection_page.dart';
 
 void main() {
@@ -103,6 +104,19 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         child: Text('Purchase'),
 
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (builder) {
+                                return AmazonPayPage();
+                              },
+                            ),
+                          );
+                        },
+                        child: Text('Amazon Pay (Link & Pay)'),
                       )
                     ],
                   ),

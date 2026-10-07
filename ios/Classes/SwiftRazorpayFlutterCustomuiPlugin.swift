@@ -9,9 +9,40 @@ public class SwiftRazorpayFlutterCustomuiPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: CHANNEL_NAME, binaryMessenger: registrar.messenger())
         let instance = SwiftRazorpayFlutterCustomuiPlugin()
+        // Apps on the UIScene lifecycle (default for newer Flutter templates) get openURL via
+        // scene(_:openURLContexts:). addSceneDelegate / FlutterSceneLifeCycleDelegate only exist on
+        // newer Flutter engines, so register dynamically to keep building on older ones. The protocol
+        // is attached before any registration so the engine sees scene support from the start.
+        if #available(iOS 13.0, *) {
+            let addSceneDelegateSel = NSSelectorFromString("addSceneDelegate:")
+            let registrarObject = registrar as AnyObject
+            if registrarObject.responds(to: addSceneDelegateSel) {
+                if let sceneProtocol = NSProtocolFromString("FlutterSceneLifeCycleDelegate") {
+                    class_addProtocol(SwiftRazorpayFlutterCustomuiPlugin.self, sceneProtocol)
+                }
+                _ = registrarObject.perform(addSceneDelegateSel, with: instance)
+            }
+        }
         registrar.addMethodCallDelegate(instance, channel: channel)
+        // Apps on the classic AppDelegate lifecycle get openURL here. Either path forwards Amazon
+        // Pay's amzn-<bundle id>:// redirect to the Amazon SDK, so the merchant needs no AppDelegate code.
+        registrar.addApplicationDelegate(instance)
     }
-    
+
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String
+        return RazorpayDelegate.handleAmazonPayRedirect(url, sourceApplication: sourceApplication)
+    }
+
+    @available(iOS 13.0, *)
+    @objc public func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) -> Bool {
+        var handled = false
+        for context in URLContexts where RazorpayDelegate.handleAmazonPayRedirect(context.url, sourceApplication: context.options.sourceApplication) {
+            handled = true
+        }
+        return handled
+    }
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         switch call.method {

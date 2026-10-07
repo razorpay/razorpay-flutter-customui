@@ -10,8 +10,13 @@ import Flutter
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
-    
+
     override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        // Let plugins handle the URL first (e.g. Amazon Pay's amzn-<bundle id>:// redirect).
+        // Without calling super, FlutterAppDelegate never forwards openURL to plugins.
+        if super.application(app, open: url, options: options) {
+            return true
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "CRED_CALLBACK_NOTIFICATION"), object: nil, userInfo: ["response":url.absoluteString])
         }
