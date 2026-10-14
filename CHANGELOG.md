@@ -1,6 +1,5 @@
 ## 1.5.1
 
-- Android: depends on `com.razorpay:customui-core:3.10.+` (Custom UI SDK 3.10.x).
 - iOS: depends on `razorpay-customui-pod` `~> 2.2.3` (Custom UI SDK 2.2.x).
 
 ## 1.5.0
