@@ -1,3 +1,7 @@
+## 1.5.1
+
+- iOS: depends on `razorpay-customui-pod` `~> 2.2.3` (Custom UI SDK 2.2.x).
+
 ## 1.5.0
 
 - Added `getRecommendedInstruments` API for fetching ranked payment instrument suggestions.
