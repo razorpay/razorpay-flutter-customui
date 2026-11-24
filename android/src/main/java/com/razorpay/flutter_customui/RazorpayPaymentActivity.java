@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.razorpay.PaymentData;
 import com.razorpay.PaymentResultWithDataListener;
 import com.razorpay.Razorpay;
@@ -141,6 +144,25 @@ public class RazorpayPaymentActivity
         webview.setLayoutParams(params);
         rootview.addView(webview);
         razorpay.setWebView(webview);
+        fitContentToSystemBars(rootview);
+    }
+
+    /**
+     * Keeps checkout inside the area not covered by the status bar, navigation bar or keyboard.
+     * On Android 15+ apps targeting SDK 35+ are drawn edge-to-edge, so without this the WebView
+     * and the SDK's UPI sheets (added to the same content view) end up behind the navigation bar.
+     * Insets come from the system, so this works for any navigation bar size or mode.
+     */
+    private void fitContentToSystemBars(View content) {
+        ViewCompat.setOnApplyWindowInsetsListener(content, (view, insets) -> {
+            Insets bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout()
+            );
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            view.setPadding(bars.left, bars.top, bars.right, Math.max(bars.bottom, ime.bottom));
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(content);
     }
 
     private void sendRequest() {

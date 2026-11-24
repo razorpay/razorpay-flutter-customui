@@ -16,6 +16,9 @@ Pod::Spec.new do |s|
   s.platform = :ios, '10.0'
 
   # s.vendored_frameworks = 'Frameworks/Razorpay.xcframework'
+  # 1.0.8+ ships RazorpayCheckout.initWithKey(_:andDelegate:withPaymentWebView:amazonPlugin:),
+  # which the Amazon Pay wallet / PayLater flow relies on.
+  s.dependency 'razorpay-core-pod', '>= 1.0.8'
   s.dependency 'razorpay-customui-pod', '~> 2.2.3'
 
   # Flutter.framework does not contain a i386 slice.

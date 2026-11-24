@@ -32,6 +32,11 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Amazon Pay Link-n-Pay (wallet + PayLater). The plugin does not bundle this pod; apps that
+  # offer Amazon Pay add it. Also set APIKey and the amzn-$(PRODUCT_BUNDLE_IDENTIFIER) URL
+  # scheme in Info.plist.
+  pod 'razorpay-apay-wallet-paylater', '1.0.0'
 end
 
 post_install do |installer|

@@ -1,6 +1,14 @@
-## 1.5.1
+## Unreleased
 
-- iOS: depends on `razorpay-customui-pod` `~> 2.2.3` (Custom UI SDK 2.2.x).
+- Fixed iOS Amazon Pay wallet / PayLater payments not returning to checkout after OTP or insufficient-balance top-up:
+  - Forward `WKNavigationDelegate.decidePolicyFor` to the SDK so `amazon.in` navigations are handed to the Amazon Pay SDK instead of loading in the webview.
+  - Initialise the SDK with the Amazon Pay plugin (when the `razorpay-apay-wallet-paylater` pod is present) so it is available to the payment flow, not only to linking.
+  - Handle `amzn-<bundle id>://` redirects via `application(_:open:options:)`, and `scene(_:openURLContexts:)` for apps on the UIScene lifecycle, and pass them to the Amazon Pay SDK.
+- iOS payment error responses now include `code` and `description` when the SDK reports them only as arguments (previously such errors reached Dart as an empty map). Existing keys are unchanged.
+- Guarded iOS plugin registration against a nil registrar to avoid a crash at launch.
+- iOS: requires `razorpay-core-pod` 1.0.8 or later.
+- Apps that override `application(_:open:options:)` must call `super` so plugins receive URL callbacks (needed for the Amazon Pay redirect).
+- Fixed Android checkout drawing under the status bar, navigation bar and keyboard on Android 15+ (apps targeting SDK 35+ are edge-to-edge). This cut off the bottom of the UPI "No UPI apps found" / app selector sheets and the top of payment pages. The payment screen is now padded by the system bar, display cutout and keyboard insets; no change on Android 14 and lower.
 
 ## 1.5.0
 
